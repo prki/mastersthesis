@@ -11,9 +11,10 @@ NMF - Image compression - performance analysis
 
 ## Topics to research
  * NMF implementation library
+ * What sorts of NMF algos are there? Is there one that's clearly superior for this purpose?
  * NMF rank v\*r and r\*w - any heuristic for choosing r? what sort of effect does it have on the images?
  * RGB/CMYK/other? - any difference on the performance?
- * NMF producing floating/decimal numbers - can be larger than the original data, would rounding/cutting information be fine?
+ * NMF producing floating/decimal numbers - can be larger than the original data - how much of a problem can this be? can the floats be cut/rounded to a certain value or represented in a whole different way? how would that hurt the compression?
  * Is it necessary to restrict the factorization only to non-negative matrices?
  * Performance metrics - compression ratio, peak signal-to-noise ratio
  * Constrained NMF - papers seem to imply that CNMF is the way to go
