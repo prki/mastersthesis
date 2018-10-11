@@ -15,6 +15,7 @@ NMF - Image compression - performance analysis
  * NMF rank v\*r and r\*w - any heuristic for choosing r? what sort of effect does it have on the images?
  * RGB/CMYK/other? - any difference on the performance?
  * NMF producing floating/decimal numbers - can be larger than the original data - how much of a problem can this be? can the floats be cut/rounded to a certain value or represented in a whole different way? how would that hurt the compression?
+ * Followup to previous - https://docs.python.org/3.7/library/decimal.html - how much can decimals be controlled in python/how well can be custom numeric types be implemented in python? or should I just use c/c++?
  * Is it necessary to restrict the factorization only to non-negative matrices?
  * Performance metrics - compression ratio, peak signal-to-noise ratio
  * Constrained NMF - papers seem to imply that CNMF is the way to go
