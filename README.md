@@ -8,6 +8,7 @@ NMF - Image compression - performance analysis
  * An Image Compression Scheme in Wireless Multimedia Sensor Networks Based on NMF - http://www.mdpi.com/2078-2489/8/1/26/pdf
  * MATLAB - Image compression based on NMF http://www.advancedsourcecode.com/nmfcompression.asp (understand the code + rewrite unless there's a C-like language implementation)
  * Nimfa - A Python NMF library - multiple algorithms and parametrization http://nimfa.biolab.si/
+ * BMP format description - http://www.dragonwins.com/domains/getteched/bmp/bmpfileformat.htm
 
 ## Topics to research
  * NMF implementation library - OK
