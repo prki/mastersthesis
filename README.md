@@ -10,12 +10,17 @@ NMF - Image compression - performance analysis
  * Nimfa - A Python NMF library - multiple algorithms and parametrization http://nimfa.biolab.si/
 
 ## Topics to research
- * NMF implementation library
- * What sorts of NMF algos are there? Is there one that's clearly superior for this purpose?
- * NMF rank v\*r and r\*w - any heuristic for choosing r? what sort of effect does it have on the images?
+ * NMF implementation library - OK
+ * What sorts of NMF algos are there? Is there one that's clearly superior for this purpose? - ONGOING
+ * NMF rank v\*r and r\*w - any heuristic for choosing r? what sort of effect does it have on the images? - ONGOING
  * RGB/CMYK/other? - any difference on the performance?
- * NMF producing floating/decimal numbers - can be larger than the original data - how much of a problem can this be? can the floats be cut/rounded to a certain value or represented in a whole different way? how would that hurt the compression?
- * Followup to previous - https://docs.python.org/3.7/library/decimal.html - how much can decimals be controlled in python/how well can be custom numeric types be implemented in python? or should I just use c/c++?
- * Is it necessary to restrict the factorization only to non-negative matrices?
+ * NMF producing floating/decimal numbers - can be larger than the original data - how much of a problem can this be? can the floats be cut/rounded to a certain value or represented in a whole different way? how would that hurt the compression? - ONGOING
+ * Followup to previous - https://docs.python.org/3.7/library/decimal.html - how much can decimals be controlled in python/how well can be custom numeric types be implemented in python? or should I just use c/c++? - OK
+ * Is it necessary to restrict the factorization only to non-negative matrices? - ONGOING
  * Performance metrics - compression ratio, peak signal-to-noise ratio
- * Constrained NMF - papers seem to imply that CNMF is the way to go
+ * Constrained NMF - papers seem to imply that CNMF is the way to go - Which constraints can even be used? Not sparsity for sure.
+
+## New stuff/ideas
+ * NMF clearly very lossy when considering the numbers as 8bits (already "mock" implemented)
+ * Idea - NMF is most likely not very accurate when it comes to lower digits - how about the numbers go from 8bits to large numbers?
+ * Different representation - loading into 32bit numbers - either the whole row (better compression but likely one channel will suffer severely) (legal operation - the row is by default zero padded so that it can be used that way) or per pixel (8 zeros at the end)
