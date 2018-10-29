@@ -82,6 +82,10 @@ def perform_nmf(img_matrix, max_iter, rank):
 
     return mult_matrix
 
+def perform_32b_nmf(img_matrix, max_iter, rank):
+    print("Running 32bit NMF. Params: max_iter:", max_iter, "rank:", rank)
+    nmf = nimfa.Nmf(img_matrix, max_iter 
+
 
 def create_8bit_matrix(image_file, scanline_len, width, height, offset):
     """ Creates a numpy matrix of the bitmap in its most basic fashion -
@@ -114,7 +118,8 @@ def compress_image(image_file, scanline_len, width, height, offset):
     matrix_8bit = create_8bit_matrix(image_file, scanline_len, width, height, offset)
     matrix_32bit = convert_8to32bit_matrix(matrix_8bit)
 
-    img_matrix_postnmf = perform_nmf(matrix_32bit, 300, 50)
+    #img_matrix_postnmf = perform_nmf(matrix_8bit, 300, 50)
+    img_matrix_postnmf = perform_32b_nmf(matrix_32bit, 300, 50)
 
     create_new_image_file(img_matrix_postnmf, image_file, offset, scanline_len)
 
