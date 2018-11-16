@@ -21,8 +21,6 @@ def read_image(file_path):
 
 def parse_file_header(image_file):
     """ @return offset - the only relevant thing from the header for us. """
-    #bf_type = image_file[:2]
-    #bf_size = int.from_bytes(image_file[2:6], byteorder='little')
     bf_off = int.from_bytes(image_file[10:14], byteorder='little')
 
     return bf_off
@@ -56,6 +54,7 @@ def create_new_image_file(img_matrix, orig_img_file, offset, scanline_len):
     img_matrix = img_matrix.tolist()
     null_padding_bytes = scanline_len - len(img_matrix[0])
     null_bytes = []
+    print(null_bytes)
 
     for _ in range(null_padding_bytes):
         null_bytes.extend([0])
@@ -70,8 +69,11 @@ def create_new_image_file(img_matrix, orig_img_file, offset, scanline_len):
 
 def perform_nmf(img_matrix, max_iter, rank):
     """ Performs the NMF on the image matrix."""
-    V = np.matrix(img_matrix, dtype=np.uint8)
+    #V = np.matrix(img_matrix, dtype=np.uint8)
     print("Running NMF. Params: max_iter:", max_iter, "rank:", rank)
+    V = img_matrix
+    print("V:")
+    print(V)
     nmf = nimfa.Nmf(V, max_iter=max_iter, rank=rank, update='euclidean', objective='fro')
     nmf_fit = nmf()
     W = nmf_fit.basis()  # np.float64
@@ -81,10 +83,6 @@ def perform_nmf(img_matrix, max_iter, rank):
     mult_matrix = mult_matrix.astype(np.uint8)
 
     return mult_matrix
-
-def perform_32b_nmf(img_matrix, max_iter, rank):
-    print("Running 32bit NMF. Params: max_iter:", max_iter, "rank:", rank)
-    nmf = nimfa.Nmf(img_matrix, max_iter 
 
 
 def create_8bit_matrix(image_file, scanline_len, width, height, offset):
@@ -99,15 +97,30 @@ def create_8bit_matrix(image_file, scanline_len, width, height, offset):
     return np.matrix(img_mat)
 
 
+def create_8bit_matrix_zeropad(image_file, scanline_len, width, height, offset):
+    """ Creates an 8bit matrix of the bitmap with the finishing zero pads.
+    This is useful for the naive approach of creating the 32bit matrix."""
+    print("Creating an 8bit matrix with BMP zero padding.")
+    img_mat = [[0 for x in range(width)] for y in range(height)]
+
+    for i in range(height):
+        img_mat[i] = list(image_file[offset:(offset + scanline_len)])
+        offset = offset + scanline_len
+
+    return np.matrix(img_mat, dtype=np.uint8)
+
+
 def convert_8to32bit_matrix(mat_8bit):
     """ Converts the numpy uint8 matrix into one where following elements get
     packed into uint8s."""
     print("Converting 8bit matrix to a 32bit one.")
-    ret_mat = np.zeros(shape=(mat_8bit.shape[0], int(mat_8bit.shape[1]/4)))
-    for i, row in enumerate(mat_8bit):
-        ret_mat[i] = np.frombuffer(row, dtype=np.uint32)
 
-    return ret_mat
+    return mat_8bit.view(np.uint32)
+
+
+def convert_32to8bit_matrix(mat_32bit):
+    """ Views the numpy uint32 matrix as an uint8 one."""
+    return mat_32bit.view(np.uint8)
 
 
 def compress_image(image_file, scanline_len, width, height, offset):
@@ -115,12 +128,28 @@ def compress_image(image_file, scanline_len, width, height, offset):
        Parses the image data into a matrix without the null padding (in order
        to compress less data). NMF compression can be done with various
        parameters."""
-    matrix_8bit = create_8bit_matrix(image_file, scanline_len, width, height, offset)
+    #matrix_8bit = create_8bit_matrix(image_file, scanline_len, width, height, offset)
+    matrix_8bit = create_8bit_matrix_zeropad(image_file, scanline_len, width, height, offset)
+    print("orig8bit:")
+    print(matrix_8bit)
+    print(matrix_8bit.dtype)
     matrix_32bit = convert_8to32bit_matrix(matrix_8bit)
+    print("8to32:")
+    print(matrix_32bit)
+    print("32to8:")
+    print(convert_32to8bit_matrix(matrix_32bit))
 
-    #img_matrix_postnmf = perform_nmf(matrix_8bit, 300, 50)
-    img_matrix_postnmf = perform_32b_nmf(matrix_32bit, 300, 50)
-
+    img_matrix_postnmf = perform_nmf(matrix_8bit, 300, 50)
+    #img_matrix_postnmf = perform_nmf(matrix_32bit, 150, 50)
+    #
+    #print("postnmf1:")
+    #print(img_matrix_postnmf)
+    #img_matrix_postnmf = img_matrix_postnmf.astype(np.uint32)
+    #print("postnmf2:")
+    #print(img_matrix_postnmf)
+    #img_matrix_postnmf = convert_32to8bit_matrix(img_matrix_postnmf)
+    #print("postnmf3:")
+    #print(img_matrix_postnmf)
     create_new_image_file(img_matrix_postnmf, image_file, offset, scanline_len)
 
 

@@ -25,3 +25,7 @@ NMF - Image compression - performance analysis
  * NMF clearly very lossy when considering the numbers as 8bits (already "mock" implemented)
  * Idea - NMF is most likely not very accurate when it comes to lower digits - how about the numbers go from 8bits to large numbers?
  * Different representation - loading into 32bit numbers - either the whole row (better compression but likely one channel will suffer severely) (legal operation - the row is by default zero padded so that it can be used that way) or per pixel (8 zeros at the end)
+
+## Notes
+ * Naive 32-bit matrix - VERY lossy, the code needs to be refactored slightly but clearly a lot of information is being lost - not only are pixels overlapping (rgbr gbrg brgb...) but it seems that NMF might be very inaccurate with BIG numbers.
+ * No overlap 32-bit matrix - (rgb0 rgb0 rgb0...) yet to be implemented

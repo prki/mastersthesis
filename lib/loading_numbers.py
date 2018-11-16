@@ -13,7 +13,8 @@ def generate_random_array():
 
 def generate_random_matrix():
     """ Generates a matrix with numbers in range of [0;255]"""
-    return np.random.randint(0, high=255, dtype=np.uint8, size=(32, 16))
+    #return np.random.randint(0, high=255, dtype=np.uint8, size=(32, 16))
+    return np.full((32, 16), 255, dtype=np.uint8)
 
 
 def load_32bit_nopad(data):
@@ -23,23 +24,10 @@ def unpack_32bit(data):
     return np.frombuffer(data, dtype=np.uint8)
 
 def convert_8to32bit_matrix(mat):
-    ret_mat = np.zeros(shape=(mat.shape[0], int(mat.shape[1]/4)))
-    for i, row in enumerate(mat):
-        ret_mat[i] = np.frombuffer(row, dtype=np.uint32)
-
-    return ret_mat
+    return mat.view(np.uint32)
  
-
 def convert_32to8bit_matrix(mat):
-    print(mat.shape[0], mat.shape[1])
-    ret_mat = np.zeros(shape=(mat.shape[0], mat.shape[1]*4))
-    dt = np.dtype(np.uint8)
-    dt = dt.newbyteorder('<')
-    for i, row in enumerate(mat):
-        print(np.frombuffer(row, dtype=dt))
-        #ret_mat[i] = np.frombuffer(row, dtype=np.uint8)
-
-    return ret_mat
+    return mat.view(np.uint8)
 
 def main():
     #arr = generate_random_array()
