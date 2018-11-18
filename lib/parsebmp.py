@@ -69,7 +69,6 @@ def create_new_image_file(img_matrix, orig_img_file, offset, scanline_len):
 
 def perform_nmf(img_matrix, max_iter, rank):
     """ Performs the NMF on the image matrix."""
-    #V = np.matrix(img_matrix, dtype=np.uint8)
     print("Running NMF. Params: max_iter:", max_iter, "rank:", rank)
     V = img_matrix
     print("V:")
