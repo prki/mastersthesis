@@ -29,3 +29,4 @@ NMF - Image compression - performance analysis
 ## Notes
  * Naive 32-bit matrix - VERY lossy, the code needs to be refactored slightly but clearly a lot of information is being lost - not only are pixels overlapping (rgbr gbrg brgb...) but it seems that NMF might be very inaccurate with BIG numbers.
  * No overlap 32-bit matrix - (rgb0 rgb0 rgb0...) yet to be implemented
+ * No overlap 24-bit matrix (rgb rgb rgb...) - should be possible to calc with with numpy, research how
