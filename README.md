@@ -9,6 +9,14 @@ NMF - Image compression - performance analysis
  * MATLAB - Image compression based on NMF http://www.advancedsourcecode.com/nmfcompression.asp (understand the code + rewrite unless there's a C-like language implementation)
  * Nimfa - A Python NMF library - multiple algorithms and parametrization http://nimfa.biolab.si/
  * BMP format description - http://www.dragonwins.com/domains/getteched/bmp/bmpfileformat.htm
+ * SVD image compression (also dimensinoality reduction) - http://fourier.eng.hmc.edu/e161/lectures/svdcompression.html - very good paper, should inspire a lot
+ * Image Compression Methods using Dimension Reduction and Classification through PCA and LDA: A Review - https://www.ijsr.net/archive/v5i5/NOV163957.pdf - doesn't really show much practical things but there's some nice theory to write about ad. compression and data redundancy
+ * Dimensinoality Reduction for Matrix- and Tensor-Coded Data [Part 1] - https://www.youtube.com/watch?v=hmmnRF66hOA - a few slides have very solid images to describe why NMF is different than PCA/what the difference is
+ * The Why and How of Nonnegative Matrix Factorization - https://arxiv.org/pdf/1401.5226.pdf - absolutely excellent paper showing usecases of NMF.
+ * Online SVD compression demo (SVD explanation + demo for own images) - http://timbaumann.info/svd-image-compression-demo/
+ * SVD Image compression slides (quick summarising presentation) - https://www.slideshare.net/AishwaryaKM1/singular-value-decomposition-image-compression
+ * NMF decomposition scikit-learn https://scikit-learn.org/stable/modules/decomposition.html#non-negative-matrix-factorization-nmf-or-nnmf
+ * NMF x PCA relationship - http://www.columbia.edu/~jwp2128/Teaching/E4903/papers/nmf_nature.pdf
 
 ## Topics to research
  * NMF implementation library - OK
