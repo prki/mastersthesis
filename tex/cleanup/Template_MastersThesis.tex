@@ -1,0 +1,202 @@
+% arara: xelatex
+% arara: xelatex
+% arara: xelatex
+
+
+% options:
+% thesis=B bachelor's thesis
+% thesis=M master's thesis
+% czech thesis in Czech language
+% english thesis in English language
+% hidelinks remove colour boxes around hyperlinks
+
+\documentclass[thesis=M,english]{FITthesis}[2012/10/20]
+
+% \usepackage[utf8]{inputenc} % LaTeX source encoded as UTF-8
+% \usepackage[latin2]{inputenc} % LaTeX source encoded as ISO-8859-2
+% \usepackage[cp1250]{inputenc} % LaTeX source encoded as Windows-1250
+
+\usepackage{graphicx} %graphics files inclusion
+% \usepackage{subfig} %subfigures
+% \usepackage{amsmath} %advanced maths
+% \usepackage{amssymb} %additional math symbols
+
+\usepackage{dirtree} %directory tree visualisation
+
+% % list of acronyms
+% \usepackage[acronym,nonumberlist,toc,numberedsection=autolabel]{glossaries}
+% \iflanguage{czech}{\renewcommand*{\acronymname}{Seznam pou{\v z}it{\' y}ch zkratek}}{}
+% \makeglossaries
+
+% % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 
+% EDIT THIS
+% % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 
+
+\department{Department of Theoretical Computer Science}
+\title{Evaluating performance of an image compression scheme based on non-negative matrix factorization}
+\authorGN{Marek} %author's given name/names
+\authorFN{Pikna} %author's surname
+\author{Marek Pikna} %author's name without academic degrees
+\authorWithDegrees{Bc. Marek Pikna} %author's name with academic degrees
+\supervisor{doc. Ing. Ivan Šimeček, Ph.D.}
+\acknowledgements{THANKS (remove entirely in case you do not with to thank anyone)}
+\abstractEN{Summarize the contents and contribution of your work in a few sentences in English language.}
+\abstractCS{V n{\v e}kolika v{\v e}t{\' a}ch shr{\v n}te obsah a p{\v r}{\' i}nos t{\' e}to pr{\' a}ce v {\v c}esk{\' e}m jazyce.}
+\placeForDeclarationOfAuthenticity{Prague}
+\keywordsCS{Replace with comma-separated list of keywords in Czech.}
+\keywordsEN{Replace with comma-separated list of keywords in English.}
+\declarationOfAuthenticityOption{1} %select as appropriate, according to the desired license (integer 1-6)
+% \website{http://site.example/thesis} %optional thesis URL
+
+% dobry zdroje kompilace
+% https://homepages.cae.wisc.edu/~ece533/project/f06/aguilera_rpt.pdf
+% https://pdfs.semanticscholar.org/b481/96b92a6d28078b77f74f9129c3cd138ec291.pdf
+% https://medium.com/@alfredayibonte/svd-and-image-compression-439c70745c99
+% http://www.math.utah.edu/~goller/F15_M2270/BradyMathews_SVDImage.pdf
+
+% TODO
+% Introduction - nejspise prepsat budouci cas na pritomny (tato cast je popsana, nikoliv bude popsana etc)
+% Na konci introduction kde se popipisuji kapitoly asi prolinkovat jednotoliva cisla, jakmile budou.
+% Prepsat v uvodu JPEG z algoritmu na format (+ png)
+% Doplnit bibliografii v introduction
+
+\begin{document}
+
+% \newacronym{CVUT}{{\v C}VUT}{{\v C}esk{\' e} vysok{\' e} u{\v c}en{\' i} technick{\' e} v Praze}
+% \newacronym{FIT}{FIT}{Fakulta informa{\v c}n{\' i}ch technologi{\' i}}
+
+\setsecnumdepth{part}
+\chapter{Introduction}
+Data encoding and consequently data compression are both problems which lie
+at the heart of many modern technologies - digital television, videogames, mobile
+communications, security cameras and all other kinds of multimedia. As the amount
+of data only grows in the current world \emph{[CITATION NEEDED]}, the quality of
+compression ends up becoming a very serious problem, since good compression can
+very significantly reduce the costs of data storage as well as the costs and speed
+of data transfer.
+\\
+
+To put the problem into perspective, in order to store images in the resolutions
+currently considered as high resolution (1920x1080 pixels, the second most common
+resolution on desktop devices \emph{[CITATION NEEDED http://gs.statcounter.com/screen-resolution-stats/desktop/worldwide]}.
+When storing an image with these dimensions using an uncompressed standard encoding,
+the filesize would be almost 6 megabytes. Such a high size impacts many areas, such as
+speed of transfer or storage costs. Fortunately, modern image compression formats such as
+\emph{PNG} or \emph{JPG} are able to reduce this size remarkably.
+\\
+
+Currently, images contribute to the amount of data on the internet significantly - not only are images a common
+form of media for professional purposes but some of the currently largest platofrms on the
+internet are based on image sharing and image hosting. One modern social media platform centered around image
+sharing had over 67 million new posts each day \emph{[CITATION NEEDED https://blog.microfocus.com/how-much-data-is-created-on-the-internet-each-day/]}.
+Being able to obtain these images fast and in good quality is therefore highly important for both users, just
+as it is important for the owners of these services to be able to store this data.
+\\
+
+In the recent years with growht related to machine learning and similar areas, such as artifical
+intelligence, new applications of mathematical concepts were discovered. Some of these concepts
+which are enjoying high success are algorithms related to \emph{dimensionality reduction}. These
+algorithms aim to reduce the number of random variables under consideration\emph{[CITATION NEEDED http://www.robots.ox.ac.uk/~az/lectures/ml/lle.pdf]}.
+\\
+
+While these algorithms have been enjoying success mostly in areas such as data mining or machine
+learning, their nature of reducing the amount of random variables under inspection means that the
+algorithms are essentially also compression algorithms. One of the algorithms used for dimensionality
+reduction and the one which this thesis focuses on is \emph{non-negative matrix factorization} (abbreviated
+as \emph{NMF}). The \emph{NMF} algorithm is currently used in areas such as facial recognition or
+astronomy. Heart of the algorithm is the factorization of a matrix consisting of non-negative values into
+matrices.
+\\
+
+The research in image compression methods using dimensionality reduction algorithms is currently being
+performed - another dimensionality reduction algorithm and its potential usage for image compression 
+which has been well researched is the \emph{singular value decomposition} algorithm, for example in [\emph{CITATION NEEDED see SVD link nahore}]. This algorithm, just like the \emph{NMF}, factorizes a matrix - however, without
+restricting the values to be non-negative. While certain similar research to see whether
+\emph{NMF} can be used for image compression exists, the works are related to very
+specific use-case scenarios.
+\\
+
+Thus, this thesis aims to analyze the potential of the \emph{NMF} algorithm
+as a tool for image compression. In order to achieve this, the following points
+will be explored in the thesis:
+\begin{itemize}
+  \item \emph{NMF} and its current applications will be studied (Chapter~\ref{ch:NMF}).
+  \item The theory and practice related to digital image encoding and image
+        compression will be explored and described together with
+        modern image compression . (Chapters~\ref{ch:image-encoding} and~\ref{ch:image-compression})
+\end{itemize}
+
+By analyzing these concepts, a proof of concept image compression algorithm using
+\emph{NMF} will be designed and implemented. By doing so, these issues will be
+addressed:
+\begin{itemize}
+  \item Whether a certain way of representing an uncompressed image is better
+        suited for non-negative matrix factorization.
+  \item Utilizing both subjective as well as objective metrics commonly used
+        for evaluating quality of image compression, the performance of
+        the proof of concept compression scheme will be evaluated.
+  \item How well suited \emph{NMF} is for usage as an algorithm for image
+        compression.
+\end{itemize} 
+At the end of the thesis, the proof of concept algorithm will be compared to
+the state of the art image compression algorithms and possible points related
+to further analysis or will be explored.
+\\
+
+The first three chapters are related to the theoretical part of the problem, studying
+\emph{NMF}, image encoding and image compression. The following chapters are related
+to the practical part of this thesis - design and implementation of the image
+compression algorithm and its evaluation.
+
+\setsecnumdepth{all}
+\chapter{Non-negative matrix factorization}
+\label{ch:NMF}
+fgsfds
+
+\chapter{Digital image encoding}
+\label{ch:image-encoding}
+fgsfds
+
+\chapter{Image compression}
+\label{ch:image-compression}
+fgsfds
+
+\chapter{Realisation}
+
+\setsecnumdepth{part}
+\chapter{Conclusion}
+
+
+\bibliographystyle{iso690}
+\bibliography{mybibliographyfile}
+
+\setsecnumdepth{all}
+\appendix
+
+\chapter{Acronyms}
+% \printglossaries
+\begin{description}
+  \item[NMF] Non-negative matrix factorization
+  \item[PNG] Portable Network Graphics
+  \item[JPEG]
+\end{description}
+
+
+\chapter{Contents of enclosed CD}
+
+%change appropriately
+
+\begin{figure}
+	\dirtree{%
+		.1 readme.txt\DTcomment{the file with CD contents description}.
+		.1 exe\DTcomment{the directory with executables}.
+		.1 src\DTcomment{the directory of source codes}.
+		.2 wbdcm\DTcomment{implementation sources}.
+		.2 thesis\DTcomment{the directory of \LaTeX{} source codes of the thesis}.
+		.1 text\DTcomment{the thesis text directory}.
+		.2 thesis.pdf\DTcomment{the thesis text in PDF format}.
+		.2 thesis.ps\DTcomment{the thesis text in PS format}.
+	}
+\end{figure}
+
+\end{document}
