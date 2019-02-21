@@ -59,6 +59,14 @@
 % Na konci introduction kde se popipisuji kapitoly asi prolinkovat jednotoliva cisla, jakmile budou.
 % Prepsat v uvodu JPEG z algoritmu na format (+ png)
 % Doplnit bibliografii v introduction
+% TODO thesis na NMF - https://www.researchgate.net/profile/Ngoc_Diep_Ho/publication/262258846_Nonnegative_matrix_factorization_algorithms_and_applications/links/02e7e537226cb7e59b000000.pdf - excelentni stuff	
+% TODO potencialne popsat, proc je potreba nezapornost (viz uvod vyse)
+% TODO kapitola, ktera vysvetluje zaklady maticovyho poctu, co je to nonnegative matrix, matrix
+%          multiplication a tak? kam s touhle kapitolou? podsekce v NMF sekci nebo vlastni kapitola?
+%           zatim bych to napsal jako vlastni sekci, kdyztak se to presune
+% TODO zkontrolovat korektnost definice (velikosti), vysvetlit, co je to to r (rank - parametr nmf)
+% TODO https://dial.uclouvain.be/pr/boreal/object/boreal:157009/datastream/PDF_01/view - zajimava vec o exaktnim NMF,
+%      potencialne by byl gamechanger
 
 \begin{document}
 
@@ -78,7 +86,7 @@ of data transfer.
 
 To put the problem into perspective, in order to store images in the resolutions
 currently considered as high resolution (1920x1080 pixels, the second most common
-resolution on desktop devices \emph{[CITATION NEEDED http://gs.statcounter.com/screen-resolution-stats/desktop/worldwide]}.
+resolution on desktop devices \cite{res-stats}.
 When storing an image with these dimensions using an uncompressed standard encoding,
 the filesize would be almost 6 megabytes. Such a high size impacts many areas, such as
 speed of transfer or storage costs. Fortunately, modern image compression formats such as
@@ -88,7 +96,7 @@ speed of transfer or storage costs. Fortunately, modern image compression format
 Currently, images contribute to the amount of data on the internet significantly - not only are images a common
 form of media for professional purposes but some of the currently largest platofrms on the
 internet are based on image sharing and image hosting. One modern social media platform centered around image
-sharing had over 67 million new posts each day \emph{[CITATION NEEDED https://blog.microfocus.com/how-much-data-is-created-on-the-internet-each-day/]}.
+sharing had over 67 million new posts each day \cite{data-amount}.
 Being able to obtain these images fast and in good quality is therefore highly important for both users, just
 as it is important for the owners of these services to be able to store this data.
 \\
@@ -96,7 +104,7 @@ as it is important for the owners of these services to be able to store this dat
 In the recent years with growht related to machine learning and similar areas, such as artifical
 intelligence, new applications of mathematical concepts were discovered. Some of these concepts
 which are enjoying high success are algorithms related to \emph{dimensionality reduction}. These
-algorithms aim to reduce the number of random variables under consideration\emph{[CITATION NEEDED http://www.robots.ox.ac.uk/~az/lectures/ml/lle.pdf]}.
+algorithms aim to reduce the number of random variables under consideration \cite{dimens-reduction}.
 \\
 
 While these algorithms have been enjoying success mostly in areas such as data mining or machine
@@ -110,7 +118,7 @@ matrices.
 
 The research in image compression methods using dimensionality reduction algorithms is currently being
 performed - another dimensionality reduction algorithm and its potential usage for image compression 
-which has been well researched is the \emph{singular value decomposition} algorithm, for example in [\emph{CITATION NEEDED see SVD link nahore}]. This algorithm, just like the \emph{NMF}, factorizes a matrix - however, without
+which has been well researched is the \emph{singular value decomposition} algorithm, for example in \cite{svd-compression}. This algorithm, just like the \emph{NMF}, factorizes a matrix - however, without
 restricting the values to be non-negative. While certain similar research to see whether
 \emph{NMF} can be used for image compression exists, the works are related to very
 specific use-case scenarios.
@@ -151,7 +159,30 @@ compression algorithm and its evaluation.
 \setsecnumdepth{all}
 \chapter{Non-negative matrix factorization}
 \label{ch:NMF}
-fgsfds
+This chapter discusses the \emph{non-negative matrix factorization} - defines
+the problem, describes some of the existing solutions to the problem and
+offers some observations. By doing so, the basics for the rest of the thesis are
+provided.
+\\
+Non-negative matrix factorization as a problem was first formulated by Paatero
+and Tapper in \emph{[CITATION NEEDED]}, but the works which have given
+this problem far more popularity are the works of Lee and Seung \emph{[CITATION NEEDED]}, where
+\emph{NMF} was applied to areas of machine learning and artificial
+intelligence - more specifically to facial recognition and discovering semantic
+features in encyclopedic articles.
+
+\subsection{Problem definition}
+Given a non-negative matrix \emph{V} with size $n \times m$, find non-negative matrix
+ factors {W} with size $m \times r$ and {H} with size $r \times n$ such that:
+\begin{equation}
+  V \approx WH
+\end{equation}
+
+It should be noted here that the name of the problem might be misleading, as
+the term \emph{"factorization"} is usually understood more as an exact
+decomposition, whereas \emph{NMF} is in reality an approximation. Thus,
+the problem is called \emph{non-negative matrix approximation} in certain
+other works. \emph{[CITATION NEEDED  Inderjit S. Dhillon; Suvrit Sra (2005). Generalized Nonnegative Matrix Approximations with Bregman Divergences (PDF). NIPS.]}
 
 \chapter{Digital image encoding}
 \label{ch:image-encoding}
