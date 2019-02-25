@@ -18,8 +18,12 @@
 
 \usepackage{graphicx} %graphics files inclusion
 % \usepackage{subfig} %subfigures
-% \usepackage{amsmath} %advanced maths
+\usepackage{amsmath} %advanced maths
 % \usepackage{amssymb} %additional math symbols
+\usepackage[]{algorithm2e}
+\usepackage{xcolor}
+\usepackage{float}
+\newtheorem{problem}{Problem}
 
 \usepackage{dirtree} %directory tree visualisation
 
@@ -53,20 +57,24 @@
 % https://pdfs.semanticscholar.org/b481/96b92a6d28078b77f74f9129c3cd138ec291.pdf
 % https://medium.com/@alfredayibonte/svd-and-image-compression-439c70745c99
 % http://www.math.utah.edu/~goller/F15_M2270/BradyMathews_SVDImage.pdf
+% https://www.mpi-inf.mpg.de/fileadmin/inf/d5/teaching/ss15_dmm/lectures/2015-05-26-intro-to-nmf.pdf - bozi prezentace
+%     o praktickym nmf.
+% https://eprints.soton.ac.uk/413094/1/NeuralComputationMDLPostReviews.pdf - volba ranku
 
 % TODO
 % Introduction - nejspise prepsat budouci cas na pritomny (tato cast je popsana, nikoliv bude popsana etc)
 % Na konci introduction kde se popipisuji kapitoly asi prolinkovat jednotoliva cisla, jakmile budou.
 % Prepsat v uvodu JPEG z algoritmu na format (+ png)
-% Doplnit bibliografii v introduction
 % TODO thesis na NMF - https://www.researchgate.net/profile/Ngoc_Diep_Ho/publication/262258846_Nonnegative_matrix_factorization_algorithms_and_applications/links/02e7e537226cb7e59b000000.pdf - excelentni stuff	
 % TODO potencialne popsat, proc je potreba nezapornost (viz uvod vyse)
 % TODO kapitola, ktera vysvetluje zaklady maticovyho poctu, co je to nonnegative matrix, matrix
 %          multiplication a tak? kam s touhle kapitolou? podsekce v NMF sekci nebo vlastni kapitola?
 %           zatim bych to napsal jako vlastni sekci, kdyztak se to presune
-% TODO zkontrolovat korektnost definice (velikosti), vysvetlit, co je to to r (rank - parametr nmf)
+%           tam urcite - maticovy soucin, inverze, vektor * matice, transpozice matic
 % TODO https://dial.uclouvain.be/pr/boreal/object/boreal:157009/datastream/PDF_01/view - zajimava vec o exaktnim NMF,
 %      potencialne by byl gamechanger
+% Prakticka cast - http://nimfa.biolab.si/nimfa.models.nmf.html - funkce sparseness() a estimate_rank().
+% Prakticka cast - http://heather.cs.ucdavis.edu/NMFTutorial.pdf - choosing the rank SVD na obrazku!
 
 \begin{document}
 
@@ -78,7 +86,7 @@
 Data encoding and consequently data compression are both problems which lie
 at the heart of many modern technologies - digital television, videogames, mobile
 communications, security cameras and all other kinds of multimedia. As the amount
-of data only grows in the current world \emph{[CITATION NEEDED]}, the quality of
+of data only grows in the current world, the quality of
 compression ends up becoming a very serious problem, since good compression can
 very significantly reduce the costs of data storage as well as the costs and speed
 of data transfer.
@@ -156,6 +164,13 @@ The first three chapters are related to the theoretical part of the problem, stu
 to the practical part of this thesis - design and implementation of the image
 compression algorithm and its evaluation.
 
+% Dale lze psat -
+%   konkretni metody volby r - to by si zaslouzilo aspon trochu silnejsi popis a vysvetleni
+%                              jednotlivych bodu
+%   nmf a obrazkovou kompresi dal asi ne, to je vec casti navrhu nmf algoritmu
+%   nimfu asi taky ne, ta bude v prakticky casti
+%   rozepsat vic least squares
+%   
 \setsecnumdepth{all}
 \chapter{Non-negative matrix factorization}
 \label{ch:NMF}
@@ -164,25 +179,361 @@ the problem, describes some of the existing solutions to the problem and
 offers some observations. By doing so, the basics for the rest of the thesis are
 provided.
 \\
+
 Non-negative matrix factorization as a problem was first formulated by Paatero
-and Tapper in \emph{[CITATION NEEDED]}, but the works which have given
-this problem far more popularity are the works of Lee and Seung \emph{[CITATION NEEDED]}, where
+and Tapper in \cite{nmf-paatero}, but the works which have given
+this problem far more popularity are the works of Lee and Seung \cite{lee99}, where
 \emph{NMF} was applied to areas of machine learning and artificial
 intelligence - more specifically to facial recognition and discovering semantic
 features in encyclopedic articles.
 
-\subsection{Problem definition}
-Given a non-negative matrix \emph{V} with size $n \times m$, find non-negative matrix
- factors {W} with size $m \times r$ and {H} with size $r \times n$ such that:
+\section{Problem definition}
+Let $V$ be a $n \times p$ non-negative matrix, (i.e. with $x_{ij} \geq 0$, denoted
+$X \geq 0$), and $r > 0$ an integer. Non-negative matrix factorization consists in
+finding an approximation
 \begin{equation}
   V \approx WH
 \end{equation}
+where $W, H$ are $n \times r$ and $r \times p$ non-negative matrices, respectively - meaning
+all the elements of the matrices are non-negative.
+In practice, the rank $r$ is often chosen such that $r \ll min(n,p)$. This is due
+to the reason than in many common applications of non-negative matrix factorization,
+the information contained in the matrix $V$ is summarized and split into $r$ factors
+as the columns of $W$ \cite{nmf-r-vignette}.
+\\
 
 It should be noted here that the name of the problem might be misleading, as
 the term \emph{"factorization"} is usually understood more as an exact
 decomposition, whereas \emph{NMF} is in reality an approximation. Thus,
 the problem is called \emph{non-negative matrix approximation} in certain
-other works. \emph{[CITATION NEEDED  Inderjit S. Dhillon; Suvrit Sra (2005). Generalized Nonnegative Matrix Approximations with Bregman Divergences (PDF). NIPS.]}
+other works, such as \cite{nmf-approx}.
+
+\section{Problem solution}
+% TODO time complexity, standard algos, dulezitost volby r/max_iter?
+In this section, two of the commonly used algorithms for solving the
+non-negative matrix factorization problem will be described. The
+first of these two algorithms will be the algorithm based on
+\emph{multiplicative updates} as used in \cite{lee99}, where the
+attention to part-based analysis, simplicity of the \emph{multiplicative
+updates} and interpretability of the results helped to spread the influence
+into many other research fields, such as image processing or text
+processing \cite{nmf-phd-thesis}. Due to these reasons, this will be one of the algorithms
+described. The second algorithm which will be described is the \emph{alternating
+least squares} algorithm, which is the earliest algorithm proposed for solving
+the non-negative matrix factorization problem (positive matrix factorization
+in the original work) \cite{nmf-paatero}.
+\\
+
+The reason for choosing these two algorithms is that both of them are very
+commonly used in practice. Other algorithms exist and are often researched,
+example being the \emph{projected gradient} method \cite{projected-gradient}.
+However, they will not be explored within this thesis.
+
+\subsection{Multiplicative updates}
+% TODO na zaver pripsat, ze velka sila je, jak je popsano v {lee-algos} v
+%      jednoduchosti implementace.
+The algorithm described here is described more thoroughly in \cite{lee-algos},
+a work by Lee and Seung where the algorithms are described in detail together
+with proving correctness of the algorithms.
+\\
+
+In order to find an approximate factorization $V \approx WH$, a way how to
+quantify the quality of the approximation needs to be defined. Such a metric
+(or a cost function) can be constructed by measuring the distance between
+two non-negative matrices $A$ and $B$. One of the measures provided in
+\cite{lee-algos} is the square of the Euclidean distance between $A$ and $B$.
+
+\begin{equation}
+||A - B||^2 = \sum_{ij}(A_{ij} - B_{ij})^2
+\end{equation}
+
+This distance is lower bounded by zero and vanishes if and only if $A = B$.
+\\
+
+By using this cost function, the non-negative matrix factorization can be
+formulated as an optimization problem:
+\begin{problem}
+  Minimize $||V - WH||^2$ with respect to $W$ and $H$, subject to the constraints
+$W, H \geq 0$.
+\end{problem}
+It is shown in \cite{lee-algos} that an algorithm cannot realistically solve this
+problem by finding a global minimum. However, it is possible using various
+techniques from numerical optimization which make it possible to find
+local minimum.
+\\
+
+Thus, the multiplicative update rules are a compromise between speed and
+ease of implementation offered in \cite{lee-algos} for solving this
+problem. The multiplicative updates can be described as an algorithm below:
+\\
+
+\begin{algorithm}[H]
+  \caption{Multiplicative update algorithm for NMF}
+  \KwIn{Non-negative matrix V}
+  \KwOut{Non-negative factors W and H}
+  \begin{itemize}
+    \item Initialize W and H as non-negative matrices\\
+    \item Until $||V - WH||^2$ is minimized, update W and H by computing the
+following, with n as an index of the iteration:\\
+  \end{itemize}
+  \begin{equation}
+    H^{n+1}_{[i,j]} = H^{n}_{[i,j]} \frac{((W^{n})^TV)_{[i,j]}}{((W^{n})^{T}W^{n}H^{n})_{[i,j]}}
+  \end{equation}
+  and
+  \begin{equation}
+    W^{n+1}_{[i,j]} = W^{n}_{[i,j]} \frac{(V(H^{n+1})^{T}_{[i,j]}}{W^{n}H^{n+1}(H^{n+1})^{T}_{[i,j]}}
+  \end{equation}
+\end{algorithm}
+
+It is shown in \cite{lee-algos} that the Euclidean distance $||V - WH||$ (and
+consequently the cost function $||V - WH||^2$) is nonincreasing under these
+rules. The work by Lee and Seung also considers another possible cost function and
+proves the convergence of these rules.
+\\
+
+\subsection{Alternating least squares method}
+Alternating least squares method is the first algorithm proposed for solving
+the non-negative matrix factorization problem, which was proposed in the
+work by Paatero. \cite{nmf-paatero} Fixing either of the factors $W$ or $H$,
+the problem essentially becomes a least squares problem, which is commonly
+used in \emph{regression analysis}.
+\\
+
+The alternating least squares problem then solves NMF using the algorithm
+shown in \ref{alg:anls}.
+\\
+
+\begin{algorithm}[h]
+  \caption{Basic Alternating least squares algorithm for NMF. \cite{nmf-anls}}
+  \label{alg:anls}
+  \KwIn{Non-negative matrix V}
+  \KwOut{Non-negative factors W and H}
+  \begin{itemize}
+    \item Initialize W as random dense matrix\\
+    \item Until a stopping condition:\\
+    ~~\emph{(LS)} ~~~~~~~~~~Solve $min_{H \geq 0}||V - WH||^{2}$\\
+    ~~\emph{(NONNEG)} Set all the negative elements of $H$ to $0$.\\
+    ~~\emph{(LS)} ~~~~~~~~~~Solve $min_{W \geq 0}||V^{T} - H^{T}W^{T}||^{2}$\\
+    ~~\emph{(NONNEG)} Set all the negative elements of $W$ to $0$.\\
+  \end{itemize}
+\end{algorithm}
+
+As the least squares algorithm does not enforce the constraint of non-negativity,
+all the negative elements in matrices are set to $0$ after each evaluation of
+the least squares problem.
+\\
+
+The name of the algorithm reflects its nature where it keeps alternating between
+solving the least squares problem for one fixed matrix and then the other.
+
+\section{Common NMF applications}
+% Duvod teto kapitoly - pozdeji take ukaze, ze pocet casti (napr. barevnych sloupcu)
+% silne ovlivnuje kvalitu komprese - nebot vicemene provadim rozklad na tyto casti
+In this section, a short example of a common application of non-negative matrix
+factorizations will be provided, for the purpose of showing concrete examples
+so that the reader may become more adjusted to the problem as well as showing
+certain observations about the properties of non-negative matrix factorization.
+\\
+
+\subsection{Part-based analysis}
+What has inspired the work of Lee and Seung \cite{lee99} was the human activity
+of recognizing objects from basic parts - especially when using human vision which
+is shown to be designed to detect the presence or absence of features (parts)
+of physical objects in order to recognize them \cite{component-recognition}.
+\\
+
+Thus, assuming that features of an object would be independent and it would be
+possible to compile all the features together, an object could be described
+formally as:
+\begin{equation}
+  Object_{i} = Part_{1}(b_{i1})~\text{with}~Part_{2}(b_{i2})~\text{with...,}
+\end{equation}
+where $b_{ij}$ either has the value \emph{present} if part $i$ is present in object $j$ or
+the value \emph{absent} if part $i$ is absent in object $j$.
+\\
+
+If the possible states \emph{present} and \emph{absent} in the model are
+replaced by non-negative values, it is possible to signify not only the
+presence or absence of a feature but also its quantity or significance
+($b_{ij} \geq 0$). Thus, mathematically, a description of an object could
+look like the following:
+
+\begin{equation}
+  Object_{i} = b_{i1} \times Part_{1} + b_{i2} \times Part_{2} + ...
+\end{equation}\cite{nmf-phd-thesis}
+
+When utilizing non-negative matrix factorization, the matrix $W$ can be
+considered the set of features present in the data and matrix $H$ the set
+of hidden variables. Non-negative matrix factorization can also be implemented
+as:
+
+\begin{equation}
+  v_{i} \approx Wh_{i}
+\end{equation}
+
+Represented this way, the concept of non-negative matrix factorization can
+be understood intuitively - each column in the original matrix $V$ is a data point.
+Each column in the matrix $W$ is a basis element and columns of the matrix $H$ give the
+coordinates of a data point in the basis $W$. The product matrix $WH$ (the approximation
+of V) is a linear combination of the column vectors - the features extracted from
+the data points and its significance in the data point.
+\\
+
+This way, features and parts can be extracted from
+the original data and understood, as shown in the next subsection on the
+image learning example.
+
+\subsection{Image learning}
+Digital image processing is a field which is currently enjoying high
+popularity when it comes to research. Image processing is the field thanks
+to which it is possible to extract features from images or recognize
+various patterns. Principal component analysis \emph{(PCA)} is a dimensionality
+reduction technique similar to \emph{NMF} commonly used for recognizing
+faces in images \cite{pca-facial} - however, without the non-negativity constraint.
+It has been shown in \cite{lee99} that \emph{NMF} can be used in a similar
+fashion while potentially classifying the data in a way which is easier to be understood.
+\\
+
+\begin{figure}[h]
+  \centering
+  \includegraphics{nmfpca-comparison}
+  \caption{Comparison between dimensionality reduction algorithms - \emph{NMF} and \emph{PCA},
+           as shown in \cite{lee99}.}
+  \label{fig:nmfpca-comparison}
+\end{figure}
+
+The Figure \ref{fig:nmfpca-comparison} has been taken from \cite{lee99}, where a database of
+2,429 facial images has been taken and used to create a matrix $V$. By
+applying both \emph{NMF} as well as \emph{PCA} to the matrix, feature
+and coeffiecient matrices were created and particular instance of a
+face was approximately represented by a linear superposition of basis
+images. The coefficients used in the linear superposition are shown in the
+montages, where black pixels indicate positive values and red pixels indicate
+negative values. It can be seen on these montages that while \emph{NMF}
+can be used for the same purposes as \emph{PCA}, the main strength of the
+algorithm is that certain parts can be recognized meaningfully - for example
+parts of a nose and such, whereas in the case of \emph{PCA}, discovering
+meaning in the matrices is difficult.
+\\
+
+It is for these reasons that non-negativity is a powerful and meaningful
+constraint, as parts are never subtracted from the particular instance
+(as it can happen in the case of \emph{PCA}), but are only added together \cite{nmf-phd-thesis}.
+\\
+
+\subsection{NMF properties}
+Previous sections in this chapter have described non-negative matrix factorization,
+more specifically the definition of the problem, common solutions and an example
+usage of \emph{NMF}. In this section, certain properties of non-negative matrix
+factorization will be pointed out. When the proof of concept image compression scheme
+is designed, the usefulness of these properties for compression will be discussed.
+\\
+
+The first property which will be shown is that the solution to non-negative matrix
+factorization is \textbf{not unique}. A matrix and its inverse can transform the two
+factorization matrices, for example as:
+\begin{equation}
+  V \approx WH = WBB^{-1}H
+\end{equation}
+
+If the matrices $\bar{W} = WB$ and $\bar{H} = B^{-1}H$ are non-negative then they
+form another solution to the \emph{NMF} problem.\cite{nmf-nonuniq}
+\\
+
+Another important property is that the non-negative matrix factorization is not
+hierarchical, meaning that the factor matrices using rank $r$ can be completely
+different to those of rank $r+1$, as shown in \ref{fig:nmf-hierarchy}, where choice of
+rank $r = 1$ provides only approximation of the target matrix $V$ yet rank $r = 2$ makes it
+possible to calculate $V = WH$ instead of the approximation. Due to these
+reasons, the results provided by using \emph{NMF} highly depend on choice of the rank
+parameter.
+\\
+
+\begin{figure}[h]
+  \centering
+  \caption{Visual display of non-hierarchical properties of NMF. \cite{nonhierarchy}}
+  \label{fig:nmf-hierarchy}
+  \includegraphics[scale=0.7]{non-hierarchical}
+\end{figure}
+
+However, one of the most important properties to note is that non-negative matrix
+factorization is very difficult to solve and the existing general algorithms
+solve \emph{NMF} as an optimization problem. Not only that but it has even been
+proven that non-negative matrix factorization is an \emph{NP-hard} problem.\cite{nmf-nphard}
+With certain constraints, it is however possible to solve the \emph{NMF} problem
+in polynomial time - for example it is shown in \cite{nmf-poly} that in case the
+matrix $V$ is symmetric and contains a diagonal principal submatrix of rank $r$,
+it is possible to solve the problem in polynomial time $O(rm^{2})$.
+\\
+
+The last property of non-negative matrix factorization to be noted has been
+shown in the figures above. The factors extracted are often \emph{sparse} - it is
+precisely for this reason that interpreting results of non-negative matrix
+factorization is easy in fields such as image processing or text mining (but many
+others as well).\cite{nmf-whyhow}
+
+\subsection{Choice of rank $r$}
+The choice of rank $r$ is one of the most important problems when utilizing non-negative
+matrix factorization - as when used for the examples above, choice of rank $r$
+changes the amount of features to be extracted in order to approximate the target
+matrix $V$.
+\\
+
+There are several common methods used for choosing the rank $r$:
+\begin{itemize}
+  \item Trial and error - try different values of \emph{r} and choose the one
+        performing the best for application at hand.
+  \item Estimate the rank $r$ using various statistical approaches (such as by
+        using \emph{SVD}).
+  \item The use of expert insights.
+\end{itemize}\cite{nmf-whyhow}
+
+
+\section{NMF and compression}
+% TODO popsani rozmeru matic, r = n/2 vypocet, treba i obrazek...
+Most common use-case scenarios of non-negative matrix factorization are
+related to machine learning, as shown in the previous sections. However,
+\emph{NMF} can also be looked upon as a lossy compression tool (more
+on lossy compression in chapter \ref{ch:image-compression}), as an
+original matrix of size $n \times p$ is approximated by the product
+of two smaller matrices. Assuming the target matrix $V$ is represented
+in the same way as the factor matrices $W$ and $H$, if the amount
+of elements contained in matrices $W$ and $H$ is lower than the amount of
+elements in matrix $V$, then \emph{NMF} was used to perform compression.
+\\
+
+Whether the amount of elements in factor matrices $W$ and $H$ is lower than
+the amount of elements in target matrix $V$ depends on the choice of rank $r$.
+More specifically, if the dimensions of matrix $V$ are $n \times p$, the
+dimensions of matrix $W$ $n \times r$ and the dimensions of matrix $H$
+$r \times p$, then this requirement can be formalized as:
+\begin{align*}
+  n \times r + r \times p &< n \times p\\
+  r (n + p) &< n \times p\\
+  r &< \frac{n \times p}{n + p}
+\end{align*}
+
+Considering a square matrix ($n = p$), the following relationship can also
+be deduced:
+\begin{align*}
+  r &< \frac{n \times n}{n + n}\\
+  r &< \frac{n^{2}}{2n}\\
+  r &< \frac{n}{2}
+\end{align*}
+This relationship is also demonstrated in the figure \ref{fig:maxrank}.
+
+\begin{figure}[h]
+  \centering
+  \caption{Visualization of NMF as a compression tool. When using a rank $r$ lower than $n/2$, the
+           total amount of elements in matrices $W$ and $H$ is less than the amount of elements in
+           matrix $V$. When the rank $r$ reaches the value $n/2$, the amount of elements is the same.}
+  \label{fig:maxrank}
+  \includegraphics[scale=0.7]{maxrank}
+\end{figure}
+
+% [TODO]
+%\section{Other types of NMF}
+%Nice to have, ale nyni neni priorita.
 
 \chapter{Digital image encoding}
 \label{ch:image-encoding}
@@ -192,7 +543,8 @@ fgsfds
 \label{ch:image-compression}
 fgsfds
 
-\chapter{Realisation}
+\chapter{NMF compression scheme}
+% TODO maximalni mozny rank, treba i s obrazkem
 
 \setsecnumdepth{part}
 \chapter{Conclusion}
@@ -210,6 +562,8 @@ fgsfds
   \item[NMF] Non-negative matrix factorization
   \item[PNG] Portable Network Graphics
   \item[JPEG]
+  \item[PCA] Principal Component Analysis
+  \item[SVD] Singular Value Decomposition
 \end{description}
 
 

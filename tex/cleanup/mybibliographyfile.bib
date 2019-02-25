@@ -1,4 +1,4 @@
-@MANUAL{svgspec,
+﻿@MANUAL{svgspec,
     title = "Scalable Vector Graphics (SVG) 1.1 Specification {[online]}",
     organization = "WWW Consorcium",
     url = "http://www.w3.org/TR/2003/REC-SVG11-20030114/",
@@ -53,6 +53,25 @@
   author = "Jeff Schultz"
 }
 
+@MISC{nmf-r-vignette,
+  title = "An introduction to NMF package",
+  howpublished = {\url{https://cran.r-project.org/web/packages/NMF/vignettes/NMF-vignette.pdf}},
+  year = {2018},
+  note = {Accessed: 2019-02-21},
+  author = "Renaud Gaujoux"
+}
+
+@incollection{nmf-approx,
+  title = {Generalized Nonnegative Matrix Approximations with Bregman Divergences},
+  author = {Sra, Suvrit and Inderjit S. Dhillon},
+  booktitle = {Advances in Neural Information Processing Systems 18},
+  editor = {Y. Weiss and B. Sch\"{o}lkopf and J. C. Platt},
+  pages = {283--290},
+  year = {2006},
+  publisher = {MIT Press},
+  url = {http://papers.nips.cc/paper/2757-generalized-nonnegative-matrix-approximations-with-bregman-divergences.pdf}
+}
+
 @inproceedings{dimens-reduction,
   author = {S. T. Roweis and L. K. Saul},
   booktitle = {Science},
@@ -71,4 +90,157 @@
   year = {2014},
   note = {Accessed: 2019-02-21},
   howpublished = {\url{http://www.math.utah.edu/~goller/F15_M2270/BradyMathews_SVDImage.pdf}}
+}
+
+@article{nmf-paatero,
+  author = {Paatero, Pentti and Tapper, Unto},
+  year = {1994},
+  month = {06},
+  pages = {111-126},
+  title = {Positive Matrix Factorization: A Non-Negative Factor Model with Optimal Utilization of Error Estimates of Data Values},
+  volume = {5},
+  journal = {Environmetrics},
+  doi = {10.1002/env.3170050203}
+}
+
+@article{lee99,
+  author = {Lee, Daniel D. and Seung, H. Sebastian},
+  biburl = {https://www.bibsonomy.org/bibtex/2ba1100135fbba9782a6052b95e6f9b05/folke},
+  interhash = {b293699f3a0541bd6fb1b10d7f9410ac},
+  intrahash = {ba1100135fbba9782a6052b95e6f9b05},
+  journal = {Nature},
+  key = {Lee and Seung},
+  keywords = {clustering factorization matrix multi toread view},
+  pages = {788--791},
+  timestamp = {2009-09-09T09:12:51.000+0200},
+  title = {Learning the parts of objects by nonnegative matrix factorization},
+  volume = 401,
+  year = 1999
+}
+
+@phdthesis{nmf-phd-thesis,
+  author = {Ho, Ngoc-Diep},
+  year = {2008},
+  month = {06},
+  pages = {},
+  title = {Nonnegative matrix factorization algorithms and applications},
+  journal = {PhD thesis}
+}
+
+@incollection{lee-algos,
+  title = {Algorithms for Non-negative Matrix Factorization},
+  author = {Daniel D. Lee and Seung, H. Sebastian},
+  booktitle = {Advances in Neural Information Processing Systems 13},
+  editor = {T. K. Leen and T. G. Dietterich and V. Tresp},
+  pages = {556--562},
+  year = {2001},
+  publisher = {MIT Press},
+  url = {http://papers.nips.cc/paper/1861-algorithms-for-non-negative-matrix-factorization.pdf}
+}
+
+@TECHREPORT{projected-gradient,
+  author = {Chih-jen Lin},
+  title = {Projected gradient methods for non-negative matrix factorization},
+  institution = {Neural Computation},
+  year = {2007}
+}
+
+@ARTICLE{component-recognition,
+  author = {Irving Biederman},
+  title = {Recognition-by-components: A theory of human image understanding},
+  journal = {Psychological Review},
+  year = {1987},
+  volume = {94},
+  pages = {115--147}
+}
+
+@INPROCEEDINGS{pca-facial,
+  author={M. {Agarwal} and H. {Agrawal} and N. {Jain} and M. {Kumar}}, 
+  booktitle={2010 International Conference on Signal Acquisition and Processing}, 
+  title={Face Recognition Using Principle Component Analysis, Eigenface and Neural Network}, 
+  year={2010}, 
+  volume={}, 
+  number={}, 
+  pages={310-314}, 
+  keywords={eigenvalues and eigenfunctions;face recognition;neural nets;principal component analysis;visual databases;face recognition;principle component analysis;eigenface;neural network;complex multidimensional visual model;information theory approach;face image decoding;feedforward backpropagation neural network;feature extraction;Oracle Research Laboratory face database;Face recognition;Neural networks;Testing;Feature extraction;Multidimensional systems;Computational modeling;Information theory;Image coding;Decoding;Feeds;Face recognition;Principal component analysis(PCA);Artificial Neural network (ANN);Eigenvector;Eigenface}, 
+  doi={10.1109/ICSAP.2010.51}, 
+  ISSN={}, 
+  month={Feb}
+}
+
+@article{nmf-anls,
+  author = {Rezghi, M and Yousefi, Masoud},
+  year = {2015},
+  month = {01},
+  pages = {273-279},
+  title = {A projected alternating least square approach for computation of nonnegative matrix factorization},
+  volume = {26},
+  journal = {Journal of Sciences, Islamic Republic of Iran}
+}
+
+@inproceedings{nmf-nonuniq,
+ author = {Xu, Wei and Liu, Xin and Gong, Yihong},
+ title = {Document Clustering Based on Non-negative Matrix Factorization},
+ booktitle = {Proceedings of the 26th Annual International ACM SIGIR Conference on Research and Development in Informaion Retrieval},
+ series = {SIGIR '03},
+ year = {2003},
+ isbn = {1-58113-646-3},
+ location = {Toronto, Canada},
+ pages = {267--273},
+ numpages = {7},
+ url = {http://doi.acm.org/10.1145/860435.860485},
+ doi = {10.1145/860435.860485},
+ acmid = {860485},
+ publisher = {ACM},
+ address = {New York, NY, USA},
+ keywords = {document clustering, non-negative matrix factorization},
+} 
+
+@misc{nonhierarchy,
+  author={Pauli Miettinen},
+  year = {2017},
+  title = {Lecture notes in Data Mining and Matrices},
+  publisher = {Max Planck Institute for Informatics},
+  url = {https://www.mpi-inf.mpg.de/fileadmin/inf/d5/teaching/ss17_dmm/lectures/2017-05-29-intro-to-nmf.pdf}
+}
+
+@article{nmf-nphard,
+  author = {Shitov, Yaroslav},
+  year = {2016},
+  month = {05},
+  pages = {},
+  url = {https://www.researchgate.net/publication/303217568_A_short_proof_that_NMF_is_NP-hard},
+  title = {A short proof that NMF is NP-hard}
+}
+
+@article{nmf-poly,
+  title = "Computing symmetric nonnegative rank factorizations",
+  journal = "Linear Algebra and its Applications",
+  volume = "436",
+  number = "2",
+  pages = "421 - 435",
+  year = "2012",
+  note = "Special Issue devoted to the Applied Linear Algebra Conference (Novi Sad 2010)",
+  issn = "0024-3795",
+  doi = "https://doi.org/10.1016/j.laa.2011.03.016",
+  url = "http://www.sciencedirect.com/science/article/pii/S0024379511002199",
+  author = "V. Kalofolias and E. Gallopoulos",
+  keywords = "Nonnegative rank factorization, Nonnegative matrix factorization, Symmetric, Rotation, Isometry, Principal submatrix, Pivoted Cholesky factorization, Symmetric positive semidefinite, Arrowhead matrix, Extreme ray, Maximum independent set, Rank reduction",
+  abstract = "An algorithm is described for the nonnegative rank factorization (NRF) of some completely positive (CP) matrices whose rank is equal to their CP-rank. The algorithm can compute the symmetric NRF of any nonnegative symmetric rank-r matrix that contains a diagonal principal submatrix of that rank and size with leading cost O(rm2) operations in the dense case. The algorithm is based on geometric considerations and is easy to implement. The implications for matrix graphs are also discussed."
+}
+
+@ARTICLE{nmf-whyhow,
+  author = {{Gillis}, Nicolas},
+  title = "{The Why and How of Nonnegative Matrix Factorization}",
+  journal = {arXiv e-prints},
+  keywords = {Statistics - Machine Learning, Computer Science - Information Retrieval, Computer Science - Machine Learning, Mathematics - Optimization and Control},
+  year = "2014",
+  month = "Jan",
+  eid = {arXiv:1401.5226},
+  pages = {arXiv:1401.5226},
+  archivePrefix = {arXiv},
+  eprint = {1401.5226},
+  primaryClass = {stat.ML},
+  adsurl = {https://ui.adsabs.harvard.edu/\#abs/2014arXiv1401.5226G},
+  adsnote = {Provided by the SAO/NASA Astrophysics Data System}
 }
