@@ -535,6 +535,7 @@ This relationship is also demonstrated in the figure \ref{fig:maxrank}.
 %\section{Other types of NMF}
 %Nice to have, ale nyni neni priorita.
 
+% [TODO] mozna by stalo za to nepopisovat to jako color model nybrz jako colorspace
 \chapter{Digital image encoding}
 \label{ch:image-encoding}
 The second chapter of this thesis is related to digital images and their
@@ -542,26 +543,73 @@ representations color models. The importance of this chapter is related to
 creating the image compression scheme and its empirical testing on
 various different digital image representations. The possible ways of
 specifying colors in digital images which will be explored are \emph{RGB},
-\emph{CMYK} and \emph{grayscale}.
+\emph{grayscale} and \emph{Y'CbCr}.
 
 \section{Digital images}
 % http://elib.mi.sanu.ac.rs/files/journals/ncd/12/ncd12017.pdf
 % https://www.spacetelescope.org/static/projects/fits_liberator/image_processing.pdf
 % http://www.imageprocessingplace.com/downloads_V3/root_downloads/tutorials/Image%20Processing%20Fundamentals--An%20Overview.pdf - ideal
 % https://www.researchgate.net/figure/A-digital-image-is-a-2D-array-of-pixels-Each-pixel-is-characterised-by-its-x-y_fig1_221918148
-Digital images are stored as matrices of pixels (abbreviation for a picture
-element) arranged in columns and rows. The values of these pixels 
+A digital image $I$ is stored as a matrix of \emph{pixels} (abbreviation for a \emph{picture
+element}). These matrices described as 2D discrete space are derived from analog
+images in 2D continuous space through the process called \emph{sampling}. More about
+sampling can be found for example in \cite{img:img-processing}.
+\\
 
-\section{Encoding color}
+The value assigned to a pixel $I[m,n]$ determines its color. The following subsections
+explore the common color encoding options.
 
+% https://www.spacetelescope.org/static/projects/fits_liberator/image_processing.pdf
 \subsection{RGB}
-fgs
+The \emph{RGB} color model is closely related to the way the human eye perceives colors
+with the \emph{r} (red), \emph{g} (green) and \emph{b} (blue) receptors in our retinas.\cite{img:color-theory}.
+In order to represent a color, components of each color (red, green and blue) are added together.
+As these components are added together, the \emph{RGB} model is considered to be an additive one.
+\\
 
-\subsection{CMYK}
-fgs
+In order to store image data using the \emph{RGB} color model, the color components
+need to be quantified. Common way of storing the values of components in a pixel
+is storing the color intensity value using 8 bits (range [0, 255], where the
+value 0 indicates no inclusion of the color component and 255 indicates maximum
+possible inclusion of the component). If all the values of components are
+equal to 0, the resulting color is black, if all the values of components are
+equal to the defined maximum value (255 in this case), the resulting color
+is white. An uncompressed image format which represents images this way is, for
+example, the Windows BMP.\cite{fileformat-bmp}
+\\
+
+Thus, encoding an uncompressed image using the \emph{RGB} color scheme with
+the common 8-bit per component component representation results in each pixel
+being represented by 24 bits. The size of an image in bytes would then be
+$width*height*3$ bytes (not counting the header and other data used by the
+specific file format).
+
 
 \subsection{Grayscale}
-fds
+\emph{Grayscale} images are images composed exclusively of shades of gray.
+When using the grayscale model, each pixel therefore carries only the intensity
+information. Commonly \emph{[CITATION NEEDED]}, grayscale images are stored using 8 bits
+per pixel. The range of colors represented by these 8 bits goes from black (the value 0)
+through possible shades of gray to white (255 or another maximum possible value).
+\\
+
+It is possible to convert an image stored with the \emph{RGB} model to a
+a grayscale image by eliminating the hue and saturation information from
+the image while retaining the luminance. \emph{CITATION [https://www.mathworks.com/help/matlab/ref/rgb2gray.html]}.
+\\
+
+Encoding an uncompressed grayscale image which uses the common 8 bit per pixel
+representation would therefore create an image of a size of $width*height$, not counting
+the header and other data used by the specific file format.
+
+
+\subsection{Y'CbCr}
+\emph{Y'CbCr}, also written as $Y'C_{B}C_{R}$ is a color space commonly
+used in digital image systems, which is defined by a mathematical coordinate
+transformation from an associated RGB color space. \emph{[CITATION NEEDED]} The $Y'$
+holds the \emph{luma} value (brightness of an image). The $C_{B}$ and $C_{R}$ values
+are considered the \emph{chroma components}, representing the color information. 
+
 
 \chapter{Image compression}
 % TODO mozna by nebylo od veci zde mit formalni definice komprese obecne (source units)
