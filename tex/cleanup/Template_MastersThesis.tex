@@ -543,7 +543,9 @@ representations color models. The importance of this chapter is related to
 creating the image compression scheme and its empirical testing on
 various different digital image representations. The possible ways of
 specifying colors in digital images which will be explored are \emph{RGB},
-\emph{grayscale} and \emph{Y'CbCr}.
+\emph{grayscale} and $Y'C_BC_R$. As this thesis is related to image
+compression and non-negative matrix factorization and not image processing,
+only the most important elements of image encoding and color spaces will be explored.
 
 \section{Digital images}
 % http://elib.mi.sanu.ac.rs/files/journals/ncd/12/ncd12017.pdf
@@ -584,7 +586,7 @@ being represented by 24 bits. The size of an image in bytes would then be
 $width*height*3$ bytes (not counting the header and other data used by the
 specific file format).
 
-
+%TODO pridat vzorec a zdroj?
 \subsection{Grayscale}
 \emph{Grayscale} images are images composed exclusively of shades of gray.
 When using the grayscale model, each pixel therefore carries only the intensity
@@ -595,7 +597,7 @@ through possible shades of gray to white (255 or another maximum possible value)
 
 It is possible to convert an image stored with the \emph{RGB} model to a
 a grayscale image by eliminating the hue and saturation information from
-the image while retaining the luminance. \emph{CITATION [https://www.mathworks.com/help/matlab/ref/rgb2gray.html]}.
+the image while retaining the luminance. \cite{img:rgb2gray} %\emph{CITATION [https://www.mathworks.com/help/matlab/ref/rgb2gray.html]}.
 \\
 
 Encoding an uncompressed grayscale image which uses the common 8 bit per pixel
@@ -603,13 +605,51 @@ representation would therefore create an image of a size of $width*height$, not 
 the header and other data used by the specific file format.
 
 
-\subsection{Y'CbCr}
+\subsection{$Y'C_{B}C_{R}$}
 \emph{Y'CbCr}, also written as $Y'C_{B}C_{R}$ is a color space commonly
 used in digital image systems, which is defined by a mathematical coordinate
-transformation from an associated RGB color space. \emph{[CITATION NEEDED]} The $Y'$
+transformation from an associated RGB color space. \cite{whatisycbcr} The $Y'$
 holds the \emph{luma} value (brightness of an image). The $C_{B}$ and $C_{R}$ values
-are considered the \emph{chroma components}, representing the color information. 
+are considered the \emph{chroma components}, and represent the color information.
 
+\subsubsection{Luma}
+The \emph{luma} value is represented in the $Y'C_{B}C_{R}$ model by the symbol $Y'$
+and representes the brightness of an image. $Y$ itself is considered to be the \emph{relative
+luminance}. Relative luminance is a metric of light intensity as it appears to the human eye.
+The prime symbol ($Y'$) denotes that \emph{gamma correction} has been utilized. Gamma correction
+is an operation related to nonlinearity of light perception - when twice the number of
+photons hit a camera sensor, twice the signal is received, denoting a linear relationship.
+However, the human eye does not perceive change of light in a linear way. Gamma correction
+thus aims to translate the human eye's light sensitivity and that of a camera. \cite{img:gamma}
+As gamma correction is not an important topic for the rest of this thesis, it will not be
+explored further.
+\\
+
+Luma is calculated as the weighted sum of gamma-compressed $R'G'B'$ components. The prime
+again represents gamma correction. Luma can be calculated in the following way, as described in
+\cite{img:rec-709}:
+
+\begin{equation}
+  Y' = 0.2126R' + 0.7512G' + 0.0722B'
+\end{equation}
+
+\subsubsection{Chrominance}
+Chrominance is the signal conveying the color information of a picture, separately
+from the accompanying luma. the $C_{B}$ and $C_{R}$ values represent the blue-difference
+(and red-difference, respectively) when compared to the neutral, i.e. grayscale. \cite{img:chrominance}
+Multiple ways of calculating $C_{B}$ and $C_{R}$ exist, such as the one for HDTVs in \cite{img:rec-709}.
+In digital images, other transformations exist, such as the one used in the JPEG image format:
+\begin{equation}
+  \begin{aligned}
+    C_B = 128 - (0.168736R') - (0.331264G') + (0.5B')\\
+    C_R = 128 + (0.5R') - (0.418688G') + (0.081312B')
+  \end{aligned}
+\end{equation}
+\cite{jfif}
+
+%TODO vysvetleni, ze chromacita nemusi byt uplne OK pri prenosu, ze jde hlavne o svetlost.
+\subsubsection{Use of $Y'C_{B}C_{R}$}
+fgs
 
 \chapter{Image compression}
 % TODO mozna by nebylo od veci zde mit formalni definice komprese obecne (source units)
