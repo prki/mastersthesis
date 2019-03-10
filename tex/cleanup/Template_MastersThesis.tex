@@ -76,6 +76,18 @@
 % Prakticka cast - http://nimfa.biolab.si/nimfa.models.nmf.html - funkce sparseness() a estimate_rank().
 % Prakticka cast - http://heather.cs.ucdavis.edu/NMFTutorial.pdf - choosing the rank SVD na obrazku!
 
+% DULEZITE
+% TODO - updatnout uvod (popsat co je teorie, co je uvod, odpovidajici kapitoly fixnout) - az bude vse
+% TODO - presunout NMF jako treti kapitolu, kdyz tam ukazuju minimalni rank pro kompresi (a nerekl jsem, co je to komprese)
+% TODO - Pripsat do digital image encoding, ze diskutujem jen rastry, vektorovy obrazky se tyhle prace netykaj
+% TODO - Pridat do digital image encoding obrazek, kterej ukazuje pixely obrazku
+
+% Moznosti nafouknuti
+%   - Related work (nova kapitola)
+%   - choice of rank r (nmf kapitola)
+%   - nafouknuti matematickyho backgroundu (soucin matic a vse jine co je v NMF kapitole)
+%   - color model vs color space (kapitola image encoding)
+
 \begin{document}
 
 % \newacronym{CVUT}{{\v C}VUT}{{\v C}esk{\' e} vysok{\' e} u{\v c}en{\' i} technick{\' e} v Praze}
@@ -94,11 +106,11 @@ of data transfer.
 
 To put the problem into perspective, in order to store images in the resolutions
 currently considered as high resolution (1920x1080 pixels, the second most common
-resolution on desktop devices \cite{res-stats}.
+resolution used on desktop devices \cite{res-stats}.
 When storing an image with these dimensions using an uncompressed standard encoding,
 the filesize would be almost 6 megabytes. Such a high size impacts many areas, such as
 speed of transfer or storage costs. Fortunately, modern image compression formats such as
-\emph{PNG} or \emph{JPG} are able to reduce this size remarkably.
+\emph{PNG} or \emph{JPEG} are able to reduce this size remarkably.
 \\
 
 Currently, images contribute to the amount of data on the internet significantly - not only are images a common
@@ -326,6 +338,7 @@ the least squares problem.
 The name of the algorithm reflects its nature where it keeps alternating between
 solving the least squares problem for one fixed matrix and then the other.
 
+
 \section{Common NMF applications}
 % Duvod teto kapitoly - pozdeji take ukaze, ze pocet casti (napr. barevnych sloupcu)
 % silne ovlivnuje kvalitu komprese - nebot vicemene provadim rozklad na tyto casti
@@ -334,6 +347,7 @@ factorizations will be provided, for the purpose of showing concrete examples
 so that the reader may become more adjusted to the problem as well as showing
 certain observations about the properties of non-negative matrix factorization.
 \\
+
 
 \subsection{Part-based analysis}
 What has inspired the work of Lee and Seung \cite{lee99} was the human activity
@@ -383,6 +397,7 @@ This way, features and parts can be extracted from
 the original data and understood, as shown in the next subsection on the
 image learning example.
 
+
 \subsection{Image learning}
 Digital image processing is a field which is currently enjoying high
 popularity when it comes to research. Image processing is the field thanks
@@ -420,6 +435,7 @@ It is for these reasons that non-negativity is a powerful and meaningful
 constraint, as parts are never subtracted from the particular instance
 (as it can happen in the case of \emph{PCA}), but are only added together \cite{nmf-phd-thesis}.
 \\
+
 
 \subsection{NMF properties}
 Previous sections in this chapter have described non-negative matrix factorization,
@@ -479,6 +495,7 @@ changes the amount of features to be extracted in order to approximate the targe
 matrix $V$.
 \\
 
+
 There are several common methods used for choosing the rank $r$:
 \begin{itemize}
   \item Trial and error - try different values of \emph{r} and choose the one
@@ -535,7 +552,8 @@ This relationship is also demonstrated in the figure \ref{fig:maxrank}.
 %\section{Other types of NMF}
 %Nice to have, ale nyni neni priorita.
 
-% [TODO] mozna by stalo za to nepopisovat to jako color model nybrz jako colorspace
+
+% [TODO] mozna pripsat rozdil mezi color modelem a color spacem
 \chapter{Digital image encoding}
 \label{ch:image-encoding}
 The second chapter of this thesis is related to digital images and their
@@ -546,6 +564,7 @@ specifying colors in digital images which will be explored are \emph{RGB},
 \emph{grayscale} and $Y'C_BC_R$. As this thesis is related to image
 compression and non-negative matrix factorization and not image processing,
 only the most important elements of image encoding and color spaces will be explored.
+
 
 \section{Digital images}
 % http://elib.mi.sanu.ac.rs/files/journals/ncd/12/ncd12017.pdf
@@ -558,13 +577,24 @@ images in 2D continuous space through the process called \emph{sampling}. More a
 sampling can be found for example in \cite{img:img-processing}.
 \\
 
-The value assigned to a pixel $I[m,n]$ determines its color. The following subsections
+The value assigned to a pixel $I[m,n]$ determines its color. The following sections
 explore the common color encoding options.
+
+
+\section{Color models}
+A color model is a mathematical model used for describing the way of representing
+colors, usually as tuples of numbers (although this is not necessary, as in i.e.
+the \emph{grayscale} model). When associated with a description of how the tuple
+components are interpreted, colors can be interpreted. The color models described
+are the \emph{RGB} color model, the $Y'C_{B}C_{R}$ color space (the set of colors
+which can be used) which is a transformation using the \emph{RGB} model and the
+\emph{grayscale} model.
+
 
 % https://www.spacetelescope.org/static/projects/fits_liberator/image_processing.pdf
 \subsection{RGB}
 The \emph{RGB} color model is closely related to the way the human eye perceives colors
-with the \emph{r} (red), \emph{g} (green) and \emph{b} (blue) receptors in our retinas.\cite{img:color-theory}.
+with the \emph{r} (red), \emph{g} (green) and \emph{b} (blue) receptors in our retinas.\cite{img:color-theory}
 In order to represent a color, components of each color (red, green and blue) are added together.
 As these components are added together, the \emph{RGB} model is considered to be an additive one.
 \\
@@ -585,32 +615,19 @@ the common 8-bit per component component representation results in each pixel
 being represented by 24 bits. The size of an image in bytes would then be
 $width*height*3$ bytes (not counting the header and other data used by the
 specific file format).
-
-%TODO pridat vzorec a zdroj?
-\subsection{Grayscale}
-\emph{Grayscale} images are images composed exclusively of shades of gray.
-When using the grayscale model, each pixel therefore carries only the intensity
-information. Commonly \emph{[CITATION NEEDED]}, grayscale images are stored using 8 bits
-per pixel. The range of colors represented by these 8 bits goes from black (the value 0)
-through possible shades of gray to white (255 or another maximum possible value).
 \\
 
-It is possible to convert an image stored with the \emph{RGB} model to a
-a grayscale image by eliminating the hue and saturation information from
-the image while retaining the luminance. \cite{img:rgb2gray} %\emph{CITATION [https://www.mathworks.com/help/matlab/ref/rgb2gray.html]}.
-\\
-
-Encoding an uncompressed grayscale image which uses the common 8 bit per pixel
-representation would therefore create an image of a size of $width*height$, not counting
-the header and other data used by the specific file format.
+A colored image together with its decomposition into the \emph{R}, \emph{G}
+and \emph{B} channels can be seen on the figure \ref{fig:house-rgbdecomp}
 
 
 \subsection{$Y'C_{B}C_{R}$}
-\emph{Y'CbCr}, also written as $Y'C_{B}C_{R}$ is a color space commonly
+\emph{Y'CbCr}, also written as $Y'C_{B}C_{R}$ is an encoding system of colors commonly
 used in digital image systems, which is defined by a mathematical coordinate
-transformation from an associated RGB color space. \cite{whatisycbcr} The $Y'$
-holds the \emph{luma} value (brightness of an image). The $C_{B}$ and $C_{R}$ values
+transformation from an associated RGB color space. The $Y'$ represents the
+\emph{luma} value (brightness of an image). The $C_{B}$ and $C_{R}$ values
 are considered the \emph{chroma components}, and represent the color information.
+
 
 \subsubsection{Luma}
 The \emph{luma} value is represented in the $Y'C_{B}C_{R}$ model by the symbol $Y'$
@@ -630,13 +647,15 @@ again represents gamma correction. Luma can be calculated in the following way, 
 \cite{img:rec-709}:
 
 \begin{equation}
+  \label{formula:luma}
   Y' = 0.2126R' + 0.7512G' + 0.0722B'
 \end{equation}
 
+%[TODO] lepsi definice, zkontrolovat rozdil mezi transformacemi/vyznam
 \subsubsection{Chrominance}
 Chrominance is the signal conveying the color information of a picture, separately
 from the accompanying luma. the $C_{B}$ and $C_{R}$ values represent the blue-difference
-(and red-difference, respectively) when compared to the neutral, i.e. grayscale. \cite{img:chrominance}
+(and red-difference, respectively) when compared to the luma.
 Multiple ways of calculating $C_{B}$ and $C_{R}$ exist, such as the one for HDTVs in \cite{img:rec-709}.
 In digital images, other transformations exist, such as the one used in the JPEG image format:
 \begin{equation}
@@ -647,15 +666,167 @@ In digital images, other transformations exist, such as the one used in the JPEG
 \end{equation}
 \cite{jfif}
 
-%TODO vysvetleni, ze chromacita nemusi byt uplne OK pri prenosu, ze jde hlavne o svetlost.
+
 \subsubsection{Use of $Y'C_{B}C_{R}$}
-fgs
+Common usage of $Y'C_{B}C{R}$ stems from the human eye being more sensitive to the
+differences in luminance than color differences. By transforming colors into the $Y'C_{B}C{R}$
+color space, it is possible to separate the color data from luminance and reduce the
+amount of color difference signals - thus less resolution can be allocated for chrominance while
+keeping high resolution for the luma information. This process is called \emph{chroma
+subsampling} and is widely used in video encoding schemes, as well as in the JPEG image
+format. \cite{img:chroma-subsample}
+\\
+
+An image decomposed into the $Y'$, $C_B$ and $C_R$ components can be seen on the figure
+\ref{fig:house-ycbcrdecomp}
+
+
+\subsection{Grayscale}
+\emph{Grayscale} images are images composed exclusively of shades of gray.
+When using the grayscale model, each pixel therefore carries only the intensity
+information. Commonly, grayscale images are stored using 8 bits per pixel.
+The range of colors represented by these 8 bits goes from black (the value 0)
+through possible shades of gray to white (255 or another maximum possible value).
+\\
+
+It is possible to transform colors from an \emph{RGB} color space into
+the grayscale model by calculating the luma using the formula \ref{formula:luma},
+as luma is a representation of an image's brightness.
+\\
+
+Encoding an uncompressed grayscale image which uses the common 8 bit per pixel
+representation would therefore create an image of a size of $width*height$, not counting
+the header and other data used by the specific file format.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[scale=0.5]{imgs/house-rgbdecomp}
+  \caption{An image decomposed into the \emph{R}, \emph{G} and \emph{B} channels
+           as used in the \emph{RGB} color model.}
+  \label{fig:house-rgbdecomp}
+\end{figure}
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[scale=0.5]{imgs/houses-decomp-ycbcr}
+  \caption{An image decomposed into the $Y'$, $C_B$ and $C_R$ components, as used
+           in the $Y'C_BC_R$ color space. The $Y'$ component also represents the
+           grayscale image.}
+  \label{fig:house-ycbcrdecomp}
+\end{figure}
+
 
 \chapter{Image compression}
-% TODO mozna by nebylo od veci zde mit formalni definice komprese obecne (source units)
 \label{ch:image-compression}
-fgsfds
+As it has been shown in the introduction of this thesis, storing uncompressed
+images requires a lot of space. The art of reducing the amount of space required
+for storing data by encoding information with less bits than would otherwise
+be necessary is called data compression.
+\\
 
+This chapter will explore the basics of data compression in order to build
+a framework for the rest of this thesis. Image compression basics with examples
+of current algorithms used for image compression will be described. The end of
+the chapter will explore compression metrics which can be used for determining
+quality of data compression (as well as image compression).
+
+
+%http://rahilshaikh.weebly.com/uploads/1/1/6/3/11635894/data_compression.pdf
+\section{Data compression}
+When the terms \emph{compression algorithm} or \emph{compression technique} are
+used, they refer to two algorithms. One algorithm which takes an input $X$ and
+generates a representation $Y$, which requires fewer bits to store. The second
+algorithm is the reconstruction algorithm, which operates on the representation
+$Y$ and generates the reconstruction $Z$. Depending on whether the reconstruction
+$Z$ is completely identical to the original data source $X$, the compression
+algorithms can be divided into two broad classes, being either \emph{lossless
+algorithms} or \emph{lossy algorithms}. Lossy algorithms generally provide
+much higher compression than lossless algorithms do, but at the cost of
+losing information.\cite{datacompression}
+
+
+\subsection{Lossless algorithms}
+Lossless compression techniques involve no loss of information - by using
+a lossless algorithm, the original data can be recovered exactly from the
+compressed data. The applications for lossless algorithms commonly include
+text data, where small differences could easily result in wrong statements
+(errors in e.g. bank records are, for obvious reasons, very undesirable).
+
+
+\subsection{Lossy algorithms}
+However, not all usage scenarios require compression to be lossless. In
+these cases, the requirement of retrieving absolutely identical data can
+be relaxed. By relaxing this requirement, very often higher compression
+ratios (more on compression ratio in section \ref{metrics}) can be obtained,
+at the cost of having distortions in the reconstruction.
+\\
+
+Very common scenarios where lossy compression algorithms become often more
+desirable than lossless ones are when storing audio content. Modern audio
+compression algorithms are almost all lossy - the often used \emph{MP3}
+format used for storing audio stores audio with a lossy compression
+algorithm. As long as audio is stored without audible artifacts (distortions
+which are not present in the original data), the quality of sound does not
+have to be perfect - especially when compressing speech. When compressing
+other forms of audio, such as music, the compression needs to be more accurate,
+but still does not have to be absolutely perfect - as long as the listener
+does not notice the difference.
+\\
+
+Other typical use case for a lossy compression algorithm is compressing images
+or video content. Small distortions are acceptable in images and video as long
+as they are not easily noticable by the human eye. However, this can also depend
+on the use case - for example photos commonly taken can be compressed in a lossy
+way, but medical images often have to be compressed in a lossless way, as artifacts
+can be very undesirable for medical usage.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics{imgs/sampletext-comparison}
+  \caption{A sample image showing how accurate a lossy algorithm can be. The left image
+           has been compressed using a lossless algorithm, the right image has been
+           compressed using a lossy algorithm (JFIF/JPEG). In this case, essentially
+           no artifact can be seen unless zoomed in (as seen in the figure \ref{fig:jfifartifact}).}
+  \label{fig:jfifvspng-sample}
+\end{figure}
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[scale=0.3]{imgs/text-artifacts}
+  \caption{A zoomed in image used in the figure \ref{fig:jfifvspng-sample}. While
+           almost impossible to notice any artifact in the former example,
+           the artifacts can be seen on the borders between the text and the
+           gray background easily once zoomed out. Color levels were adjusted
+           in order to emphasize the presence of artifacts.}
+  \label{fig:jfifartifact}
+\end{figure}
+
+
+\subsection{Modeling}
+One of the important factors when designing a compression scheme which needs to
+be accounted for are characteristics of data which is to be compressed. An approach
+which works the best will depend to a large extent on the redundancies inherent
+to the data compressed. \cite{datacompression}
+\\
+
+In the phase of modeling, information about any redundancy is extracted in a form
+of a model, which can then be utilized in the compression algorithm.
+\\
+
+A very simple example of modeling and its importance can be seen on \emph{delta encoding}.
+
+
+\section{Image compression}
+
+\subsection{Modeling in image compression}
+
+
+\section{Compression metrics}
+\label{metrics}
+
+%Vlastnosti NMF popsane
+%  - neunikatnost NMF - muze byt rozdilna velikost se stejnou kvalitou (i kdyby se dosahlo perfekce, muze byt vice reseni, to je pak slovnikove komprimovano)
+%  - NMF posilano jen na chromu v ycbcr
 \chapter{NMF compression scheme}
 fgsfds
 
