@@ -566,6 +566,8 @@ compression and non-negative matrix factorization and not image processing,
 only the most important elements of image encoding and color spaces will be explored.
 
 
+% TODO http://apachetechnology.in/ati/www/KC/dw/Saloman%20-%20Data_Compression_Complete_Reference.pdf
+%  `sampling and quantization str 253
 \section{Digital images}
 % http://elib.mi.sanu.ac.rs/files/journals/ncd/12/ncd12017.pdf
 % https://www.spacetelescope.org/static/projects/fits_liberator/image_processing.pdf
@@ -733,6 +735,8 @@ quality of data compression (as well as image compression).
 
 
 %http://rahilshaikh.weebly.com/uploads/1/1/6/3/11635894/data_compression.pdf
+% Pridat sekci o redundancies
+% Taky bych pak mohl napsat sekci o nejaky kompresni srande, co zvolim
 \section{Data compression}
 When the terms \emph{compression algorithm} or \emph{compression technique} are
 used, they refer to two algorithms. One algorithm which takes an input $X$ and
@@ -803,27 +807,113 @@ can be very undesirable for medical usage.
 \end{figure}
 
 
-\subsection{Modeling}
+\subsection{Modeling and coding}
 One of the important factors when designing a compression scheme which needs to
 be accounted for are characteristics of data which is to be compressed. An approach
-which works the best will depend to a large extent on the redundancies inherent
-to the data compressed. \cite{datacompression}
+which works the best will depend to a large extent on the redundancies (more on
+redundancies in section \ref{sec:imgcmpr-redund}) inherent to the data compressed.
 \\
 
 In the phase of modeling, information about any redundancy is extracted in a form
-of a model, which can then be utilized in the compression algorithm.
+of a model, which can then be utilized in the compression algorithm. The second phase
+important in a compression scheme is \emph{coding}. A description of model and how
+data differs from the model can be encoded (usually using a binary alphabet).\cite{datacompression}
 \\
 
-A very simple example of modeling and its importance can be seen on \emph{delta encoding}.
+A very simple example of modeling and coding and its importance can be seen on \emph{delta
+encoding} (sometimes also called \emph{delta compression}). Delta encoding encodes
+a sequence of messages not by their values but by calculating the difference
+between two elements.\cite{signalprocessing} Thus, a sequence such as
+\begin{align*}
+  10000, 10002, 10001, 99999, 10000
+\end{align*}
+can be modelled as a sequence where the numbers have very small differences.
+When shown as a sequence of differences, with the original value, the sequence
+then becomes:
+\begin{align*}
+  10000, +2, -1, -2, +1
+\end{align*}
+\\
+
+After a representation of this data sequence has been modeled, the coding phase
+creates a way how to encode this sequence using this model. One possible
+coding is shown in the table \ref{tab:deltacoding}. Utilizing this coding, the
+differences require only 2 bits in order to be stored.
+\\
+
+\begin{table}[]
+\centering
+\begin{tabular}{|l|l|}
+\hline
++1 & 00 \\ \hline
++2 & 01 \\ \hline
+-1 & 11 \\ \hline
+-2 & 11 \\ \hline
+\end{tabular}
+\caption{Example coding for a sample data sequence using delta encoding}
+\label{tab:deltacoding}
+\end{table}
+
+However, delta encoding would not be efficient in a scenario when
+the data has large differences - especially if the differences would be larger
+than storing the data itself. Understanding the type of data when creating a model
+is therefore highly important.
 
 
 \section{Image compression}
+Commonly, data compression algorithms are discussed as universal techniques
+which are able to compress essentially any data. While these algorithms might still
+have preferred applications, literature commonly separates techniques from the applications.
+However, image compression is a specific field where separating techniques from
+the application is essentially impossible as the techniques are meant specifically
+for compressing images.\cite{datacompression}
+\\
 
-\subsection{Modeling in image compression}
+While compressing image data using standard compression techniques, none of them
+are satisfactory for color or grayscale images (which were discussed in chapter
+\ref{ch:image-encoding}). For example, statistical methods can be very good for
+compressing data where each value has different probability (such as in standard
+text, where certain letters appear far less than others). However, in images, certain
+colors or shades of gray often have the same probabilities.\cite{datacompressioncompleteref}
+\\
 
 
-\section{Compression metrics}
+% TODO obrazek, ktery ukazuje redundance na 3 obrazcich
+\subsection{Redundancies in images}
+\label{sec:imgcmpr-redund}
+In order to understand how image compression techniques work, certain aspects of
+images need to be characterized, as compression techniques try to use these
+aspects for their advantage. A fundamental component of image compression is
+reducing the amount of redundancies present in the signal source. The redundancies
+commonly present in images are these ones:
+
+% src pro popis - fromdcttowavelet
+\begin{itemize}
+  \item Coding redundancy
+  \item Interpixel redundancy
+  \item Psychovisual redundancy
+\end{itemize}
+\cite{fromdcttowavelet}
+
+\emph{Coding redundancy} occurs when length of the code words is larger than
+required. A simple example of coding redundancy can be shown on a grayscale
+image where only certain shades of gray are used. Instead of requiring
+8 bits per shade of gray, such an image might require far less bits to
+encode, as can be seen on \ref{img:redundancies}.
+\\
+
+Interpixel redundancy
+
+\subsection{Lossy image compression}
+
+
+\subsection{Compression metrics}
 \label{metrics}
+%lossy, lossless, compression ratia jpg png ...
+
+
+
+
 
 %Vlastnosti NMF popsane
 %  - neunikatnost NMF - muze byt rozdilna velikost se stejnou kvalitou (i kdyby se dosahlo perfekce, muze byt vice reseni, to je pak slovnikove komprimovano)
