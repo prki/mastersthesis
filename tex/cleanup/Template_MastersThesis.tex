@@ -902,7 +902,24 @@ image where only certain shades of gray are used. Instead of requiring
 encode, as can be seen on \ref{img:redundancies}.
 \\
 
-Interpixel redundancy
+Interpixel redundancy refers to the fact that usually, neighbouring pixels
+tend to have similar colors. Therefore, it can often be possible to predict
+the color of neighbouring pixels. As a simple example, black-and-white images
+might be encoded using \emph{run-length encoding}, where instead of 
+encoding the specific colors per pixel, an information about how many
+pixels of the same color are stored in a row. This can be particularly
+efficient when considering bi-level (black-and-white) images, as can be seen
+on \ref{img:redundancies}.
+\\
+
+The last kind of redundancy which is commonly utilized in image compression
+algorithms is called \emph{psychovisual redundancy}. The human eye is not
+able to perceive certain visual information in an image - such information could
+be discarded without any noticeable artifacts present in the compressed image.
+A tool commonly used for reducing psychovisual redundancies in an image is
+\emph{discrete cosine transform}, which is also used in the JFIF/JPEG image
+format.
+
 
 \subsection{Lossy image compression}
 
