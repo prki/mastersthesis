@@ -890,7 +890,7 @@ commonly present in images are these ones:
 % src pro popis - fromdcttowavelet
 \begin{itemize}
   \item Coding redundancy
-  \item Interpixel redundancy
+  \item Interpixel redundancy (also sometimes spatial redundancy)
   \item Psychovisual redundancy
 \end{itemize}
 \cite{fromdcttowavelet}
@@ -902,7 +902,7 @@ image where only certain shades of gray are used. Instead of requiring
 encode, as can be seen on \ref{img:redundancies}.
 \\
 
-Interpixel redundancy refers to the fact that usually, neighbouring pixels
+\emph{Interpixel redundancy} refers to the fact that usually, neighbouring pixels
 tend to have similar colors. Therefore, it can often be possible to predict
 the color of neighbouring pixels. As a simple example, black-and-white images
 might be encoded using \emph{run-length encoding}, where instead of 
@@ -920,23 +920,195 @@ A tool commonly used for reducing psychovisual redundancies in an image is
 \emph{discrete cosine transform}, which is also used in the JFIF/JPEG image
 format.
 
+\begin{figure}[h]
+  \centering
+  \includegraphics{imgs/redundancies}
+  \caption{A sample image showing some of the redundancies which can be present in an image.
+  		  As there are only 4 levels of gray color, storing them using 8 bits
+  		  per possible gray color would result in high coding redundancy. Also,
+  		  neighbouring pixels almost always have the same colors.}
+  \label{fig:redundancies}
+\end{figure}
 
-\subsection{Lossy image compression}
-
-
+% potencialni todo - extendovat psnr/mse o vysvetleni, jak se pocitaji s barvickama
+% [TODO] obrazek, ktery ukazuje mse a psnr
 \subsection{Compression metrics}
 \label{metrics}
 %lossy, lossless, compression ratia jpg png ...
+When evaluating the quality of a compression technique, utilizing certain
+metrics is necessary - especially when attempting to compare compression
+algorithms.
+\\
 
+One of the most important metrics is the \emph{compression ratio}.
+Compression ratio is a very simple metric which quantifies the reduction
+in data representation needed. It can be easily defined in the following
+way:
+\begin{equation}
+Compression\ Ratio = \frac{Uncompressed\ size}{Compressed\ size}    
+\end{equation}
 
+It is easy to see that compression ratio is an essential metric as
+it makes it very easy to compare compression algorithms or even
+quantify their compression power in general. Certain metrics
+extend compression ratio and use it for scoring purposes, such as
+the \emph{Weissman score} which can be used for lossless compression
+algorithms. \cite{CITATIONNEEDED}.
+\\
 
+However, while compression ratio is a very valuable metric and
+highly valuable for lossless algorithms, it potentially stops
+being the most important metric when evaluating lossy algorithms.
+When evaluating lossy algorithms, the important information is not
+only quantification of how much was the data compressed but also
+evaluating how much information was actually lost in the compression
+process. As an example, if a lossy algorithm has better compression
+ratio than another one, it might still not be the algorithm of choice,
+in the case where it would introduce too many artifacts into the data.
+\\
+
+%[TODO] citation: http://www.debugmode.com/imagecmp/index.htm
+Thus, it is necessary to introduce other compression metrics, which
+can be utilized for evaluating the performance of lossy compression
+algorithms, related to information loss - or in other words, the errors
+present in data after reconstruction. The two error metrics which are
+commonly used when measuring the performance of a lossy compression
+algorithm are the \emph{mean squared error} (MSE) and \emph{peak
+signal-to-noise ratio} (PSNR).\cite{imgcomprintro}
+\\
+
+Mean squared error is a statistical metric measuring the average
+of the squared of errors (the difference between original values and
+the values after decompressing data and obtaining the reconstruction).
+When used for image compression, the metric can be formalized in the
+following way:
+\begin{equation}
+    MSE = \frac{1}{MN}\sum_{y=1}^{M}\sum_{x=1}^{N}(I(x,y) - I'(x,y))^2
+\end{equation}
+where
+\begin{itemize}
+    \item $M$ and $N$ are the dimensions of an image
+    \item $I(x, y)$ is the value of a pixel on coordinates $x, y$ in the
+    original image.
+    \item $I'(x, y)$ is the value of a pixel on coordinates $x, y$ in the
+    reconstructed image.
+\end{itemize}
+A lower value of MSE is better, as it directly displays less errors present
+in the decompressed image.
+\\
+
+Peak signal-to-noise ratio is a metric derived from MSE describing the ratio
+between the maximum possible power of a signal and the power of corrupting
+noise which affects the representation. Due to signals possibly having
+a very wide dynamic range, PSNR is usually expressed in the logarithmic scale.
+\\
+
+With MSE defined as above, PSNR can be formalized as:
+\begin{equation}
+    PSNR = 20 \cdot log10 \left( \frac{MAX^2_I}{MSE} \right)
+\end{equation}
+where $MAX_I$ is the maximum possible value of a pixel in an image. In the
+case of grayscale images stored with 8 bits per pixel, this value would
+be 255. Unlike MSE, higher PSNR values are better, as they are a sign of less errors
+in data - signal being the original colors and noise being errors.
+\\
+
+When evaluating MSE (and consecutively PSNR) for color images, the calculation becomes
+slightly more difficult, as a pixel value of I[x, y] holds multiple values for multiple
+components, which are all perceived differently by the human eye. Some of possible approaches
+can therefore be the following:
+\begin{itemize}
+  \item Evaluate MSE and PSNR for each component. Resulting MSE (or PSNR respectively)
+  is the average of MSE values of each component (or PSNR values of each component, 
+  respectively).
+  \item Due to brightness being the most important element for human eye, rather than
+  color components, evaluate MSE and PSNR values only of luma (or simply the grayscale
+  image). The definition of luma as a weighted sum has been explored in chapter \ref{ch:image-encoding}.
+\end{itemize}
+\cite{matlab18}\cite{netpbm}
+
+%[TODO] citace - viz wiki psnr
+However, it needs to be noted that PSNR is not a perfect metric in the sense
+that it would provide absolute definite conclusions. When utilizing PSNR, it is
+still important to also consider data subjectively, as it is only conclusively
+valid in scenarios where the compared results come from the same codec (or codec
+type) and the same content. Not only that, but it is a metric which is not
+performing strongly as a quality metric when it comes to human perception
+of image data. \cite{psnrsucks1} \cite{psnrsucks2} Still, it is a metric often
+utilized to evaluate lossy compression
+of images.
+\\
+
+%[TODO] better wording
+Last but not least, one of the important metrics, just like when
+evaluating performance of any other algorithm, is the required
+time to execute the compression algorithm (as well as decompression
+time).
+
+\subsection{JPEG image compression}
+As noted in chapter \ref{ch:NMF}, non-negative matrix factorization can
+be understood as a lossy compression algorithm - approximating the
+data in an original matrix by two smaller matrices which have less
+elements in total than the original matrix. As this process necessarily
+involves data loss (as non-negative matrix factorization solves the problem
+of approximating the original matrix, not finding an exact representation),
+a compression algorithm based on non-negative matrix factorization has to be
+a lossy one. Thus, the image compression algorithms which are going to be
+discussed in this thesis are lossy ones. Also, as this thesis is related
+to creating a proof of concept image compression scheme based on non-negative
+matrix factorization and not describing all the existing lossy image
+compression schemes, only the JPEG compression scheme will be explored,
+as the results of the \emph{NMF} compression scheme will be compared to
+JPEG.
+\\
+
+The JPEG compression method is commonly used for compressing digital
+photographies and makes it possible to adjust the degree of compression
+- making it possible to decide the tradeoff between image quality and
+compression. Commonly, JPEG is able to achieve 10:1 compression ratio
+without significant perceptible loss in image quality.\cite{jpegcompression}
+\\
+
+The JPEG compression algorithm can use various modes of operation, but
+the most popular one works in the following way:
+\begin{itemize}
+    \item An image is converted from $RGB$ to $Y'C_BC_R$.
+    \item The resolution of chroma is reduced - this is done as the human eye is less
+    sensitive to color details than brightness.
+    \item The image is split into $8 \times 8$ pixel blocks. For each component of $Y'C_BC_R$
+    the 8x8 block is transformed using the discrete cosine transform. By doing so,
+    the image data is represented in the frequency domain.
+    \item The amplitudes of the frequencies are quantized, meaning that components
+    with high frequencies are stored with less accuracy than the ones with lower
+    frequencies.
+    \item The resulting data of $8 \times 8$ blocks is further compressed using lossless
+    encoding.
+\end{itemize}
+These steps are all able to reduce all three redundancies presented in the previous
+sections - psychovisual redundancies are removed by storing higher frequencies with
+lower accuracy and interpixel redundancy by working no $8 \times 8$ pixel blocks. Coding
+redundancy is reduced using a lossless compression algorithm at the end.
+
+% [NTH] mozna napsat kapitolu, ktera ukaze schopnost JPEG komprese na nejakych metrikach,
+% ale je to soucast porovnavani vuci mymu algoritmu, tak uvidime.
 
 
 %Vlastnosti NMF popsane
 %  - neunikatnost NMF - muze byt rozdilna velikost se stejnou kvalitou (i kdyby se dosahlo perfekce, muze byt vice reseni, to je pak slovnikove komprimovano)
 %  - NMF posilano jen na chromu v ycbcr
 \chapter{NMF compression scheme}
+The previous three chapters all explored the essentials required to construct an image
+compression scheme based on non-negative matrix factorization. Utilizing these concepts,
+in this chapter a proof of concept compression scheme will be constructed.
+\\
+
+a
+
+
+\chapter{Implementation}
+\label{ch:implementation}
 fgsfds
+
 
 \setsecnumdepth{part}
 \chapter{Conclusion}
