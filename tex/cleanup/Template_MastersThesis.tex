@@ -1097,12 +1097,39 @@ redundancy is reduced using a lossless compression algorithm at the end.
 %  - neunikatnost NMF - muze byt rozdilna velikost se stejnou kvalitou (i kdyby se dosahlo perfekce, muze byt vice reseni, to je pak slovnikove komprimovano)
 %  - NMF posilano jen na chromu v ycbcr
 \chapter{NMF compression scheme}
+
 The previous three chapters all explored the essentials required to construct an image
 compression scheme based on non-negative matrix factorization. Utilizing these concepts,
-in this chapter a proof of concept compression scheme will be constructed.
-\\
+proof of concept compression schemes will be designed in this chapter. The following
+implementation is described in the following chapter \ref{ch:implementation}.
 
-a
+
+\section{Compression scheme design}
+As it has been shown in chapter \ref{ch:NMF}, non-negative matrix factorization
+can be understood as a lossy compression scheme for matrices, as the original
+matrix can be approximated by factor matrices which possibly require less
+space to store. However, as there are multiple ways of representing and encoding
+an image with different tradeoffs, two compression schemes will be constructed
+and compared with each other - a naive one and a scheme based on compressing
+chroma values.
+
+
+\subsection{NMF properties}
+However, before the compression schemes are designed, there are some features
+of non-negative matrix factorization which should be noted here, as understanding
+the effects and limitations of non-negative matrix factorization is important for
+constructing these schemes. These properties are the following:
+\begin{itemize}
+  \item Optimization problem - takes pretty long
+\end{itemize}
+
+
+\subsection{Naive compression scheme}
+fgs
+
+
+\subsection{$Y'C_BC_R$ compression scheme}
+fds
 
 
 \chapter{Implementation}
