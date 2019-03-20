@@ -917,7 +917,7 @@ algorithms is called \emph{psychovisual redundancy}. The human eye is not
 able to perceive certain visual information in an image - such information could
 be discarded without any noticeable artifacts present in the compressed image.
 A tool commonly used for reducing psychovisual redundancies in an image is
-\emph{discrete cosine transform}, which is also used in the JFIF/JPEG image
+\emph{discrete cosine transform}, which is also used in the JPEG image
 format.
 
 \begin{figure}[h]
@@ -1137,9 +1137,35 @@ tool in order to save storage space.
 
 This compression scheme 
 
+\begin{figure}[h]
+  \centering
+  \includegraphics{nmf-naive-scheme}
+  \caption{Visualization of the naive compression scheme.}
+  \label{fig:nmf-naive-scheme}
+\end{figure}
+
 
 \subsection{$Y'C_BC_R$ compression scheme}
-fds
+The compression scheme based on $Y'C_BC_R$ aims to utilize the concept
+of human eye not noticing loss of information as strongly when it is related
+to colors, rather than brightness. This is achieved by working on each component
+separately:
+\begin{itemize}
+  \item The luma ($Y'$) component is not compressed by a lossy compression algorithm.
+  \item The chroma components are separately compressed both using non-negative
+   matrix factorization.
+\end{itemize}
+As a 
+
+
+\begin{figure}[h]
+  \centering
+  \includegraphics{nmf-scheme}
+  \caption{Visualization of the compression scheme based on using $Y'C_BC_R$.}
+  \label{fig:nmf-scheme}
+\end{figure}
+
+
 
 
 \chapter{Implementation}
