@@ -1114,6 +1114,7 @@ and compared with each other - a naive one and a scheme based on compressing
 chroma values.
 
 
+%[TODO] complete
 \subsection{NMF properties}
 However, before the compression schemes are designed, there are some features
 of non-negative matrix factorization which should be noted here, as understanding
@@ -1121,11 +1122,20 @@ the effects and limitations of non-negative matrix factorization is important fo
 constructing these schemes. These properties are the following:
 \begin{itemize}
   \item Optimization problem - takes pretty long
+  \item Sparsity? - \emph{OTESTOVAT V PY}
+  \item Discover columns with similar data.
 \end{itemize}
 
 
-\subsection{Naive compression scheme}
-fgs
+\subsection{Naive compression scheme (RGB)}
+As an image with colors encoded using the RGB values is already
+a 2D matrix, a naive approach would be to simply use non-negative
+matrix factorization with the image as the input matrix. Afterwards,
+the two matrices will be compressed using a lossless data compression
+tool in order to save storage space.
+\\
+
+This compression scheme 
 
 
 \subsection{$Y'C_BC_R$ compression scheme}
