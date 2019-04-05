@@ -182,7 +182,8 @@ compression algorithm and its evaluation.
 %   nmf a obrazkovou kompresi dal asi ne, to je vec casti navrhu nmf algoritmu
 %   nimfu asi taky ne, ta bude v prakticky casti
 %   rozepsat vic least squares
-%   
+%
+% [TODO] Initial seeding
 \setsecnumdepth{all}
 \chapter{Non-negative matrix factorization}
 \label{ch:NMF}
@@ -488,13 +489,18 @@ precisely for this reason that interpreting results of non-negative matrix
 factorization is easy in fields such as image processing or text mining (but many
 others as well).\cite{nmf-whyhow}
 
+\section{NMF parameters}
+When utilizing non-negative matrix factorization, a number of variables can
+be chosen - most importantly the rank $r$ affecting the dimensions of the
+factor matrices and the initialization technique for initializing the
+factor matrices.
+
 \subsection{Choice of rank $r$}
-The choice of rank $r$ is one of the most important problems when utilizing non-negative
+The choice of rank $r$ is one of the most important decisions when utilizing non-negative
 matrix factorization - as when used for the examples above, choice of rank $r$
 changes the amount of features to be extracted in order to approximate the target
 matrix $V$.
 \\
-
 
 There are several common methods used for choosing the rank $r$:
 \begin{itemize}
@@ -506,8 +512,24 @@ There are several common methods used for choosing the rank $r$:
 \end{itemize}\cite{nmf-whyhow}
 
 
+\subsection{Initialization techniques}
+As it has been previously shown, non-negative matrix factorization is an optimization
+problem. The results of NMF highly depend on the initial values of NMF variables due to
+the existence of local minima. Some of the ways of initializing the initial factor
+matrices are:
+\begin{itemize}
+  \item Using random non-negative values.
+  \item Searching good values via genetic algorithms.
+  \item Initialize matrices based on feature extraction using \emph{PCA}.
+  \item Initialize matrices based on feature extraction using \emph{SVD}.
+\end{itemize}\cite{nmfinit}
+
+It should be noted here that some of the initialization techniques involve randomness
+(such as purely using random non-negative values) and some do not - and are rather
+based on extracting data from the input matrix.
+
+
 \section{NMF and compression}
-% TODO popsani rozmeru matic, r = n/2 vypocet, treba i obrazek...
 Most common use-case scenarios of non-negative matrix factorization are
 related to machine learning, as shown in the previous sections. However,
 \emph{NMF} can also be looked upon as a lossy compression tool (more
@@ -1100,8 +1122,8 @@ redundancy is reduced using a lossless compression algorithm at the end.
 
 The previous three chapters all explored the essentials required to construct an image
 compression scheme based on non-negative matrix factorization. Utilizing these concepts,
-proof of concept compression schemes will be designed in this chapter. The following
-implementation is described in the following chapter \ref{ch:implementation}.
+proof of concept compression schemes will be designed in this chapter. The implementation
+of these schemes is described in the following chapter \ref{ch:implementation}.
 
 
 \section{Compression scheme design}
@@ -1109,23 +1131,15 @@ As it has been shown in chapter \ref{ch:NMF}, non-negative matrix factorization
 can be understood as a lossy compression scheme for matrices, as the original
 matrix can be approximated by factor matrices which possibly require less
 space to store. However, as there are multiple ways of representing and encoding
-an image with different tradeoffs, two compression schemes will be constructed
-and compared with each other - a naive one and a scheme based on compressing
-chroma values.
+an image with different tradeoffs, multiple compression schemes will be constructed
+and compared with each other - ones based on factorizing RGB images and a scheme based
+on compressing chroma values.
+\\
 
-
-%[TODO] complete
-\subsection{NMF properties}
-However, before the compression schemes are designed, there are some features
-of non-negative matrix factorization which should be noted here, as understanding
-the effects and limitations of non-negative matrix factorization is important for
-constructing these schemes. These properties are the following:
-\begin{itemize}
-  \item Optimization problem - takes pretty long
-  \item Sparsity? - \emph{OTESTOVAT V PY}
-  \item Discover columns with similar data.
-\end{itemize}
-
+It should be emphasized that these compression schemes are proof of concept only
+and their main goal is to empirically evaluate the effect non-negative matrix
+factorization has on images. Therefore, storage size reduction is in this case only
+the secondary goal.
 
 \subsection{Naive compression scheme (RGB)}
 As an image with colors encoded using the RGB values is already
@@ -1135,13 +1149,39 @@ the two matrices will be compressed using a lossless data compression
 tool in order to save storage space.
 \\
 
-This compression scheme 
+As non-negative matrix factorization results in creating two factor
+matrices, these factors are flattened and afterwards concatenated, resulting
+in one long string of bytes which is afterwards compressed using a lossless
+algorithm of choice (more on the specifics of implementation in the following chapter).
 
 \begin{figure}[h]
   \centering
   \includegraphics{nmf-naive-scheme}
-  \caption{Visualization of the naive compression scheme.}
+  \caption{Visualization of the naive compression scheme. Note that NMF(RGB) actually
+  represents two matrices which are stored next to each other in one data structure.}
   \label{fig:nmf-naive-scheme}
+\end{figure}
+
+
+\subsection{Separate RGB compression}
+Another scheme which will be explored will be one where the RGB components
+are extracted into their own matrices and non-negative matrix factorization
+is performed on each of these matrices individually. One aspect of this approach
+compared to the previous one is that the matrices which are going to be factorized
+are going to be smaller (contain less columns, as two color components will be missing
+in each matrix).
+\\
+
+Like in the previous scheme, the factor matrices will be flattened and concatenated,
+followed by using a lossless compression technique to store the data. More on the
+specifics in the following chapter which is related to implementation.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics{drawio/comprseparatergb}
+  \caption{Visualization of the compression scheme which performs NMF on each of the
+  $RGB$ components.}
+  \label{fig:nmf-rgbseparate-scheme}
 \end{figure}
 
 
@@ -1150,13 +1190,17 @@ The compression scheme based on $Y'C_BC_R$ aims to utilize the concept
 of human eye not noticing loss of information as strongly when it is related
 to colors, rather than brightness. This is achieved by working on each component
 separately:
+\\
+
 \begin{itemize}
   \item The luma ($Y'$) component is not compressed by a lossy compression algorithm.
   \item The chroma components are separately compressed both using non-negative
    matrix factorization.
 \end{itemize}
-As a 
 
+After factorizing the matrices containing the chroma components, all 5 matrices will
+be flattened and concatenated. This data will then be compressed using a lossless
+technique of choice.
 
 \begin{figure}[h]
   \centering
@@ -1166,12 +1210,35 @@ As a
 \end{figure}
 
 
+% Je zde pojem non-deterministic OK?
+\subsection{Non-deterministic properties of NMF}
+One of the properties which has been noted in chapter \ref{ch:NMF} was that
+the solution to non-negative matrix factorization is not unique. Not only that,
+but due to the problem being an optimization problem, there is no guarantee that
+various runs of any of these compression schemes will create the same images, unless
+the initial matrices have been initialized in the same way.
+\\
+
+As a result, unless the initial matrices have been initialized in the same way,
+two aspects of these compression schemes should be noted:
+\begin{itemize}
+  \item As the approximation will be different for each run, the information loss will
+  also be different, meaning that the visual quality of compression can differ.
+  \item When using a lossless algorithm to store the data, the storage size required
+  to store the matrices will be different, as the source data compressed will also
+  be different.
+\end{itemize}
 
 
 \chapter{Implementation}
 \label{ch:implementation}
 fgsfds
 
+%[TODO] vyzkouset udelat obrazky ktery se sestavaji jen z par barev, ty by mohly byt
+% turbopresny - sestavaji se jen z nekolika komponent, init
+\chapter{Results}
+\label{ch:results}
+asdf
 
 \setsecnumdepth{part}
 \chapter{Conclusion}
