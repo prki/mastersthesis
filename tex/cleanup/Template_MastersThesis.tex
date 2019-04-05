@@ -812,7 +812,7 @@ can be very undesirable for medical usage.
   \includegraphics{imgs/sampletext-comparison}
   \caption{A sample image showing how accurate a lossy algorithm can be. The left image
            has been compressed using a lossless algorithm, the right image has been
-           compressed using a lossy algorithm (JFIF/JPEG). In this case, essentially
+           compressed using a lossy algorithm (JPEG). In this case, essentially
            no artifact can be seen unless zoomed in (as seen in the figure \ref{fig:jfifartifact}).}
   \label{fig:jfifvspng-sample}
 \end{figure}
@@ -975,7 +975,7 @@ it makes it very easy to compare compression algorithms or even
 quantify their compression power in general. Certain metrics
 extend compression ratio and use it for scoring purposes, such as
 the \emph{Weissman score} which can be used for lossless compression
-algorithms. \cite{CITATIONNEEDED}.
+algorithms.
 \\
 
 However, while compression ratio is a very valuable metric and
@@ -996,7 +996,7 @@ algorithms, related to information loss - or in other words, the errors
 present in data after reconstruction. The two error metrics which are
 commonly used when measuring the performance of a lossy compression
 algorithm are the \emph{mean squared error} (MSE) and \emph{peak
-signal-to-noise ratio} (PSNR).\cite{imgcomprintro}
+signal-to-noise ratio} (PSNR).\cite{imgcompintro}
 \\
 
 Mean squared error is a statistical metric measuring the average
@@ -1056,7 +1056,7 @@ still important to also consider data subjectively, as it is only conclusively
 valid in scenarios where the compared results come from the same codec (or codec
 type) and the same content. Not only that, but it is a metric which is not
 performing strongly as a quality metric when it comes to human perception
-of image data. \cite{psnrsucks1} \cite{psnrsucks2} Still, it is a metric often
+of image data. \cite{psnrvalid} Still, it is a metric often
 utilized to evaluate lossy compression
 of images.
 \\
@@ -1088,7 +1088,7 @@ The JPEG compression method is commonly used for compressing digital
 photographies and makes it possible to adjust the degree of compression
 - making it possible to decide the tradeoff between image quality and
 compression. Commonly, JPEG is able to achieve 10:1 compression ratio
-without significant perceptible loss in image quality.\cite{jpegcompression}
+without significant perceptible loss in image quality.\cite{nasajpeg}
 \\
 
 The JPEG compression algorithm can use various modes of operation, but
@@ -1147,12 +1147,14 @@ a 2D matrix, a naive approach would be to simply use non-negative
 matrix factorization with the image as the input matrix. Afterwards,
 the two matrices will be compressed using a lossless data compression
 tool in order to save storage space.
-\\
 
+<<<<<<< HEAD
 As non-negative matrix factorization results in creating two factor
 matrices, these factors are flattened and afterwards concatenated, resulting
 in one long string of bytes which is afterwards compressed using a lossless
 algorithm of choice (more on the specifics of implementation in the following chapter).
+=======
+>>>>>>> d6172b690c6f2796a0eb208cebb2d9d6565232a1
 
 \begin{figure}[h]
   \centering
@@ -1239,6 +1241,44 @@ fgsfds
 \chapter{Results}
 \label{ch:results}
 asdf
+
+\chapter{Experiments and results}
+\label{ch:tests}
+This chapter describes experiments performed using the compression schemes
+presented in the previous two chapters and their performance. Performance of
+compression schemes will be measured using the following metrics:
+\begin{itemize}
+  \item Peak signal-to-noise ratio - calculated both as an average of PSNR
+  for each RGB component and averaged as well as evaluating PSNR solely using
+  the luma component.
+  \item Mean squared error - calculated both as an average of MSE for each
+  RGB component and averaged as well as evaluating MSE solely using the luma
+  component.
+  \item Compression ratio.
+  \item Compression time.
+\end{itemize}
+Together with that, the compressed images will be analyzed subjectively.
+
+
+\section{Compression scheme variables}
+As noted in the previous chapters, non-negative matrix factorization can perform
+very differently depending on the parameters of NMF, such as the matrix rank,
+number of iterations of NMF, the chosen algorithm used for solving NMF as well
+as matrix initialization.
+\\
+
+In order for the experiments to be replicable, the algorithm used and the
+method used for matrix initialization will be the same for each run of each
+compression scheme. On the other hand, the effect of rank and the maximum
+number of iterations on the quality of compression will be explored - thus
+these values will not be constant.
+\\
+
+The chosen algorithm + the chosen method for initializing matrices...
+
+
+\section{Choice of images}
+
 
 \setsecnumdepth{part}
 \chapter{Conclusion}
