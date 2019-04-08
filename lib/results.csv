@@ -1,0 +1,6 @@
+# asdf
+filename,orig_size,jpeg_size,nmf_method,nmf_rank,nmf_iter,nmf_seed,nmf_size,comp_ratio,comp_time,psnr_avg,psnr_y,mse_avg,mse_y
+abc.png,50000,20000,naive24,100,200,nndsvd,30000,3:5,2,30,50,10,5
+xyz.png,60000,23000,ycbcr,5,20,nndsvd,25000,1:2,3,60,70,20,10
+out-of-focus.png,120000,20000,ycbcr,5,100,nndsvd,50000,2.4,4,60,30,20,10
+out-of-focus.png,120000,20000,ycbcr,7,100,nndsvd,55000,2.6,4.5,65,60,18,8
