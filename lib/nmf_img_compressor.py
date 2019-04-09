@@ -12,6 +12,11 @@ from PIL import Image
 import img_utils
 
 
+__SIZE_UINT8 = np.uint8(5).itemsize
+__SIZE_UINT32 = np.uint32(5).itemsize
+__SIZE_FLOAT32 = np.float32(5).itemsize
+
+
 def resolve_path(filepath):
     if not '\\' in filepath and not '/' in filepath:
         return filepath
@@ -99,9 +104,9 @@ def decompress_naive_nmf(compressed_data):
     """[header, w_flat, h_flat]"""
     logging.info('Decompressing naive 24bit RGB image data.')
     data = zlib.decompress(compressed_data)
-    header = data[:3*4]  # 3 elements sizeof uint32
+    header = data[:3*__SIZE_UINT32]  # 3 elements sizeof uint32
     header = np.frombuffer(header, dtype=np.uint32)
-    data = data[3*4:]
+    data = data[3*__SIZE_UINT32:]
 
     w = header[0]
     h = header[1]
@@ -164,9 +169,9 @@ def compress_separate_nmf(rmat_w, rmat_h, gmat_w, gmat_h, bmat_w, bmat_h):
 def decompress_separate_rgb(compressed_data):
     logging.info('Decompressing separate RGB NMF image data.')
     data = zlib.decompress(compressed_data)
-    header = data[:3*4]  # 3 elems sizeof uint32
+    header = data[:3*__SIZE_UINT32]  # 3 elems sizeof uint32
     header = np.frombuffer(header, dtype=np.uint32)
-    data = data[3*4:]
+    data = data[3*__SIZE_UINT32:]
 
     w = header[0]
     h = header[1]
@@ -223,9 +228,9 @@ def decompress_ycbcr_nmf(compressed_data):
     logging.info('Decompressing NMF YCbCr image data.')
     data = zlib.decompress(compressed_data)
 
-    header = data[:3*4]  # 3 elements sizeof uint32
+    header = data[:3*__SIZE_UINT32]  # 3 elements sizeof uint32
     header = np.frombuffer(header, dtype=np.uint32)
-    data = data[3*4:]
+    data = data[3*__SIZE_UINT32:]
 
     cb_w = header[0]
     cb_h = header[1]
@@ -238,8 +243,8 @@ def decompress_ycbcr_nmf(compressed_data):
     data = data[cb_h * cb_w * 1:]  # sizeof(uint8)
 
     split = int(len(data) / 2)
-    cb_wr = cb_w * rank * 4  # sizeof(float32)
-    cb_rh = cb_h * rank * 4  # sizeof(float32)
+    cb_wr = cb_w * rank * __SIZE_FLOAT32  # sizeof(float32)
+    cb_rh = cb_h * rank * __SIZE_FLOAT32  # sizeof(float32)
     cb_flat = data[:split]
     cr_flat = data[split:]
     
@@ -377,7 +382,8 @@ def main():
     #for rank in range(5, 21):
     #    test_ycbcr_scheme(img_filepath, 300, rank, dtype=np.float32, seed='nndsvd')
     #test_naive_rgb_scheme(img_filepath, 50, 50, dtype=np.float32, seed='nndsvd')
-    test_separate_rgb_scheme(img_filepath, 50, 50, dtype=np.float32, seed='nndsvd')
+    #test_separate_rgb_scheme(img_filepath, 50, 50, dtype=np.float32, seed='nndsvd')
+    test_ycbcr_scheme(img_filepath, 200, 20, dtype=np.float32, seed='nndsvd')
 
 
 

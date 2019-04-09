@@ -1040,32 +1040,27 @@ slightly more difficult, as a pixel value of I[x, y] holds multiple values for m
 components, which are all perceived differently by the human eye. Some of possible approaches
 can therefore be the following:
 \begin{itemize}
-  \item Evaluate MSE and PSNR for each component. Resulting MSE (or PSNR respectively)
-  is the average of MSE values of each component (or PSNR values of each component, 
-  respectively).
+  \item Evaluate MSE and PSNR for all the color components together using the RGB matrix.
   \item Due to brightness being the most important element for human eye, rather than
   color components, evaluate MSE and PSNR values only of luma (or simply the grayscale
   image). The definition of luma as a weighted sum has been explored in chapter \ref{ch:image-encoding}.
 \end{itemize}
 \cite{matlab18}\cite{netpbm}
 
-%[TODO] citace - viz wiki psnr
+
 However, it needs to be noted that PSNR is not a perfect metric in the sense
 that it would provide absolute definite conclusions. When utilizing PSNR, it is
 still important to also consider data subjectively, as it is only conclusively
 valid in scenarios where the compared results come from the same codec (or codec
 type) and the same content. Not only that, but it is a metric which is not
 performing strongly as a quality metric when it comes to human perception
-of image data. \cite{psnrvalid} Still, it is a metric often
+of image data.\cite{psnrvalid} Still, it is a metric often
 utilized to evaluate lossy compression
 of images.
 \\
 
-%[TODO] better wording
-Last but not least, one of the important metrics, just like when
-evaluating performance of any other algorithm, is the required
-time to execute the compression algorithm (as well as decompression
-time).
+The last metric to note is not related to quality of the resulting data specifically,
+but is nonetheless very important - compression (or decompression) time.
 
 \subsection{JPEG image compression}
 As noted in chapter \ref{ch:NMF}, non-negative matrix factorization can
@@ -1125,7 +1120,7 @@ compression scheme based on non-negative matrix factorization. Utilizing these c
 proof of concept compression schemes will be designed in this chapter. The implementation
 of these schemes is described in the following chapter \ref{ch:implementation}.
 
-
+%[TODO] PRIPSAT GRAYSCALE KOMPRESI
 \section{Compression scheme design}
 As it has been shown in chapter \ref{ch:NMF}, non-negative matrix factorization
 can be understood as a lossy compression scheme for matrices, as the original
@@ -1147,14 +1142,13 @@ a 2D matrix, a naive approach would be to simply use non-negative
 matrix factorization with the image as the input matrix. Afterwards,
 the two matrices will be compressed using a lossless data compression
 tool in order to save storage space.
+\\
 
-<<<<<<< HEAD
 As non-negative matrix factorization results in creating two factor
-matrices, these factors are flattened and afterwards concatenated, resulting
-in one long string of bytes which is afterwards compressed using a lossless
-algorithm of choice (more on the specifics of implementation in the following chapter).
-=======
->>>>>>> d6172b690c6f2796a0eb208cebb2d9d6565232a1
+matrices, these factor matrices are flattened and afterwards concatenated into
+a byte string, resulting in one long string of bytes which is afterwards
+compressed using a lossless algorithm of choice (more on the specifics of
+implementation in the following chapter).
 
 \begin{figure}[h]
   \centering
@@ -1163,7 +1157,6 @@ algorithm of choice (more on the specifics of implementation in the following ch
   represents two matrices which are stored next to each other in one data structure.}
   \label{fig:nmf-naive-scheme}
 \end{figure}
-
 
 \subsection{Separate RGB compression}
 Another scheme which will be explored will be one where the RGB components
@@ -1195,13 +1188,14 @@ separately:
 \\
 
 \begin{itemize}
-  \item The luma ($Y'$) component is not compressed by a lossy compression algorithm.
+  \item The luma ($Y'$) component is not compressed by a lossy compression algorithm but
+        a lossless one.
   \item The chroma components are separately compressed both using non-negative
    matrix factorization.
 \end{itemize}
 
-After factorizing the matrices containing the chroma components, all 5 matrices will
-be flattened and concatenated. This data will then be compressed using a lossless
+After factorizing the matrices containing the chroma components, all 5 matrices are flattened
+and concatenated into one long byte string, which is compressed using a lossless compression
 technique of choice.
 
 \begin{figure}[h]
@@ -1212,7 +1206,6 @@ technique of choice.
 \end{figure}
 
 
-% Je zde pojem non-deterministic OK?
 \subsection{Non-deterministic properties of NMF}
 One of the properties which has been noted in chapter \ref{ch:NMF} was that
 the solution to non-negative matrix factorization is not unique. Not only that,
@@ -1234,14 +1227,38 @@ two aspects of these compression schemes should be noted:
 
 \chapter{Implementation}
 \label{ch:implementation}
-fgsfds
+This chapter is related to the specific implementation of the schemes presented in the
+previous chapter. An outline of technologies used will be provided as well as the actual
+specifics of the compressed data.
+
+\section{Technologies used}
+The proof of concept compression schemes, as well as the analysis scripts, were implemented
+in the \emph{Python programming language}, which has been chosen for its high readability
+as well as its good support for working with data. The libraries which were used for
+implementing the compression schemes were the following:
+\begin{itemize}
+  \item \emph{NumPy} - a Python library useful for matrix calculations and other scientific work.
+        NumPy also provides support for vectorizing array operations, thus often significantly
+        speeding up matrix calculations. The library also works as an efficient container of
+        generic data with specifiable datatypes. NumPy was used for the majority of matrix
+        operations, together with flattening compressed matrices and reshaping them.\cite{numpy}
+  \item \emph{Nimfa} - a library implementing non-negative matrix factorization
+        with implementations of multiple factorization methods, initialization
+        approaches and other capabilities. This library uses the capabilities of NumPy
+        for matrix calculations.\cite{nimfa}
+  \item \emph{Pillow} - a fork of the Python Imaging Library (PIL).
+        Pillow implements many functionalities related to image processing. The
+        functionalities used are related to parsing existing image data and converting
+        between different pixel representations (RGB, grayscale (luma) and $YC_BC_R$).\cite{pillow}
+  \item \emph{zlib} - a compression library which is a higher-level abstraction for the DEFLATE
+        lossless compression algorithm. Zlib was chosen as the lossless compression
+        technique after performing non-negative matrix factorization as it is a library commonly
+        used for compression. 
+\end{itemize}
+
 
 %[TODO] vyzkouset udelat obrazky ktery se sestavaji jen z par barev, ty by mohly byt
 % turbopresny - sestavaji se jen z nekolika komponent, init
-\chapter{Results}
-\label{ch:results}
-asdf
-
 \chapter{Experiments and results}
 \label{ch:tests}
 This chapter describes experiments performed using the compression schemes
