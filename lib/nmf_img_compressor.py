@@ -18,7 +18,7 @@ __SIZE_FLOAT32 = np.float32(5).itemsize
 
 
 def resolve_path(filepath):
-    if not '\\' in filepath and not '/' in filepath:
+    if '\\' not in filepath and '/' not in filepath:
         return filepath
     else:
         pos = filepath.rfind('\\')
@@ -115,6 +115,7 @@ def decompress_naive_nmf(compressed_data):
     w_mat, h_mat = reshape_flat_data(data, w, r, h, dtype=np.float32)
 
     wh_mat = np.mat(w_mat) * np.mat(h_mat)
+    # Round floats and represent matrix as one containing 8bit values
     wh_mat = np.rint(wh_mat).astype(np.uint8)
 
     rmat_nmf, gmat_nmf, bmat_nmf = img_utils.decompose_24bit_rgb_matrix(wh_mat)
@@ -220,10 +221,10 @@ def decompress_ycbcr_nmf(compressed_data):
     """ Compressed data using zlib compression in the following form:
     [header, y_data, cb_w_data, cb_h_data, cr_w_data, cr_h_data]
     Where y_data, cb_data and cr_data are flattened matrices.
-    Y_data is represented using uint8, cb_w_data, cb_h_data (or cr_* respectively)
-    are matrices represented using float32. Y_data has been stored losslessly
-    whereas Cb/Cr information requires to be multiplied, as the stored data
-    are the NMF factor matrices.
+    Y_data is represented using uint8, cb_w_data, cb_h_data (or cr_*
+    respectively) are matrices represented using float32. Y_data has been
+    stored losslessly whereas Cb/Cr information requires to be multiplied, as
+    the stored data are the NMF factor matrices.
     """
     logging.info('Decompressing NMF YCbCr image data.')
     data = zlib.decompress(compressed_data)
@@ -243,11 +244,9 @@ def decompress_ycbcr_nmf(compressed_data):
     data = data[cb_h * cb_w * 1:]  # sizeof(uint8)
 
     split = int(len(data) / 2)
-    cb_wr = cb_w * rank * __SIZE_FLOAT32  # sizeof(float32)
-    cb_rh = cb_h * rank * __SIZE_FLOAT32  # sizeof(float32)
     cb_flat = data[:split]
     cr_flat = data[split:]
-    
+
     cb_w_mat, cb_h_mat = reshape_flat_data(cb_flat, cb_w, rank, cb_h)
     cr_w_mat, cr_h_mat = reshape_flat_data(cr_flat, cr_w, rank, cr_h)
 

@@ -16,6 +16,7 @@
 % \usepackage[latin2]{inputenc} % LaTeX source encoded as ISO-8859-2
 % \usepackage[cp1250]{inputenc} % LaTeX source encoded as Windows-1250
 
+\usepackage{multirow}
 \usepackage{graphicx} %graphics files inclusion
 % \usepackage{subfig} %subfigures
 \usepackage{amsmath} %advanced maths
@@ -1171,13 +1172,13 @@ Like in the previous scheme, the factor matrices will be flattened and concatena
 followed by using a lossless compression technique to store the data. More on the
 specifics in the following chapter which is related to implementation.
 
-\begin{figure}[h]
-  \centering
-  \includegraphics{drawio/comprseparatergb}
-  \caption{Visualization of the compression scheme which performs NMF on each of the
-  $RGB$ components.}
-  \label{fig:nmf-rgbseparate-scheme}
-\end{figure}
+%\begin{figure}[h]
+%  \centering
+%  \includegraphics{drawio/comprseparatergb}
+%  \caption{Visualization of the compression scheme which performs NMF on each of the
+%  $RGB$ components.}
+%  \label{fig:nmf-rgbseparate-scheme}
+%\end{figure}
 
 
 \subsection{$Y'C_BC_R$ compression scheme}
@@ -1253,7 +1254,106 @@ implementing the compression schemes were the following:
   \item \emph{zlib} - a compression library which is a higher-level abstraction for the DEFLATE
         lossless compression algorithm. Zlib was chosen as the lossless compression
         technique after performing non-negative matrix factorization as it is a library commonly
-        used for compression. 
+        used for compression. The other reason for choosing zlib was also that it is
+		 a part of the Python standard library.
+\end{itemize}
+
+\section{Performing non-negative matrix factorization}
+Non-negative matrix factorization was implemented using the Nimfa library, which
+allows choosing various parameters, most notably the rank, number of iterations and
+the seeding technique for initializing factor matrices.
+\\
+
+The method chosen for evaluating NMF was the standard NMF approach of multiplicative
+updates with the Euclidean distance update equations. The method for seeding
+the factor matrices which was chosen was the non-negative double singular value
+decomposition (NNDSVD)\cite{nndsvd}, which is a method containing no randomization
+and is based on SVD processes. This method has been chosen for two reasons:
+\begin{itemize}
+  \item It is a method which does not use randomization. Due to that, the
+  compression schemes always create the same factor matrices, meaning that the
+  results can be repeated.
+  \item As the SVD processes initialize the factor matrices based on the input
+  data, the algorithm often performs better than random initialization does
+  and rapidly reduces the approximation error.\cite{nndsvd}
+\end{itemize}
+
+The rank and number of iterations of the NMF algorithm are parameters of the
+compression scheme and their effect on quality of image compression is explored
+in the following chapter.
+
+
+\section{Compressed image data structure}
+\label{sec:data-structure}
+Each of the compression schemes utilizes non-negative matrix factorization
+to compress color data - be it either factorizing RGB matrix, matrices containing
+each RGB component or factorizing the chroma components of $YC_BC_R$ values.
+All of the compression schemes compress this data using a lossless compression
+algorithm in order to save space.
+\\
+
+This data structure which contains the data to be compressed is the same for all
+of the compression schemes - with the only difference being how much data does
+it contain, as the separate RGB compression scheme creates 6 factor matrices which
+need to be stored, whereas the naive RGB compression scheme creates only 2
+factor matrices. Since the data structure differs only in this aspect, the general
+explanation of the structure will be provided.
+\\
+
+\begin{table}[h]
+\centering
+\begin{tabular}{|c|l|c|c|c|}
+\hline
+\multicolumn{2}{|c|}{Data area}                                                                                                                     & Data content        & Data size                             & Data type \\ \hline
+\multicolumn{2}{|c|}{\multirow{3}{*}{Header}}                                                                                                       & height              & 4B                                    & uint32    \\ \cline{3-5} 
+\multicolumn{2}{|c|}{}                                                                                                                              & width               & 4B                                    & uint32    \\ \cline{3-5} 
+\multicolumn{2}{|c|}{}                                                                                                                              & rank                & 4B                                    & uint32    \\ \hline
+\multicolumn{2}{|c|}{\multirow{3}{*}{\begin{tabular}[c]{@{}c@{}}Compressed image\\  data\\\end{tabular}}} & flat matrix         & matrix size $\times$ 4B                      & float32   \\ \cline{3-5} 
+\multicolumn{2}{|c|}{}                                                                                                                              & flat matrix         & matrix size $\times$ 4B                      & float32   \\ \cline{3-5} 
+\multicolumn{2}{|c|}{}                                                                                                                              & other flat matrices & \multicolumn{1}{l|}{matrix size $\times$ 4B} & float32   \\ \hline
+\end{tabular}
+\caption{Table showing how the compressed image data is stored. Flat matrices
+         represent the matrices after they have been flattened into a 1-D array.
+		  Matrix size depends on what kind of matrix is stored, as explained in the section
+         \ref{sec:data-structure}}
+\label{tab:data-structure}
+\end{table}
+
+A visualization of the data structure which is compressed can be seen in the
+table \ref{tab:data-structure}. The first 12 bytes of this data structure
+are used for the header. This header stores height, width and the rank parameter
+of non-negative matrix factorization - this information is required for restoring
+the image data, as the dimensions of matrices which were stored were either
+$height \times width$ (luma matrix in the $Y'C_BC_R$ scheme), $width \times rank$
+or $rank \times height$ (in the case of factor matrices). As the data size thus
+depends on the specific matrix stored, the table only describes the data size
+as matrix size $\times$ 4B.
+\\
+
+This data structure is compressed using zlib with the highest possible compression
+setting.
+
+
+% paral. runs of nmf, sparse matrix representation? different lossless algo
+\section{Possible improvements}
+While the compression schemes were implemented, there are still some areas
+which would still allow for a more efficient implementation. Some of the
+areas noted are the following:
+\begin{itemize}
+  \item Performing independent non-negative matrix factorization in parallel
+  (such as in the case of the $YC_BC_R$ scheme, where factorizing the $C_B$
+  and the $C_R$ matrices could run in parallel as these two operations are
+  fully independent).
+  \item Storing factor matrices as sparse matrices - as non-negative matrix
+  factorization creates sparse factor matrices (and the seeding technique
+  which was used should also create sparse factor matrices), representing
+  and storing the factor matrices utilizing a technique for storing sparse
+  matrices could save more space.
+  \item Using a different lossless compression technique - while zlib was
+  chosen for its proven efficiency, it was not chosen for any specific property
+  of the data - another lossless compression technique could prove to save
+  more space.
+  \item DIFFERENT NMF METHOD (CNMF)
 \end{itemize}
 
 
