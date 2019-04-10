@@ -1092,6 +1092,12 @@ where:
   \item $k_1 = 0.01$ and $k_2 = 0.03$ by default.
 \end{itemize}\cite{ssim}
 
+Usually, this formula is applied only on luma, as the most important aspect of the
+image in relation to eye perception. However, SSIM may also be applied on color or
+chromatic values. The possible values of SSIM are in the range $(-1; 1]$, where 
+SSIM of 1 can only be reached in the case of two images being identical.
+
+
 \subsubsection{Compression time}
 The last metric to note is not related to quality of the resulting data specifically,
 but is nonetheless very important - compression (or decompression) time.
@@ -1137,7 +1143,7 @@ the most popular one works in the following way:
 \end{itemize}
 These steps are all able to reduce all three redundancies presented in the previous
 sections - psychovisual redundancies are removed by storing higher frequencies with
-lower accuracy and interpixel redundancy by working no $8 \times 8$ pixel blocks. Coding
+lower accuracy and interpixel redundancy by working on $8 \times 8$ pixel blocks. Coding
 redundancy is reduced using a lossless compression algorithm at the end.
 
 % [NTH] mozna napsat kapitolu, ktera ukaze schopnost JPEG komprese na nejakych metrikach,
