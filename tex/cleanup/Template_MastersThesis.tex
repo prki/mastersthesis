@@ -961,8 +961,8 @@ format.
 When evaluating the quality of a compression technique, utilizing certain
 metrics is necessary - especially when attempting to compare compression
 algorithms.
-\\
 
+\subsubsection{Compression ratio}
 One of the most important metrics is the \emph{compression ratio}.
 Compression ratio is a very simple metric which quantifies the reduction
 in data representation needed. It can be easily defined in the following
@@ -988,10 +988,10 @@ evaluating how much information was actually lost in the compression
 process. As an example, if a lossy algorithm has better compression
 ratio than another one, it might still not be the algorithm of choice,
 in the case where it would introduce too many artifacts into the data.
-\\
 
-%[TODO] citation: http://www.debugmode.com/imagecmp/index.htm
-Thus, it is necessary to introduce other compression metrics, which
+\subsubsection{Mean squared error}
+Therefore, when analyzing the quality of lossy compression,
+it is necessary to introduce other compression metrics, which
 can be utilized for evaluating the performance of lossy compression
 algorithms, related to information loss - or in other words, the errors
 present in data after reconstruction. The two error metrics which are
@@ -1020,6 +1020,7 @@ A lower value of MSE is better, as it directly displays less errors present
 in the decompressed image.
 \\
 
+\subsubsection{Peak signal-to-noise ratio}
 Peak signal-to-noise ratio is a metric derived from MSE describing the ratio
 between the maximum possible power of a signal and the power of corrupting
 noise which affects the representation. Due to signals possibly having
@@ -1058,8 +1059,40 @@ performing strongly as a quality metric when it comes to human perception
 of image data.\cite{psnrvalid} Still, it is a metric often
 utilized to evaluate lossy compression
 of images.
+
+%[TODO] OBRAZEK VIZ http://scikit-image.org/docs/dev/auto_examples/transform/plot_ssim.html
+%implementace - http://scikit-image.org/docs/dev/auto_examples/transform/plot_ssim.html
+\subsubsection{Structural similiarity index}
+Because of these reasons, another metric has recently been used for measuring the
+similarity between two images - the structural similarity index (abbreviated as
+\emph{SSIM}). SSIM aims to improve on MSE and PSNR, which estimate \emph{absolute
+errors} which occur during compression. SSIM on the other hand is a perception-based
+model, which considers image degradation as perceived change in structural information.
+Structural information refers to the concept that pixels have strong inter-dependencies
+when they are spatially close. These dependencies are important as they carry important
+information about the structure of objects in the visual scene.
 \\
 
+The SSIM index is calculated on various windows (sub-samples), rather than on an entire
+image, like MSE is. SSIM between two windows $x$ and $y$ of common size $N \times N$ is
+calculated using the following formula:
+\begin{equation}
+  SSIM(x, y) = \frac{(2\mu_{x}\mu_{y}+c_{1})(2\sigma_{xy} + c_{2})}{(\mu^{2}_{x} + \mu^{2}_{y} + c_{1})(\sigma^{2}_{x} + \sigma^{2}_{y} + c_2)}
+\end{equation}
+where:
+\begin{itemize}
+  \item $\mu_{x}$ is the average of $x$,
+  \item $\mu_{y}$ is the average of $y$,
+  \item $\sigma^{2}_{x}$ is the variance of $x$,
+  \item $\sigma^{2}_{y}$ is the variance of $y$.
+  \item $\sigma_{xy}$ is the covariance of $x$ and $y$,
+  \item $c_1 = (k_1 L)^{2}$, $c_2 = (k_2 L)^{2}$ are two variables to stabilize
+  the division with weak denominator,
+  \item $L$ is the dynamic range of the pixel-values (in case of 8 bits per color the value is 255),
+  \item $k_1 = 0.01$ and $k_2 = 0.03$ by default.
+\end{itemize}\cite{ssim}
+
+\subsubsection{Compression time}
 The last metric to note is not related to quality of the resulting data specifically,
 but is nonetheless very important - compression (or decompression) time.
 
@@ -1121,7 +1154,7 @@ compression scheme based on non-negative matrix factorization. Utilizing these c
 proof of concept compression schemes will be designed in this chapter. The implementation
 of these schemes is described in the following chapter \ref{ch:implementation}.
 
-%[TODO] PRIPSAT GRAYSCALE KOMPRESI
+
 \section{Compression scheme design}
 As it has been shown in chapter \ref{ch:NMF}, non-negative matrix factorization
 can be understood as a lossy compression scheme for matrices, as the original
@@ -1258,6 +1291,9 @@ implementing the compression schemes were the following:
 		 a part of the Python standard library.
 \end{itemize}
 
+The source codes together with the experiments used can be found either in the enclosed
+CD or online in a GitHub repository using the url \url{https://github.com/prki/mastersthesis}.
+
 \section{Performing non-negative matrix factorization}
 Non-negative matrix factorization was implemented using the Nimfa library, which
 allows choosing various parameters, most notably the rank, number of iterations and
@@ -1353,7 +1389,14 @@ areas noted are the following:
   chosen for its proven efficiency, it was not chosen for any specific property
   of the data - another lossless compression technique could prove to save
   more space.
-  \item DIFFERENT NMF METHOD (CNMF)
+  \item Utilizing a different method for solving the non-negative matrix factorization
+  problem or changing the variation of the non-negative matrix factorization problem.
+  For example, the research paper \cite{imgcnmf} used constrained non-negative matrix factorization for
+  compressing grayscale images and reports significantly faster compression time and slightly
+  better compression ratio with no significant image quality differences - however, many specifics
+  were not presented in the experiments and results (such as image dimensions, number
+  of iterations or rank). The standard non-negative matrix factorization method was
+  chosen for its general purpose approach.
 \end{itemize}
 
 
@@ -1385,16 +1428,14 @@ as matrix initialization.
 \\
 
 In order for the experiments to be replicable, the algorithm used and the
-method used for matrix initialization will be the same for each run of each
-compression scheme. On the other hand, the effect of rank and the maximum
-number of iterations on the quality of compression will be explored - thus
-these values will not be constant.
-\\
-
-The chosen algorithm + the chosen method for initializing matrices...
+method used for matrix initialization is the same for each run of each
+compression scheme (NNDSVD, as noted in the previous chapter). On the other hand,
+the effect of rank and the maximum number of iterations on the quality of compression
+will be explored - thus these values will not be constant.
 
 
 \section{Choice of images}
+http://imagecompression.info/test\_images/
 
 
 \setsecnumdepth{part}
