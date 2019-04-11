@@ -922,7 +922,7 @@ commonly present in images are these ones:
 required. A simple example of coding redundancy can be shown on a grayscale
 image where only certain shades of gray are used. Instead of requiring
 8 bits per shade of gray, such an image might require far less bits to
-encode, as can be seen on \ref{img:redundancies}.
+encode, as can be seen in the figure \ref{fig:redundancies}.
 \\
 
 \emph{Interpixel redundancy} refers to the fact that usually, neighbouring pixels
@@ -932,7 +932,7 @@ might be encoded using \emph{run-length encoding}, where instead of
 encoding the specific colors per pixel, an information about how many
 pixels of the same color are stored in a row. This can be particularly
 efficient when considering bi-level (black-and-white) images, as can be seen
-on \ref{img:redundancies}.
+in the figure \ref{fig:redundancies}.
 \\
 
 The last kind of redundancy which is commonly utilized in image compression
@@ -1096,7 +1096,22 @@ Usually, this formula is applied only on luma, as the most important aspect of t
 image in relation to eye perception. However, SSIM may also be applied on color or
 chromatic values. The possible values of SSIM are in the range $(-1; 1]$, where 
 SSIM of 1 can only be reached in the case of two images being identical.
+\\
 
+The figure \ref{fig:ssimmse} shows the possible strength of SSIM when compared to
+MSE or PSNR. While the second image has a lot of noise in it, its MSE compared to
+the original image is actually \emph{lower} than the MSE of the last image, even
+though the only difference is added contrast. By utilizing only MSE (or PSNR), it
+would appear the second image is more similar to the original, even though that
+is not the case for the human eye.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[scale=0.62]{imgs/flower_mse_psnr_ssim}
+  \caption{Figure visualizing the problems of MSE and PSNR when compared to
+           SSIM as an image quality metric. Original photography source: \cite{imgcomprbenchmark}}
+  \label{fig:ssimmse}
+\end{figure}
 
 \subsubsection{Compression time}
 The last metric to note is not related to quality of the resulting data specifically,
@@ -1145,6 +1160,22 @@ These steps are all able to reduce all three redundancies presented in the previ
 sections - psychovisual redundancies are removed by storing higher frequencies with
 lower accuracy and interpixel redundancy by working on $8 \times 8$ pixel blocks. Coding
 redundancy is reduced using a lossless compression algorithm at the end.
+\\
+
+One of the possible parameters of JPEG compression is the quality setting. The quality
+setting can be chosen in the range [1; 100] and affects quantization, with the value
+100 meaning no quantization. The effect which the quality setting can have on an
+image is shown in the figure \ref{fig:jpegquality}, where the original image is compressed
+multiple times with different quality settings.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[scale=0.5]{imgs/bigbuilding_compress}
+  \caption{Effect of JPEG compression on an image with varying quality settings.
+           First image is the original and the following images improve on the
+           quality settings of a previous image. Original photography source: \cite{imgcomprbenchmark}}
+  \label{fig:jpegquality}
+\end{figure}
 
 % [NTH] mozna napsat kapitolu, ktera ukaze schopnost JPEG komprese na nejakych metrikach,
 % ale je to soucast porovnavani vuci mymu algoritmu, tak uvidime.
@@ -1189,6 +1220,9 @@ matrices, these factor matrices are flattened and afterwards concatenated into
 a byte string, resulting in one long string of bytes which is afterwards
 compressed using a lossless algorithm of choice (more on the specifics of
 implementation in the following chapter).
+\\
+
+This scheme is visualized in the figure \ref{fig:nmf-naive-scheme}.
 
 \begin{figure}[h]
   \centering
@@ -1210,6 +1244,9 @@ in each matrix).
 Like in the previous scheme, the factor matrices will be flattened and concatenated,
 followed by using a lossless compression technique to store the data. More on the
 specifics in the following chapter which is related to implementation.
+\\
+
+This scheme is visualized in the figure \ref{fig:nmf-rgbseparate-scheme}.
 
 \begin{figure}[h]
   \centering
@@ -1234,14 +1271,23 @@ separately:
    matrix factorization.
 \end{itemize}
 
+By not factorizing the luma component or using any lossy compression, the original luma
+information is not lost - only the chroma information. By doing so, less artifacts should
+be introduced into the images, however at the possible cost of worse compression ratios.
+\\
+
 After factorizing the matrices containing the chroma components, all 5 matrices are flattened
 and concatenated into one long byte string, which is compressed using a lossless compression
 technique of choice.
+\\
+
+This scheme is visualized in the figure \ref{fig:nmf-scheme}.
 
 \begin{figure}[h]
   \centering
   \includegraphics{nmf-scheme}
-  \caption{Visualization of the compression scheme based on using $Y'C_BC_R$.}
+  \caption{Visualization of the compression scheme based on compressing only the chroma
+           values.}
   \label{fig:nmf-scheme}
 \end{figure}
 
@@ -1438,10 +1484,13 @@ method used for matrix initialization is the same for each run of each
 compression scheme (NNDSVD, as noted in the previous chapter). On the other hand,
 the effect of rank and the maximum number of iterations on the quality of compression
 will be explored - thus these values will not be constant.
+\\
+
+JPEG settings
 
 
 \section{Choice of images}
-http://imagecompression.info/test\_images/
+A set of 6 images has been chosen from the 
 
 
 \setsecnumdepth{part}

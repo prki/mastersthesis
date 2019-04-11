@@ -4,6 +4,7 @@ import logging
 import math
 import os
 import numpy as np
+from skimage.measure import compare_ssim as ssim
 from PIL import Image
 import cv2
 
@@ -42,7 +43,7 @@ def calc_metrics_luma(orig_filepath, compr_filepath):
 def calc_metrics_jpeg(orig_filepath):
     orig = Image.open(orig_filepath)
     orig = orig.convert('RGB')
-    compr = orig.save('./imgs/jpeg_test.jpg')
+    orig.save('./imgs/jpeg_test.jpg')
 
     mse_luma, psnr_luma = calc_metrics_luma(orig_filepath, './imgs/jpeg_test.jpg')
     mse, psnr = calc_metrics(orig_filepath, './imgs/jpeg_test.jpg')
@@ -51,6 +52,14 @@ def calc_metrics_jpeg(orig_filepath):
     return mse, psnr, mse_luma, psnr_luma
 
 
+def calc_ssim(orig_filepath, compr_filepath):
+    orig = Image.open(orig_filepath)
+    compr = Image.open(compr_filepath)
+    np_orig = np.array(orig)
+    np_compr = np.array(compr)
+
+    print(ssim(np_orig, np_compr))
+
 
 def get_jpeg_size(img_filepath):
     """ Saves the image as a JPEG, retrieves its size and deletes the image."""
@@ -58,7 +67,7 @@ def get_jpeg_size(img_filepath):
     img.save('./imgs/jpeg_test.jpg')
     size = os.path.getsize('./imgs/jpeg_test.jpg')
     os.remove('./imgs/jpeg_test.jpg')
-    
+
     return size
 
 
