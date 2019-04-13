@@ -643,7 +643,15 @@ specific file format).
 \\
 
 A colored image together with its decomposition into the \emph{R}, \emph{G}
-and \emph{B} channels can be seen on the figure \ref{fig:house-rgbdecomp}
+and \emph{B} channels can be seen in the figure \ref{fig:house-rgbdecomp}
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[scale=0.5]{imgs/house-rgbdecomp}
+  \caption{An image decomposed into the \emph{R}, \emph{G} and \emph{B} channels
+           as used in the \emph{RGB} color model.}
+  \label{fig:house-rgbdecomp}
+\end{figure}
 
 
 %[TODO] sepsat konverzi zpet (z ycbcr do rgb) - take sepsat, zda jde prevest vse
@@ -692,19 +700,30 @@ In digital images, other transformations exist, such as the one used in the JPEG
 \end{equation}
 \cite{jfif}
 
+An image decomposed into the $Y'$, $C_B$ and $C_R$ components can be seen on the figure
+\ref{fig:house-ycbcrdecomp}
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[scale=0.5]{imgs/houses-decomp-ycbcr}
+  \caption{An image decomposed into the $Y'$, $C_B$ and $C_R$ components, as used
+           in the $Y'C_BC_R$ color space. The $Y'$ component also represents the
+           grayscale image.}
+  \label{fig:house-ycbcrdecomp}
+\end{figure}
 
 \subsubsection{Use of $Y'C_{B}C_{R}$}
 Common usage of $Y'C_{B}C{R}$ stems from the human eye being more sensitive to the
-differences in luminance than color differences. By transforming colors into the $Y'C_{B}C{R}$
-color space, it is possible to separate the color data from luminance and reduce the
-amount of color difference signals - thus less resolution can be allocated for chrominance while
-keeping high resolution for the luma information. This process is called \emph{chroma
-subsampling} and is widely used in video encoding schemes, as well as in the JPEG image
-format. \cite{img:chroma-subsample}
+differences in luma than color differences. Therefore, reduced bandwidth can be
+given for chrominance components, allowing compression artifacts (or even transmission
+errors, i.e. when encoding image data for television signals) to be more efficiently
+masked, as the human eye is not as sensitive to these errors.
 \\
 
-An image decomposed into the $Y'$, $C_B$ and $C_R$ components can be seen on the figure
-\ref{fig:house-ycbcrdecomp}
+Another usage of $Y'C_BC_R$ is called \emph{chroma subsampling}, Chroma subsampling
+refers to allocating less resolution for chroma information than the luma information.
+This process is commonly used in video encoding schemes as well as in the JPEG
+image compression technique.\cite{img:chroma-subsample}
 
 
 \subsection{Grayscale}
@@ -723,23 +742,6 @@ as luma is a representation of an image's brightness.
 Encoding an uncompressed grayscale image which uses the common 8 bit per pixel
 representation would therefore create an image of a size of $width*height$, not counting
 the header and other data used by the specific file format.
-
-\begin{figure}[h]
-  \centering
-  \includegraphics[scale=0.5]{imgs/house-rgbdecomp}
-  \caption{An image decomposed into the \emph{R}, \emph{G} and \emph{B} channels
-           as used in the \emph{RGB} color model.}
-  \label{fig:house-rgbdecomp}
-\end{figure}
-
-\begin{figure}[h]
-  \centering
-  \includegraphics[scale=0.5]{imgs/houses-decomp-ycbcr}
-  \caption{An image decomposed into the $Y'$, $C_B$ and $C_R$ components, as used
-           in the $Y'C_BC_R$ color space. The $Y'$ component also represents the
-           grayscale image.}
-  \label{fig:house-ycbcrdecomp}
-\end{figure}
 
 
 \chapter{Image compression}
@@ -1170,7 +1172,7 @@ multiple times with different quality settings.
 
 \begin{figure}[h]
   \centering
-  \includegraphics[scale=0.5]{imgs/bigbuilding_compress}
+  \includegraphics[scale=0.55]{imgs/bigbuilding_compress}
   \caption{Effect of JPEG compression on an image with varying quality settings.
            First image is the original and the following images improve on the
            quality settings of a previous image. Original photography source: \cite{imgcomprbenchmark}}
@@ -1185,7 +1187,7 @@ multiple times with different quality settings.
 %  - neunikatnost NMF - muze byt rozdilna velikost se stejnou kvalitou (i kdyby se dosahlo perfekce, muze byt vice reseni, to je pak slovnikove komprimovano)
 %  - NMF posilano jen na chromu v ycbcr
 \chapter{NMF compression scheme}
-
+\ref{ch:nmfcompr}
 The previous three chapters all explored the essentials required to construct an image
 compression scheme based on non-negative matrix factorization. Utilizing these concepts,
 proof of concept compression schemes will be designed in this chapter. The implementation
@@ -1206,6 +1208,13 @@ It should be emphasized that these compression schemes are proof of concept only
 and their main goal is to empirically evaluate the effect non-negative matrix
 factorization has on images. Therefore, storage size reduction is in this case only
 the secondary goal.
+\\
+
+All the compression schemes compress data using non-negative matrix factorization.
+As it is necessary to reconstruct the matrices from one-dimensional data, a header
+containing the data related to the width and height of the original image and
+the NMF rank used is put at the start of the compressed data.
+
 
 \subsection{Naive compression scheme (RGB)}
 As an image with colors encoded using the RGB values is already
@@ -1219,7 +1228,7 @@ As non-negative matrix factorization results in creating two factor
 matrices, these factor matrices are flattened and afterwards concatenated into
 a byte string, resulting in one long string of bytes which is afterwards
 compressed using a lossless algorithm of choice (more on the specifics of
-implementation in the following chapter).
+implementation in the following chapter). 
 \\
 
 This scheme is visualized in the figure \ref{fig:nmf-naive-scheme}.
@@ -1242,8 +1251,7 @@ in each matrix).
 \\
 
 Like in the previous scheme, the factor matrices will be flattened and concatenated,
-followed by using a lossless compression technique to store the data. More on the
-specifics in the following chapter which is related to implementation.
+followed by using a lossless compression technique to store the data.
 \\
 
 This scheme is visualized in the figure \ref{fig:nmf-rgbseparate-scheme}.
@@ -1291,8 +1299,23 @@ This scheme is visualized in the figure \ref{fig:nmf-scheme}.
   \label{fig:nmf-scheme}
 \end{figure}
 
+\section{Decompression}
+Decompressing images using these compression schemes is a reversed operation. As it is
+essentially the same for each scheme, only decompression of the $Y'C_BC_R$ scheme will be
+described.
+\\
 
-\subsection{Non-deterministic properties of NMF}
+The data compressed using a lossless data compression algorithm of choice is decompressed
+utilizing it. Afterwards, the header and the data related to the $Y'$ component and the factor matrices
+are extracted from the compressed data. The header includes the width and height of the
+original matrices and the NMF rank used. By using this information, all the matrices
+are reconstructed from the flattened data. The factor matrices are multiplied together
+to reconstruct the $C_B$ and $C_R$ components. All three components are put together
+to construct an image in the $Y'C_BC_R$ color space, followed by converting the
+image into an RGB color space.
+
+
+\section{Non-deterministic properties of NMF}
 One of the properties which has been noted in chapter \ref{ch:NMF} was that
 the solution to non-negative matrix factorization is not unique. Not only that,
 but due to the problem being an optimization problem, there is no guarantee that
@@ -1340,7 +1363,9 @@ implementing the compression schemes were the following:
         lossless compression algorithm. Zlib was chosen as the lossless compression
         technique after performing non-negative matrix factorization as it is a library commonly
         used for compression. The other reason for choosing zlib was also that it is
-		 a part of the Python standard library.
+	   a part of the Python standard library.
+  \item \emph{scikit-image} - an image processing library for Python. Used for
+        calculating PSNR and SSIM.\cite{scikit-image}
 \end{itemize}
 
 The source codes together with the experiments used can be found either in the enclosed
@@ -1369,6 +1394,22 @@ and is based on SVD processes. This method has been chosen for two reasons:
 The rank and number of iterations of the NMF algorithm are parameters of the
 compression scheme and their effect on quality of image compression is explored
 in the following chapter.
+
+
+\subsection{Data types and NMF compression}
+Compression using NMF has been briefly discussed in chapter \ref{ch:NMF}. One of
+the aspects noted was the possible upper bound of rank to attain a compression ratio
+greater than 1. However, it has also been noted that it is necessary for the elements
+in factor matrices to require the same amount of storage that the elements of the
+original matrix do.
+\\
+
+However, that is not the case here, as the original data consists of 8 bit values,
+therefore natural numbers only. Factor matrices however consist of real number
+values. Thus, the data in factor matrices is represented using floating point
+numbers. In order to save space, the single-precision floating-point format was
+chosen - doing so however potentially results in more information loss than
+using double-precision would.
 
 
 \section{Compressed image data structure}
@@ -1418,15 +1459,26 @@ depends on the specific matrix stored, the table only describes the data size
 as matrix size $\times$ 4B.
 \\
 
-This data structure is compressed using zlib with the highest possible compression
-setting.
+This data structure is compressed using the zlib module with the highest possible
+compression setting.
+
+
+\section{Decompressing data}
+An important note to decompressing the image data is related to matrix multiplication.
+The factor matrices consist of real numbers, but the image data consists of natural numbers.
+Due to that, the elements of the multiplied matrix have to be rounded to the nearest number.
+This results in further possible information loss.
 
 
 % paral. runs of nmf, sparse matrix representation? different lossless algo
 \section{Possible improvements}
-While the compression schemes were implemented, there are still some areas
-which would still allow for a more efficient implementation. Some of the
-areas noted are the following:
+Certain aspects of image compression using non-negative matrix factorization
+were noticed during the time this thesis was being written, however, as
+they were out of scope, they were not implemented or analyzed. These
+aspects which were noted would allow for a more efficient implementation
+or would possibly improve the image quality. Some of the aspects
+noted are the following:
+
 \begin{itemize}
   \item Performing independent non-negative matrix factorization in parallel
   (such as in the case of the $YC_BC_R$ scheme, where factorizing the $C_B$
@@ -1449,6 +1501,9 @@ areas noted are the following:
   were not presented in the experiments and results (such as image dimensions, number
   of iterations or rank). The standard non-negative matrix factorization method was
   chosen for its general purpose approach.
+  \item Representing the factor matrices using a different datatype, possibly using fixed point
+  representation. It is unclear whether this would be an improvement or if doing so would
+  have a significant impact on the image quality, as deciding that requires further analysis.
 \end{itemize}
 
 
