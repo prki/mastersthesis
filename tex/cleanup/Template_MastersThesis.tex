@@ -177,14 +177,47 @@ The first three chapters are related to the theoretical part of the problem, stu
 to the practical part of this thesis - design and implementation of the image
 compression algorithm and its evaluation.
 
+
+\section{Related work}
+Non-negative matrix factorization is a relatively new technique and majority of
+the existing works related to non-negative matrix factorization are related to
+its applications in machine learning and others. Some of the research in the field
+of audio/video processing is related, but not limited, to:
+\begin{itemize}
+  \item Separating voices in speech mixtures or voice from background sounds. \cite{audioseparate}
+  \item Separating singing voice or musical instrument in polyphonic mixtures. \cite{audioseparate2}
+  \item Video action recognition. \cite{videorecognition}
+  \item Compression.
+\end{itemize}
+
+While the potential for the usage of non-negative matrix is high, its current usage
+is quite limited. The existing works which are specifically related to image compression
+using non-negative matrix factorization found are the following:
+\begin{itemize}
+  \item Image compression using Constrained Non-Negative Matrix Factorization \cite{imgcnmf}
+  is a work focusing mainly on non-negative matrix factorization and the effect of using
+  a slightly different method on image compression. The work reports better time results when using constrained
+  non-negative matrix factorization when compared to using the general approach, but with very low improvements
+  in the image quality.
+  \item An Image Compression Scheme in Wireless Multimedia Sensor Networks Based on NMF \cite{wirelessnmf}
+  utilizes a compression scheme based on non-negative matrix factorization but focuses more on
+  the possibility of using this compression scheme in a sensor network, rather than on the
+  image compression itself and its potential quality.
+\end{itemize}
+
+Image compression and non-negative matrix factorization has also been found in other works, but
+usually as an illustrative example rather than the target of research.
+\\
+
+This work aims to analyze the potential usability of an image compression scheme based on NMF
+strictly as a compression tool - the effect of NMF parameters on the image quality and explore
+a number of possible schemes related to the way the images would be represented.
+
 % Dale lze psat -
 %   konkretni metody volby r - to by si zaslouzilo aspon trochu silnejsi popis a vysvetleni
 %                              jednotlivych bodu
-%   nmf a obrazkovou kompresi dal asi ne, to je vec casti navrhu nmf algoritmu
 %   nimfu asi taky ne, ta bude v prakticky casti
 %   rozepsat vic least squares
-%
-% [TODO] Initial seeding
 \setsecnumdepth{all}
 \chapter{Non-negative matrix factorization}
 \label{ch:NMF}
@@ -217,7 +250,7 @@ as the columns of $W$ \cite{nmf-r-vignette}.
 \\
 
 It should be noted here that the name of the problem might be misleading, as
-the term \emph{"factorization"} is usually understood more as an exact
+the term \emph{factorization} is usually understood more as an exact
 decomposition, whereas \emph{NMF} is in reality an approximation. Thus,
 the problem is called \emph{non-negative matrix approximation} in certain
 other works, such as \cite{nmf-approx}.
@@ -1504,6 +1537,9 @@ noted are the following:
   \item Representing the factor matrices using a different datatype, possibly using fixed point
   representation. It is unclear whether this would be an improvement or if doing so would
   have a significant impact on the image quality, as deciding that requires further analysis.
+  \item Splitting up the image into multiple blocks and performing the compression scheme on these
+  blocks. This approach was not performed because early experiments showed that doing so would be very
+  time consuming - however, the results might also significantly improve the compression quality.
 \end{itemize}
 
 
@@ -1512,19 +1548,18 @@ noted are the following:
 \chapter{Experiments and results}
 \label{ch:tests}
 This chapter describes experiments performed using the compression schemes
-presented in the previous two chapters and their performance. Performance of
+presented in the previous two chapters and analyzes their performance. Performance of
 compression schemes will be measured using the following metrics:
 \begin{itemize}
-  \item Peak signal-to-noise ratio - calculated both as an average of PSNR
-  for each RGB component and averaged as well as evaluating PSNR solely using
-  the luma component.
-  \item Mean squared error - calculated both as an average of MSE for each
-  RGB component and averaged as well as evaluating MSE solely using the luma
-  component.
+  \item Peak signal-to-noise ratio, which will be calculated on the luma component
+  (on the grayscale image).
+  \item Structural similarity index
   \item Compression ratio.
   \item Compression time.
 \end{itemize}
-Together with that, the compressed images will be analyzed subjectively.
+The effect of compression on image quality will also be analyzed subjectively.
+The compressed images will also be compared with the same images compressed using
+JPEG.
 
 
 \section{Compression scheme variables}
@@ -1541,12 +1576,52 @@ the effect of rank and the maximum number of iterations on the quality of compre
 will be explored - thus these values will not be constant.
 \\
 
-JPEG settings
+The quality setting of JPEG compression is set to be constant for all the runs, with the value
+of 75.
 
 
 \section{Choice of images}
-A set of 6 images has been chosen from the 
+A set of 6 images has been chosen from the Image Compression Benchmark \cite{imgcomprbenchmark}.
+The benchmark contains a set of multiple high-resolution high-precision images from which 6
+pictures were chosen. The pictures chosen include computer-generated images as well as photographies
+in order to experiment using various images. All the images were scaled down to lower resolution than
+the original ones (while retaining the original aspect ratio) due to the high time complexity
+of solving non-negative matrix factorization. While these images can be obtained in higher
+precision than 8 bits per component, the experiments were performed using the 8 bit precision,
+as it is currently still very commonly used.
+\\
 
+The images chosen from the set are shown, together with their names, on the figure \ref{fig:benchmarkimages}.
+
+%\begin{figure}[h]
+%  \centering
+%  \includegraphics{imgs/benchmarkimages}
+%  \caption{Images used in the experiments.}
+%  \label{fig:benchmarkimages}
+%\end{figure}
+
+\section{Results using naive RGB scheme}
+fgs
+
+\section{Results using separate RGB scheme}
+fgs
+
+\section{Results using an $YC_BC_R$ scheme}
+fgs
+
+% divny barvy s randomem
+\section{Other experiments}
+In the course of implementing the compression schemes and their testing, certain
+interesting aspects of the compression schemes were found. As they are not
+related to the rest of the experiments, they are noted in this section.
+
+\subsection{More artifacts with higher rank}
+% random, naive/separate rgb, svd nedela
+fgsfds
+
+\subsection{Black squares in white space}
+% random naive rgb redundancies obrazek - okraje
+fgsfds
 
 \setsecnumdepth{part}
 \chapter{Conclusion}
