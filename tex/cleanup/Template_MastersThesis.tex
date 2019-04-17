@@ -1591,14 +1591,33 @@ precision than 8 bits per component, the experiments were performed using the 8 
 as it is currently still very commonly used.
 \\
 
-The images chosen from the set are shown, together with their names, on the figure \ref{fig:benchmarkimages}.
+The images chosen from the set are shown, together with their names, on the
+figure \ref{fig:benchmarkimages}. The information about their resolution changes
+can be found in the table \ref{tab:benchmarkimagesresolutions}.
 
-%\begin{figure}[h]
-%  \centering
-%  \includegraphics{imgs/benchmarkimages}
-%  \caption{Images used in the experiments.}
-%  \label{fig:benchmarkimages}
-%\end{figure}
+\begin{figure}[h]
+  \centering
+  \includegraphics[scale=0.5]{imgs/imagesused}
+  \caption{Images used in the experiments together with their names as found in the
+           image benchmark dataset.}
+  \label{fig:benchmarkimages}
+\end{figure}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{|l|l|l|}
+\hline
+\textbf{Image name}  & \textbf{Original resolution} & \textbf{New resolution} \\ \hline
+artificial           & 3072x2048                    & 950x633                     \\ \hline
+bridge               & 2749x4049                    & 679x1000                     \\ \hline
+deer                 & 4043x2641                    & 980x640                     \\ \hline
+hdr                  & 3072x2048                    & 1000x667                     \\ \hline
+nightshot\_iso\_1600 & 3136x2352                    & 960x720                     \\ \hline
+spider\_web          & 4256x2848                    & 960x642                     \\ \hline
+\end{tabular}
+\caption{fgsfds}
+\label{tab:benchmarkimagesresolutions}
+\end{table}
 
 \section{Results using naive RGB scheme}
 fgs
@@ -1615,13 +1634,24 @@ In the course of implementing the compression schemes and their testing, certain
 interesting aspects of the compression schemes were found. As they are not
 related to the rest of the experiments, they are noted in this section.
 
+
 \subsection{More artifacts with higher rank}
 % random, naive/separate rgb, svd nedela
 fgsfds
 
+
 \subsection{Black squares in white space}
 % random naive rgb redundancies obrazek - okraje
-fgsfds
+When attempting to perform the compression schemes based on RGB on the image
+\ref{fig:redundancies}, which was used to showcase certain redundancies present
+in images, interesting results were found. When converted into a bitmap image,
+the image has had white borders surround the image. These borders were full
+of artifacts in the form of black regions. This occured only when the
+method of seeding initial factor matrices using a random method. When the
+NNDSVD method was used, no black squares were found in the image. The
+effect can be seen in the figure \ref{fig:blacksquares}. This further shows
+that random initialization can be very harmful for compressing images using
+non-negative matrix factorization.
 
 \setsecnumdepth{part}
 \chapter{Conclusion}
