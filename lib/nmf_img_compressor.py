@@ -51,13 +51,13 @@ def output_test_results(compr_time, decompr_time, img_filepath, compressed_image
     orig_size = img_utils.get_orig_size(img_filepath)
     jpeg_size = img_utils.get_jpeg_size(img_filepath)
     compr_ratio = orig_size / len(compressed_image)
-    mse, psnr = img_utils.calc_metrics(img_filepath, decompr_path)
-    mse_luma, psnr_luma = img_utils.calc_metrics_luma(img_filepath, decompr_path)
-    jpeg_mse, jpeg_psnr, jpeg_mse_luma, jpeg_psnr_luma = img_utils.calc_metrics_jpeg(img_filepath)
+    psnr = img_utils.calc_psnr_skimage(img_filepath, decompr_path)
+    ssim = img_utils.calc_ssim(img_filepath, decompr_path)
+    psnr_jpeg, ssim_jpeg = img_utils.calc_metrics_jpeg(img_filepath)
 
     csv_out = [imgname, orig_size, jpeg_size, comprscheme, nmfrank, nmfiter, nmfseed,
                len(compressed_image), compr_ratio, compr_time, decompr_time, psnr,
-               psnr_luma, mse, mse_luma, jpeg_psnr, jpeg_psnr_luma, jpeg_mse, jpeg_mse_luma]
+               ssim, psnr_jpeg, ssim_jpeg]
 
     output_to_csv(csv_out)
 
@@ -342,7 +342,7 @@ def test_naive_rgb_scheme(img_filepath, max_iter, rank, dtype, seed):
     decompr_time = decompr_time_end - decompr_time_begin
 
     imgname = resolve_path(img_filepath)
-    decompr_path = './imgs/compress/naive24/{0}_naive24_rank{1}_iter{2}.png'.format(imgname, rank, max_iter)
+    decompr_path = './imgs/compress/naive24/{0}_naive24_rank{1}_iter{2}_seed{3}.png'.format(imgname, rank, max_iter, seed)
 
     output_test_results(compr_time, decompr_time, img_filepath, compressed_image, decompr_path,
                         decompr_img, 'naive24', rank, max_iter, seed)
@@ -378,12 +378,15 @@ def main():
     #test_ycbcr_scheme(img_filepath, 200, 20, dtype=np.float32, seed='nndsvd')
     #ycbcr_scheme(img_filepath, 200, 20, dtype=np.float32, seed='nndsvd')
 
-    #for rank in range(5, 21):
-    #    test_ycbcr_scheme(img_filepath, 300, rank, dtype=np.float32, seed='nndsvd')
-    #test_naive_rgb_scheme(img_filepath, 50, 50, dtype=np.float32, seed='nndsvd')
-    #test_separate_rgb_scheme(img_filepath, 50, 50, dtype=np.float32, seed='nndsvd')
-    test_ycbcr_scheme(img_filepath, 200, 20, dtype=np.float32, seed='nndsvd')
-
+    filenames = ['artificial.png', 'bridge.png', 'deer.png', 'hdr.png', 'nightshot_iso_1600.png', 'spider_web.png']
+    for filename in filenames:
+        for rank in range(5, 151):
+            test_separate_rgb_scheme(filename, 300, rank, dtype=np.float32, seed='nndsvd')
+        #test_ycbcr_scheme(img_filepath, 300, rank, dtype=np.float32, seed='nndsvd')
+        #test_naive_rgb_scheme(img_filepath, 300, rank, dtype=np.float32, seed='nndsvd')
+    #test_naive_rgb_scheme(img_filepath, 300, 100, dtype=np.float32, seed='nndsvd')
+    #test_separate_rgb_scheme(img_filepath, 300, 100, dtype=np.float32, seed='random')
+    #test_ycbcr_scheme(img_filepath, 300, 5, dtype=np.float32, seed='nndsvd')
 
 
 if __name__ == '__main__':

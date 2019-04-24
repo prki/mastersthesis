@@ -1619,8 +1619,12 @@ spider\_web          & 4256x2848                    & 960x642                   
 \label{tab:benchmarkimagesresolutions}
 \end{table}
 
+
 \section{Results using naive RGB scheme}
-fgs
+\subsection{Variable rank}
+In these experiments, the maximum amount of iterations before non-negative matrix
+factorization would converge was set in all cases to 300 - only the rank was changed.
+ 
 
 \section{Results using separate RGB scheme}
 fgs
@@ -1637,21 +1641,46 @@ related to the rest of the experiments, they are noted in this section.
 
 \subsection{More artifacts with higher rank}
 % random, naive/separate rgb, svd nedela
-fgsfds
+Before seeding the initial factor matrices using the NNDSVD method, various other
+ones were used - together with random seeding. While some of the results on testing
+images were satisfactory, some of the results were very surprising. One of these were
+that higher rank could lead to far higher information loss - or rather, introduce far more
+artifacts into an image than using lower rank. On the other hand, when using NNDSVD,
+the images were absolutely the same when choosing higher rank, rather than deteriorating
+the image quality.
+\\
+
+Other effects of using the random seeding method instead of NNDSVD were also far higher
+times of compression due to more iterations required to achieve convergence and far worse
+compression ratios, as the amount of artifacts present in the image became far higher. The
+effect of using random method on a sample image can be seen in the figure \ref{fig:random-seed}.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[scale=0.5]{imgs/random-seed-artifacts}
+  \caption{A sample image where random seeding method produces inconsistent results
+           when increasing rank.}
+  \label{fig:random-seed}
+\end{figure}
 
 
-\subsection{Black squares in white space}
-% random naive rgb redundancies obrazek - okraje
+\subsection{Black squares in white borders}
+% naive rgb redundancies obrazek - okraje
 When attempting to perform the compression schemes based on RGB on the image
 \ref{fig:redundancies}, which was used to showcase certain redundancies present
 in images, interesting results were found. When converted into a bitmap image,
-the image has had white borders surround the image. These borders were full
-of artifacts in the form of black regions. This occured only when the
-method of seeding initial factor matrices using a random method. When the
-NNDSVD method was used, no black squares were found in the image. The
-effect can be seen in the figure \ref{fig:blacksquares}. This further shows
-that random initialization can be very harmful for compressing images using
-non-negative matrix factorization.
+the image has had white borders surround the image. After compressing this image
+using the RGB compression schemes, distinct black lines filled large portions of these
+white borders, as seen in the image \ref{fig:blacksquares}. These artifacts occur with
+both compression schemes based on RGB. The reason why these artifacts occur is unknown.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[scale=0.65]{imgs/redundancies_black_border}
+  \caption{Black areas in the white border which occur after compressing a grayscale image
+  		  using an RGB scheme.}
+  \label{fig:blacksquares}
+\end{figure}
 
 \setsecnumdepth{part}
 \chapter{Conclusion}
