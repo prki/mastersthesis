@@ -5,6 +5,7 @@ import math
 import os
 import numpy as np
 from skimage.measure import compare_ssim as ssim
+from skimage.measure import compare_psnr
 from PIL import Image
 import cv2
 
@@ -45,20 +46,31 @@ def calc_metrics_jpeg(orig_filepath):
     orig = orig.convert('RGB')
     orig.save('./imgs/jpeg_test.jpg')
 
-    mse_luma, psnr_luma = calc_metrics_luma(orig_filepath, './imgs/jpeg_test.jpg')
-    mse, psnr = calc_metrics(orig_filepath, './imgs/jpeg_test.jpg')
+    #mse_luma, psnr_luma = calc_metrics_luma(orig_filepath, './imgs/jpeg_test.jpg')
+    #mse, psnr = calc_metrics(orig_filepath, './imgs/jpeg_test.jpg')
+    psnr = calc_psnr_skimage(orig_filepath, './imgs/jpeg_test.jpg')
+    ssim = calc_ssim(orig_filepath, './imgs/jpeg_test.jpg')
     os.remove('./imgs/jpeg_test.jpg')
 
-    return mse, psnr, mse_luma, psnr_luma
+    return psnr, ssim
+
+
+def calc_psnr_skimage(orig_filepath, compr_filepath):
+    orig = Image.open(orig_filepath)
+    compr = Image.open(compr_filepath)
+    np_orig_gray = pil2grayscale(orig)
+    np_compr_gray = pil2grayscale(compr)
+
+    return compare_psnr(np_orig_gray, np_compr_gray)
 
 
 def calc_ssim(orig_filepath, compr_filepath):
     orig = Image.open(orig_filepath)
     compr = Image.open(compr_filepath)
-    np_orig = np.array(orig)
-    np_compr = np.array(compr)
+    np_orig = np.array(pil2grayscale(orig))
+    np_compr = np.array(pil2grayscale(compr))
 
-    print(ssim(np_orig, np_compr))
+    return ssim(np_orig, np_compr)
 
 
 def get_jpeg_size(img_filepath):

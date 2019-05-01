@@ -380,8 +380,11 @@ def main():
 
     filenames = ['artificial.png', 'bridge.png', 'deer.png', 'hdr.png', 'nightshot_iso_1600.png', 'spider_web.png']
     for filename in filenames:
-        for rank in range(5, 151):
-            test_separate_rgb_scheme(filename, 300, rank, dtype=np.float32, seed='nndsvd')
+        for max_iter in range(150, 450):
+            #test_ycbcr_scheme(filename, max_iter, 150, dtype=np.float32, seed='nndsvd') 
+            test_naive_rgb_scheme(filename, max_iter, 150, dtype=np.float32, seed='nndsvd')
+        #for rank in range(5, 151):
+        #    test_separate_rgb_scheme(filename, 300, rank, dtype=np.float32, seed='nndsvd')
         #test_ycbcr_scheme(img_filepath, 300, rank, dtype=np.float32, seed='nndsvd')
         #test_naive_rgb_scheme(img_filepath, 300, rank, dtype=np.float32, seed='nndsvd')
     #test_naive_rgb_scheme(img_filepath, 300, 100, dtype=np.float32, seed='nndsvd')

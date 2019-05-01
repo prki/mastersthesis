@@ -1572,12 +1572,15 @@ as matrix initialization.
 In order for the experiments to be replicable, the algorithm used and the
 method used for matrix initialization is the same for each run of each
 compression scheme (NNDSVD, as noted in the previous chapter). On the other hand,
-the effect of rank and the maximum number of iterations on the quality of compression
-will be explored - thus these values will not be constant.
+the effect of rank on the quality of compression will be explored - thus, rank will
+not be constant. In the case of the compression scheme performing the best, the effect
+of maximum number of iterations on PSNR and SSIM will also be explored.
 \\
 
 The quality setting of JPEG compression is set to be constant for all the runs, with the value
-of 75.
+of 75. In the runs where rank was the variable, maximum number of iterations was set to
+300. In the runs where maximum number of iterations was the variable, the rank was set
+to 150.
 
 
 \section{Choice of images}
@@ -1615,24 +1618,194 @@ hdr                  & 3072x2048                    & 1000x667                  
 nightshot\_iso\_1600 & 3136x2352                    & 960x720                     \\ \hline
 spider\_web          & 4256x2848                    & 960x642                     \\ \hline
 \end{tabular}
-\caption{fgsfds}
+\caption{Resolutions of benchmark images after scaling them down. Scaling was done
+		due to high time requirements of non-negative matrix factorization.}
 \label{tab:benchmarkimagesresolutions}
 \end{table}
 
 
-\section{Results using naive RGB scheme}
+\section{Results using the naive RGB scheme}
 \subsection{Variable rank}
-In these experiments, the maximum amount of iterations before non-negative matrix
-factorization would converge was set in all cases to 300 - only the rank was changed.
- 
-
-\section{Results using separate RGB scheme}
 fgs
 
-\section{Results using an $YC_BC_R$ scheme}
+\section{Results using the separate RGB scheme}
 fgs
 
-% divny barvy s randomem
+\section{Results using the $YC_BC_R$ scheme}
+Altogether, the performance of the scheme based on compressing only the chroma
+information using non-negative matrix factorization showed itself to be much
+better than in the previous two cases, mostly achieving very high SSIM values
+and high PSNR values. At the same time, thanks to converging slightly faster,
+the compression times were also not as high.
+\\
+
+\subsection{Image quality}
+The effect of rank on the compression quality seems to be tied together closely
+- higher the rank, less information would be lost, generally. Only one image
+showed itself to be problematic and required higher rank to achieve good quality (the image called
+\emph{artificial}). In all the other cases, it would have been possible to set the
+rank to a very low value and still achieve very high compression quality. The results have
+shown themselves to be very similar both when using PSNR and SSIM as the metrics. The
+visualized results can be seen in the figure \ref{fig:ssim_ycbcr}.
+\\
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[scale=0.65]{imgs/results/psnr_ssim_ycbcr}
+  \caption{Results of measuring SSIM on benchmark images using a variable rank.
+  		  Note that except for one image, the SSIM changes only extremely slightly
+  		  with higher rank, thus making it possible to use very low rank and still
+  		  achieve good compression quality.}
+  \label{fig:ssim_ycbcr}
+\end{figure}
+
+The maximum obtained SSIM/PSNR values were essentially the same for all images, reaching
+SSIM over $0.99$ in most cases and reaching PSNR values of ca. 48 dB. In most experiments
+with other rank settings, these values were essentially not improved on using this configuration. 
+
+\subsection{Compression time/ratio}
+As in all the cases before, rank affects the compression ratio - \emph{TODO} compare with the previous
+schemes.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[scale=0.8]{imgs/results/comprtimeratio_ycbcr}
+  \caption{Visualization of the effect of rank on compression time and ratio.}
+  \label{fig:comprtimeratio_ycbcr}
+\end{figure}
+
+\subsection{Comparison with JPEG}
+The scheme based on compressing chroma information has shown itself to possibly
+perform even better than JPEG with optimal rank choice for each image. In the case
+of all six images, the values of SSIM and PSNR achieved higher values in their maximum than the SSIM and PSNR values
+of the same images compressed using JPEG. The comparison can be seen in the table \ref{tab:ycbcrvsjpeg}.
+Visually, image compression using NMF can produce better images and certain artifacts which are common
+in JPEG images are not present in images compressed in this way (as shown in the next section).
+\\
+
+However, even though the compression scheme is able to lose less information content, it is significantly
+beaten by JPEG when it comes to size of the images. This can be seen visually in the graph \ref{fig:filesize_comparison},
+which shows images compressed using rank 20 and their respective filesizes, compared to the filesizes of images
+compressed with JPEG.
+
+\begin{table}[]
+\centering
+\begin{tabular}{|l|l|l|l|l|}
+\hline
+\textbf{Image name}  & \textbf{SSIM} & \textbf{PSNR} & \textbf{SSIM (JPEG)} & \textbf{PSNR (JPEG)} \\ \hline
+artificial           & 0.993             & 48.30             & 0.974                & 38.25                \\ \hline
+bridge               & 0.999             & 48.00             & 0.950                & 35.40                \\ \hline
+deer                 & 0.999             & 48.02             & 0.957                & 40.29                \\ \hline
+hdr                  & 0.999             & 48.14             & 0.975                & 41.88                \\ \hline
+nightshot\_iso\_1600 & 0.998             & 48.07             & 0.935                & 38.86                \\ \hline
+spider\_web          & 0.999             & 47.99             & 0.980                & 42.61                \\ \hline
+\end{tabular}
+\caption{A table showing the maximum achieved values of chosen metrics when using
+         the $YC_BC_R$ compression scheme and comparing them with the results using
+         JPEG.}
+\label{tab:ycbcrvsjpeg}
+\end{table}
+
+\begin{figure}
+  \centering
+  \includegraphics[scale=0.8]{imgs/results/filesize_comparison}
+  \caption{Comparison between original image sizes and image sizes of images compressed using NMF (YCbCr scheme)
+           at a specific rank and JPEG image sizes. Even though NMF image compression can produce
+           high quality images with far lower sizes, JPEG still significantly outperforms the NMF
+           compression scheme.}
+  \label{fig:filesize_comparison}
+\end{figure}
+
+\subsection{Image quality improvement with more NMF iterations}
+As the $YC_BC_R$ compression scheme has proven to be the one performing the best
+out of the three, additional experiments were performed related to the effect
+of number of maximum possible iterations on the image quality. In these experiments,
+the value of rank was set to 150 and the maximum number of iterations was in the range
+$[150;450]$. Visualization of these experiments' results can be seen in the figure \ref{fig:maxiter_ycbcr}.
+\\
+
+While maximum number of iterations results in images closer to the original (as the
+approximation improves), the improvement has been shown to be relatively small. The effect
+on SSIM is essentially unnoticable in all images but one, where the SSIM gain is still
+quite low. However, in the case of PSNR, the improvements are easier to see - however, these
+improvements are still very low.
+\\
+
+\begin{figure}
+  \centering
+  \includegraphics[scale=0.8]{imgs/results/psnr_ssim_maxiter_ycbcr}
+  \caption{A figure displaying the effect of maximum number of multiplicative updates
+           iterations on the image quality. While both SSIM as well as PSNR can be
+           improved upon, the difference is very small, in most cases not resulting in
+           very significant PSNR gain.}
+  \label{fig:maxiter_ycbcr}
+\end{figure}
+
+By lowering the maximum number of iterations, the compression time can be significantly lowered as well,
+while not having a high impact on the compression quality, as shown in the figure \ref{fig:maxiter_ycbcr_comprtime}.
+While the effect of number of iterations on image quality has not shown to be very significant,
+it does have a linear effect on compression time requirements.
+
+\begin{figure}
+  \centering
+  \includegraphics[scale=0.8]{imgs/results/maxiter_ycbcr_comprtime}
+  \caption{A figure displaying compression time depending on the maximum number of iterations.}
+  \label{fig:maxiter_ycbcr_comprtime}
+\end{figure}
+
+\subsection{Subjective analysis of results}
+While the results show that images compressed using this method can be very
+accurate, there is still information lost in the process related to chroma values.
+This can be easily seen on the image named \emph{artificial} where compressing
+certain regions of an image creates many artifacts, especially if these regions
+mainly consist of certain colors (red, purple and dark blue). It hasn't been found out if
+certain colors are more prone to these artifacts by default or if these
+artifacts are rather related to certain image properties. A comparison between a region
+of an image showing the difference between using JPEG and the $YC_BC_R$ compression
+scheme can be seen in the figures \ref{fig:nmfvsjpgartifacts} and \ref{fig:nmfvsjpgzoom}.
+\\
+
+\begin{figure}
+  \centering
+  \includegraphics[scale=0.33]{imgs/results/nmfvsjpgartifacts}
+  \caption{Region of the image named \emph{artificial} showcasing the difference
+           between our compression scheme using NMF and between JPEG. First image
+           shows the uncompressed vesion, second image using compression with NMF,
+           last image is compressed using JPEG. While small differences are
+           noticable, second image loses less information on certain colors (mostly
+           on the right cubes).}
+  \label{fig:nmfvsjpgartifacts}
+\end{figure}
+
+\begin{figure}
+  \centering
+  \includegraphics[scale=0.5]{imgs/results/nmfjpgzoom}
+  \caption{Zoomed in region from the figure \ref{fig:nmfvsjpgartifacts}. First image
+           was compressed using the $YC_BC_R$ scheme, second one has been compressed
+           using JPEG. The JPEG artifacts surrounding the cubes are easier to notice
+           and the NMF compression scheme is able to keep the structure of an image
+           better. However, the NMF compression scheme also produces artifacts in the
+           area behind the cubes in the form of slightly blue tones in the background.}
+  \label{fig:nmfvsjpgzoom}
+\end{figure}
+
+SImilar problems however occur when compressing the same image using JPEG.
+The exact same image region has problems with the same colors and also produces artifacts in the
+neighbouring areas to the cubes, as JPEG compresses small $8 \times 8$ pixel regions.
+This is one of the main advantages of the $YC_BC_R$ compression scheme when
+compared to JPEG - structure of an image is, for the most part, very unaffected,
+as only the color values change.
+\\
+
+In most cases where the compression loses information, the human eye does not perceive
+the information loss as artifacts per se but rather simply loss of color information - resulting
+in colors being slightly inaccurate (less bright or a bit darker). This can be seen on the
+image named \emph{hdr}. While the structure of an image is kept, some of the colors are slightly
+inaccurate - such as the small region of an image showed in the figure \ref{fig:hdr-colorinacc},
+where small regions with slightly brighter colors can be seen. These changes are, however, difficult
+to notice without focusing on them.
+
+
 \section{Other experiments}
 In the course of implementing the compression schemes and their testing, certain
 interesting aspects of the compression schemes were found. As they are not
@@ -1681,6 +1854,12 @@ both compression schemes based on RGB. The reason why these artifacts occur is u
   		  using an RGB scheme.}
   \label{fig:blacksquares}
 \end{figure}
+
+
+\subsection{Different seeding method}
+% ycbcr + random
+For this experiment, a different seeding method than NNDSVD was chosen - in this case, a
+random\_vcol method.
 
 \setsecnumdepth{part}
 \chapter{Conclusion}
