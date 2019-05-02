@@ -7,16 +7,16 @@ def create_ssim_graph(data, method):
     filenames = data['filename'].drop_duplicates().values.tolist()
     filenames.sort()
     for filename in filenames:
-        df = data[['filename', 'nmf_iter', 'ssim']]
+        df = data[['filename', 'nmf_rank', 'ssim']]
         df = df.loc[df['filename'] == filename]
-        np_ranks = np.array(df['nmf_iter'].drop_duplicates().values.tolist())
+        np_ranks = np.array(df['nmf_rank'].drop_duplicates().values.tolist())
         np_ssims = np.array(df['ssim'].drop_duplicates().values.tolist())
         plt.subplot(2, 1, 1)
         plt.plot(np_ranks, np_ssims, label=filename[:-4])  # -4 - remove the .png
         #plt.legend([filename])
     plt.legend()
-    plt.title('SSIM and PSNR, variable max iterations, YCbCr scheme.')
-    plt.xlabel('Maximum number iterations')
+    plt.title('SSIM and PSNR, variable number of ranks, naive RGB scheme.')
+    plt.xlabel('Rank')
     plt.ylabel('SSIM')
     #plt.show()
     #plt.savefig('ssim_ycbcr.pdf')
@@ -27,9 +27,9 @@ def create_psnr_graph(data, method):
     filenames = data['filename'].drop_duplicates().values.tolist()
     filenames.sort()
     for filename in filenames:
-        df = data[['filename', 'nmf_iter', 'psnr']]
+        df = data[['filename', 'nmf_rank', 'psnr']]
         df = df.loc[df['filename'] == filename]
-        np_ranks = np.array(df['nmf_iter'].drop_duplicates().values.tolist())
+        np_ranks = np.array(df['nmf_rank'].drop_duplicates().values.tolist())
         np_psnrs = np.array(df['psnr'].values.tolist())
         #print(np_ranks)
         #print(np_psnrs)
@@ -38,7 +38,7 @@ def create_psnr_graph(data, method):
 
     plt.legend()
     #plt.title('PSNR of benchmark images, variable rank. YCbCr scheme.')
-    plt.xlabel('Maximum number of iterations')
+    plt.xlabel('Rank')
     plt.ylabel('PSNR [dB]')
     #plt.show()
     #plt.savefig('psnr_ycbcr.pdf')
@@ -49,16 +49,16 @@ def create_time_graph(data, method):
     filenames = data['filename'].drop_duplicates().values.tolist()
     filenames.sort()
     for filename in filenames:
-        df = data[['filename', 'compr_time', 'nmf_iter']]
+        df = data[['filename', 'compr_time', 'nmf_rank']]
         df = df.loc[df['filename'] == filename]
-        np_ranks = np.array(df['nmf_iter'].drop_duplicates().values.tolist())
+        np_ranks = np.array(df['nmf_rank'].drop_duplicates().values.tolist())
         np_times = np.array(df['compr_time'].drop_duplicates().values.tolist())
 
-        #plt.subplot(2, 1, 1)
+        plt.subplot(2, 1, 1)
         plt.plot(np_ranks, np_times, label=filename[:-4])
 
-    plt.title('Compr. time of benchmark images, variable max iters, YCbCr scheme')
-    plt.xlabel('Maximum number of iterations')
+    plt.title('Compr. time and ratio of benchmark images, variable rank, naive RGB')
+    plt.xlabel('Rank')
     plt.ylabel('Time [s]')
     plt.legend()
 
@@ -138,7 +138,7 @@ def barchart_imgsizes(data):
 
 def main():
     #data = pd.read_csv('./results/img_results_varrank.csv', delimiter=',')
-    data = pd.read_csv('./results/img_results.csv', delimiter=',')
+    data = pd.read_csv('./results/img_results_varrank.csv', delimiter=',')
     data = data.drop_duplicates(subset=('filename', 'nmf_method', 'nmf_rank', 'nmf_iter', 'nmf_seed'))
     #print(data[(data.filename == 'out-of-focus.png') & (data.nmf_method == 'ycbcr')])  # noqa
     #create_ssim_graph(data, 'ycbcr')
@@ -152,14 +152,25 @@ def main():
     #plt.savefig('psnr_ssim_ycbcr.pdf')
     #create_psnr_graph(data, 'naive24')
     #create_psnr_graph(data, 'naive24')
+    #create_psnr_graph(data, 'naive24')
+    #create_ssim_graph(data, 'naive24')
+    #plt.tight_layout()
+    #plt.savefig('psnr_ssim_naive24.pdf')
+    #plt.show()
     #compare_jpeg(data, 'ycbcr')
     #barchart_imgsizes(data)
-    create_time_graph(data, 'ycbcr')
-    plt.tight_layout()
-    plt.savefig('comprtime_maxiter_ycbcr.pdf')
+    #create_time_graph(data, 'ycbcr')
+    #plt.tight_layout()
+    #plt.savefig('comprtime_maxiter_ycbcr.pdf')
     #create_ratio_graph(data, 'ycbcr')
     #plt.tight_layout()
     #plt.savefig('comprtimeratio_ycbcr.pdf')
+
+    create_time_graph(data, 'naive24')
+    create_ratio_graph(data, 'naive24')
+    plt.tight_layout()
+    #plt.show()
+    plt.savefig('comprtimeratio_naive24.pdf')
 
 
 if __name__ == '__main__':

@@ -107,7 +107,7 @@ of data transfer.
 
 To put the problem into perspective, in order to store images in the resolutions
 currently considered as high resolution (1920x1080 pixels, the second most common
-resolution used on desktop devices \cite{res-stats}.
+resolution used on desktop devices \cite{res-stats}).
 When storing an image with these dimensions using an uncompressed standard encoding,
 the filesize would be almost 6 megabytes. Such a high size impacts many areas, such as
 speed of transfer or storage costs. Fortunately, modern image compression formats such as
@@ -122,7 +122,7 @@ Being able to obtain these images fast and in good quality is therefore highly i
 as it is important for the owners of these services to be able to store this data.
 \\
 
-In the recent years with growht related to machine learning and similar areas, such as artifical
+In the recent years with growth related to machine learning and related areas, such as artifical
 intelligence, new applications of mathematical concepts were discovered. Some of these concepts
 which are enjoying high success are algorithms related to \emph{dimensionality reduction}. These
 algorithms aim to reduce the number of random variables under consideration \cite{dimens-reduction}.
@@ -134,12 +134,13 @@ algorithms are essentially also compression algorithms. One of the algorithms us
 reduction and the one which this thesis focuses on is \emph{non-negative matrix factorization} (abbreviated
 as \emph{NMF}). The \emph{NMF} algorithm is currently used in areas such as facial recognition or
 astronomy. Heart of the algorithm is the factorization of a matrix consisting of non-negative values into
-matrices.
+two factor matrices.
 \\
 
 The research in image compression methods using dimensionality reduction algorithms is currently being
 performed - another dimensionality reduction algorithm and its potential usage for image compression 
-which has been well researched is the \emph{singular value decomposition} algorithm, for example in \cite{svd-compression}. This algorithm, just like the \emph{NMF}, factorizes a matrix - however, without
+which has been well researched is the \emph{singular value decomposition} algorithm, for example
+in \cite{svd-compression}. This algorithm, just like the \emph{NMF}, factorizes a matrix - however, without
 restricting the values to be non-negative. While certain similar research to see whether
 \emph{NMF} can be used for image compression exists, the works are related to very
 specific use-case scenarios.
@@ -169,7 +170,8 @@ addressed:
 \end{itemize} 
 At the end of the thesis, the proof of concept algorithm will be compared to
 the state of the art image compression algorithms and possible points related
-to further analysis or will be explored.
+to further analysis or further improvements of the algorithm or its implementation
+will be discussed..
 \\
 
 The first three chapters are related to the theoretical part of the problem, studying
@@ -244,7 +246,7 @@ finding an approximation
 where $W, H$ are $n \times r$ and $r \times p$ non-negative matrices, respectively - meaning
 all the elements of the matrices are non-negative.
 In practice, the rank $r$ is often chosen such that $r \ll min(n,p)$. This is due
-to the reason than in many common applications of non-negative matrix factorization,
+to the reason that in many common applications of non-negative matrix factorization,
 the information contained in the matrix $V$ is summarized and split into $r$ factors
 as the columns of $W$ \cite{nmf-r-vignette}.
 \\
@@ -698,7 +700,7 @@ are considered the \emph{chroma components}, and represent the color information
 
 \subsubsection{Luma}
 The \emph{luma} value is represented in the $Y'C_{B}C_{R}$ model by the symbol $Y'$
-and representes the brightness of an image. $Y$ itself is considered to be the \emph{relative
+and represents the brightness of an image. $Y$ itself is considered to be the \emph{relative
 luminance}. Relative luminance is a metric of light intensity as it appears to the human eye.
 The prime symbol ($Y'$) denotes that \emph{gamma correction} has been utilized. Gamma correction
 is an operation related to nonlinearity of light perception - when twice the number of
@@ -883,7 +885,7 @@ encoding} (sometimes also called \emph{delta compression}). Delta encoding encod
 a sequence of messages not by their values but by calculating the difference
 between two elements.\cite{signalprocessing} Thus, a sequence such as
 \begin{align*}
-  10000, 10002, 10001, 99999, 10000
+  10000, 10002, 10001, 9999, 10000
 \end{align*}
 can be modelled as a sequence where the numbers have very small differences.
 When shown as a sequence of differences, with the original value, the sequence
@@ -1220,7 +1222,7 @@ multiple times with different quality settings.
 %  - neunikatnost NMF - muze byt rozdilna velikost se stejnou kvalitou (i kdyby se dosahlo perfekce, muze byt vice reseni, to je pak slovnikove komprimovano)
 %  - NMF posilano jen na chromu v ycbcr
 \chapter{NMF compression scheme}
-\ref{ch:nmfcompr}
+\label{ch:nmfcompr}
 The previous three chapters all explored the essentials required to construct an image
 compression scheme based on non-negative matrix factorization. Utilizing these concepts,
 proof of concept compression schemes will be designed in this chapter. The implementation
@@ -1543,8 +1545,6 @@ noted are the following:
 \end{itemize}
 
 
-%[TODO] vyzkouset udelat obrazky ktery se sestavaji jen z par barev, ty by mohly byt
-% turbopresny - sestavaji se jen z nekolika komponent, init
 \chapter{Experiments and results}
 \label{ch:tests}
 This chapter describes experiments performed using the compression schemes
@@ -1558,8 +1558,13 @@ compression schemes will be measured using the following metrics:
   \item Compression time.
 \end{itemize}
 The effect of compression on image quality will also be analyzed subjectively.
-The compressed images will also be compared with the same images compressed using
-JPEG.
+The compression scheme performing the best will also be compared with JPEG image
+compression.
+\\
+
+The results can also be found and used for further analysis in a comma-separated
+value format online in a GitHub repository using the url \url{https://github.com/prki/mastersthesis}
+or in the enclosed CD.
 
 
 \section{Compression scheme variables}
@@ -1625,8 +1630,91 @@ spider\_web          & 4256x2848                    & 960x642                   
 
 
 \section{Results using the naive RGB scheme}
-\subsection{Variable rank}
-fgs
+The naive RGB scheme, which performs non-negative matrix factorization on
+the entire RGB matrix, has proven to be very lossy. Not only that, but as
+will be shown in the following subsections, the naive RGB compression
+scheme is able to introduce artifacts into images which make certain
+structures impossible to notice well.
+
+\subsection{Image quality}
+While the image compression can be very lossy, the structural similarity of images can still be
+fairly high - achieving values over 0.75 in majority of images already with rank 5.
+The choice of rank has strong effect on the image quality - in some test cases,
+having a noticable effect on the structural similarity, but more noticably, the
+effect of rank can be seen on PSNR, which measures entire error and where rank
+changes the PSNR value significantly (i.e. from PSNR of ca. 22dB to over 27.5dB).
+\\
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[scale=0.7]{imgs/results/psnr_ssim_naive24}
+  \caption{Results of measuring SSIM and PSNR on benchmark images using
+  		 a variable rank and the naive RGB compression scheme. In all cases,
+  		 higher rank results in better image quality - with noticable improvements.}
+  \label{fig:psnr_ssim_naive24}
+\end{figure}
+
+However, the peak signal-to-noise ratio values are still quite low and are usually
+not considered to result in images which would have good quality. However, since
+structure of images can be kept relatively well, the images could still be used
+for computer image processing, rather than for the human eye. The effect of image
+compression using the naive RGB scheme and the artifacts which the human eyes see are
+explored in the subsection \ref{sec:subj_analysis_naive}.
+
+\subsection{Compression time/ratio}
+The naive RGB compression scheme achieved the best compression ratios out of all three
+schemes. However, time-wise, it falls short when compared to the $YC_BC_R$ scheme - even though
+the $YC_BC_R$ compression scheme performs NMF on two different matrices (although containing
+slightly less data). While the compression ratio can be fairly high at lower ranks, unfortunately the image
+information loss is very easy to notice at low ranks.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[scale=0.7]{imgs/results/comprtimeratio_naive24}
+  \caption[Compression time and ratio of naive RGB scheme, variable rank]{Figure showing
+           the effect of rank on compression time and compression ratio when using
+           the naive RGB scheme. Compression ratio can be very good for lower ranks, but as
+           shown in the experiments, the image quality is very low when using these ranks.}
+  \label{fig:comprtimeratio_naive24}
+\end{figure}
+
+\subsection{Subjective analysis}
+\label{sec:subj_analysis_naive}
+The effect of rank is very easy to see when compressing images using the naive RGB
+scheme. At lower ranks, essentially only the general structure of an image can be seen.
+At higher ranks, the image becomes clearer and the details of an image become easy to
+see. However, the images still contain a lot of noise in colors - regions with the same
+color seem to contain a lot of grain. This can be seen in the figure \ref{fig:bridge_imgqual},
+which shows the same image compressed using different rank side-by-side.
+\\
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[scale=0.5]{imgs/results/bridge_imgqual}
+  \caption{Compressing the \emph{bridge} image using the naive RGB scheme.
+           Ranks used (from left to right): 5, 20, 75, 150. Even though
+           higher ranks result in significant improvement of image
+           quality, the images are very lossy and contain a lot of noise.}
+  \label{fig:bridge_imgqual}
+\end{figure}
+
+One of the problems of the naive RGB scheme which however make it difficult to use
+is that the scheme introduces artifacts which are very easy to notice and which
+corrupt the original image severely. Likely, this is not only a problem of the
+naive RGB scheme but possibly a problem of the multiplicative updates method or
+of the NNDSVD seeding method, as it seems these artifacts are a result of stopping
+in a local optimum. These artifacts do not disappear with higher ranks, but only
+change their shape very slightly. These artifacts can be seen in the image \ref{fig:artifacts_naive}.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[scale=0.3]{imgs/results/nightshot_artifacts}
+  \caption[Artifacts occuring in naive RGB compression scheme]{Image compressed using the
+           naive RGB compression scheme where some of the artifacts are very
+           easy to notice - especially on the right side, where almost all original data
+           was lost. These artifacts hardly disappear with higher rank.}
+  \label{fig:artifacts_naive}
+\end{figure}
 
 \section{Results using the separate RGB scheme}
 fgs
@@ -1651,8 +1739,9 @@ visualized results can be seen in the figure \ref{fig:ssim_ycbcr}.
 
 \begin{figure}[h]
   \centering
-  \includegraphics[scale=0.65]{imgs/results/psnr_ssim_ycbcr}
-  \caption{Results of measuring SSIM on benchmark images using a variable rank.
+  \includegraphics[scale=0.7]{imgs/results/psnr_ssim_ycbcr}
+  \caption{Results of measuring SSIM and PSNR on benchmark images using a variable rank
+           and the $YC_BC_R$ compression scheme.
   		  Note that except for one image, the SSIM changes only extremely slightly
   		  with higher rank, thus making it possible to use very low rank and still
   		  achieve good compression quality.}
@@ -1670,7 +1759,8 @@ schemes.
 \begin{figure}[h]
   \centering
   \includegraphics[scale=0.8]{imgs/results/comprtimeratio_ycbcr}
-  \caption{Visualization of the effect of rank on compression time and ratio.}
+  \caption{Visualization of the effect of rank on compression time and ratio
+           on the $YC_BC_R$ compression scheme.}
   \label{fig:comprtimeratio_ycbcr}
 \end{figure}
 
