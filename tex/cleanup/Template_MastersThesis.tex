@@ -25,6 +25,12 @@
 \usepackage{xcolor}
 \usepackage{float}
 \newtheorem{problem}{Problem}
+\usepackage{enumitem}
+\setlist{topsep=0pt}
+
+\setcounter{tocdepth}{2}  % subsubsections in toc
+\setcounter{secnumdepth}{2}
+\setlength\parskip{\baselineskip} %newlines after paragraphs
 
 \usepackage{dirtree} %directory tree visualisation
 
@@ -44,13 +50,35 @@
 \author{Marek Pikna} %author's name without academic degrees
 \authorWithDegrees{Bc. Marek Pikna} %author's name with academic degrees
 \supervisor{doc. Ing. Ivan Šimeček, Ph.D.}
-\acknowledgements{THANKS (remove entirely in case you do not with to thank anyone)}
-\abstractEN{Summarize the contents and contribution of your work in a few sentences in English language.}
-\abstractCS{V n{\v e}kolika v{\v e}t{\' a}ch shr{\v n}te obsah a p{\v r}{\' i}nos t{\' e}to pr{\' a}ce v {\v c}esk{\' e}m jazyce.}
+\acknowledgements{I would like to thank my supervisor doc. Ing. Ivan Šimeček, Ph.D. for all
+                  the valuable feedback provided during the course of writing this thesis.
+                  I would also like to thank my family for all they have done for me and my
+                  friends for being there for me whenever I was in need. Last but not least, I would
+                  like to thank Brandon McCartney for his unlasting support and positivity.}
+\abstractEN{This master's thesis analyzes the potential of image compression utilizing non-negative
+            matrix factorization, a mathematical technique which factorizes a matrix containing
+            non-negative elements into two factors. As this technique is only an approximation and
+            not an exact factorization, information loss occurs, rendering the technique a lossy
+            compression technique. Three compression schemes are proposed, based on different
+            color models, and tested, with the best performing one compared to JPEG. The results
+            show that while non-negative matrix factorization does not achieve better compression
+            ratio, the information loss can be lower and the image quality therefore higher. Further
+            improvements of the algorithm which could improve the compression ratio are proposed.}
+\abstractCS{Tato magisterská práce analyzuje potenciál komprese obrazu pomocí faktorizace nezáporných
+            matic, matematické metody která faktorizuje matici obsahující nezáporné elementy do dvou
+            faktorů. Jelikož tato technika pouze aproximuje matici a není přesnou faktorizací, dochází
+            ke ztrátě informací. Z toho důvodu lze chápat tuto metodu také jako ztrátovou kompresní
+            metodu. V práci jsou navržena tři kompresní schémata, založena na různých barevných modelech
+            a otestována. Nejlepší kompresní schéma je také porovnáno s JPEG kompresní metodou. Výsledky
+            ukazují, že ačkoliv tyto metody nedosahují lepších kompresních poměrů, ztráta informace dovede
+            být nižší a kvalita obrazu tedy vyšší, než v případě JPEGu. Práce zároveň navrhuje další
+            možná vylepšení, která by mohla vylepšit kompresní poměry a kompresní časy.}
 \placeForDeclarationOfAuthenticity{Prague}
-\keywordsCS{Replace with comma-separated list of keywords in Czech.}
-\keywordsEN{Replace with comma-separated list of keywords in English.}
-\declarationOfAuthenticityOption{1} %select as appropriate, according to the desired license (integer 1-6)
+\keywordsCS{Faktorizace nezáporných matic, redukce dimenzionality, barevné modely, barevné prostory,
+           ztrátová komprese, komprese obrazu \newpage}
+\keywordsEN{Non-negative matrix factorization, dimensionality reduction, color models, color spaces,
+            lossy compression, image compression}
+\declarationOfAuthenticityOption{5} %select as appropriate, according to the desired license (integer 1-6)
 % \website{http://site.example/thesis} %optional thesis URL
 
 % dobry zdroje kompilace
@@ -103,7 +131,6 @@ of data only grows in the current world, the quality of
 compression ends up becoming a very serious problem, since good compression can
 very significantly reduce the costs of data storage as well as the costs and speed
 of data transfer.
-\\
 
 To put the problem into perspective, in order to store images in the resolutions
 currently considered as high resolution (1920x1080 pixels, the second most common
@@ -112,7 +139,6 @@ When storing an image with these dimensions using an uncompressed standard encod
 the filesize would be almost 6 megabytes. Such a high size impacts many areas, such as
 speed of transfer or storage costs. Fortunately, modern image compression formats such as
 \emph{PNG} or \emph{JPEG} are able to reduce this size remarkably.
-\\
 
 Currently, images contribute to the amount of data on the internet significantly - not only are images a common
 form of media for professional purposes but some of the currently largest platofrms on the
@@ -120,13 +146,11 @@ internet are based on image sharing and image hosting. One modern social media p
 sharing had over 67 million new posts each day \cite{data-amount}.
 Being able to obtain these images fast and in good quality is therefore highly important for both users, just
 as it is important for the owners of these services to be able to store this data.
-\\
 
 In the recent years with growth related to machine learning and related areas, such as artifical
 intelligence, new applications of mathematical concepts were discovered. Some of these concepts
 which are enjoying high success are algorithms related to \emph{dimensionality reduction}. These
 algorithms aim to reduce the number of random variables under consideration \cite{dimens-reduction}.
-\\
 
 While these algorithms have been enjoying success mostly in areas such as data mining or machine
 learning, their nature of reducing the amount of random variables under inspection means that the
@@ -135,7 +159,6 @@ reduction and the one which this thesis focuses on is \emph{non-negative matrix 
 as \emph{NMF}). The \emph{NMF} algorithm is currently used in areas such as facial recognition or
 astronomy. Heart of the algorithm is the factorization of a matrix consisting of non-negative values into
 two factor matrices.
-\\
 
 The research in image compression methods using dimensionality reduction algorithms is currently being
 performed - another dimensionality reduction algorithm and its potential usage for image compression 
@@ -144,22 +167,21 @@ in \cite{svd-compression}. This algorithm, just like the \emph{NMF}, factorizes 
 restricting the values to be non-negative. While certain similar research to see whether
 \emph{NMF} can be used for image compression exists, the works are related to very
 specific use-case scenarios.
-\\
 
 Thus, this thesis aims to analyze the potential of the \emph{NMF} algorithm
 as a tool for image compression. In order to achieve this, the following points
 will be explored in the thesis:
-\begin{itemize}
+\begin{itemize}[topsep=0pt]
   \item \emph{NMF} and its current applications will be studied (Chapter~\ref{ch:NMF}).
   \item The theory and practice related to digital image encoding and image
         compression will be explored and described together with
-        modern image compression . (Chapters~\ref{ch:image-encoding} and~\ref{ch:image-compression})
+        modern image compression. (Chapters~\ref{ch:image-encoding} and~\ref{ch:image-compression})
 \end{itemize}
 
 By analyzing these concepts, a proof of concept image compression algorithm using
 \emph{NMF} will be designed and implemented. By doing so, these issues will be
 addressed:
-\begin{itemize}
+\begin{itemize}[topsep=0pt]
   \item Whether a certain way of representing an uncompressed image is better
         suited for non-negative matrix factorization.
   \item Utilizing both subjective as well as objective metrics commonly used
@@ -172,7 +194,6 @@ At the end of the thesis, the proof of concept algorithm will be compared to
 the state of the art image compression algorithms and possible points related
 to further analysis or further improvements of the algorithm or its implementation
 will be discussed..
-\\
 
 The first three chapters are related to the theoretical part of the problem, studying
 \emph{NMF}, image encoding and image compression. The following chapters are related
@@ -209,7 +230,6 @@ using non-negative matrix factorization found are the following:
 
 Image compression and non-negative matrix factorization has also been found in other works, but
 usually as an illustrative example rather than the target of research.
-\\
 
 This work aims to analyze the potential usability of an image compression scheme based on NMF
 strictly as a compression tool - the effect of NMF parameters on the image quality and explore
@@ -227,7 +247,6 @@ This chapter discusses the \emph{non-negative matrix factorization} - defines
 the problem, describes some of the existing solutions to the problem and
 offers some observations. By doing so, the basics for the rest of the thesis are
 provided.
-\\
 
 Non-negative matrix factorization as a problem was first formulated by Paatero
 and Tapper in \cite{nmf-paatero}, but the works which have given
@@ -237,19 +256,18 @@ intelligence - more specifically to facial recognition and discovering semantic
 features in encyclopedic articles.
 
 \section{Problem definition}
-Let $V$ be a $n \times p$ non-negative matrix, (i.e. with $x_{ij} \geq 0$, denoted
+Let $V$ be a $n \cdot p$ non-negative matrix, (i.e. with $x_{ij} \geq 0$, denoted
 $X \geq 0$), and $r > 0$ an integer. Non-negative matrix factorization consists in
 finding an approximation
 \begin{equation}
   V \approx WH
 \end{equation}
-where $W, H$ are $n \times r$ and $r \times p$ non-negative matrices, respectively - meaning
+where $W, H$ are $n \cdot r$ and $r \cdot p$ non-negative matrices, respectively - meaning
 all the elements of the matrices are non-negative.
 In practice, the rank $r$ is often chosen such that $r \ll min(n,p)$. This is due
 to the reason that in many common applications of non-negative matrix factorization,
 the information contained in the matrix $V$ is summarized and split into $r$ factors
 as the columns of $W$ \cite{nmf-r-vignette}.
-\\
 
 It should be noted here that the name of the problem might be misleading, as
 the term \emph{factorization} is usually understood more as an exact
@@ -271,7 +289,6 @@ described. The second algorithm which will be described is the \emph{alternating
 least squares} algorithm, which is the earliest algorithm proposed for solving
 the non-negative matrix factorization problem (positive matrix factorization
 in the original work) \cite{nmf-paatero}.
-\\
 
 The reason for choosing these two algorithms is that both of them are very
 commonly used in practice. Other algorithms exist and are often researched,
@@ -284,7 +301,6 @@ However, they will not be explored within this thesis.
 The algorithm described here is described more thoroughly in \cite{lee-algos},
 a work by Lee and Seung where the algorithms are described in detail together
 with proving correctness of the algorithms.
-\\
 
 In order to find an approximate factorization $V \approx WH$, a way how to
 quantify the quality of the approximation needs to be defined. Such a metric
@@ -297,7 +313,6 @@ two non-negative matrices $A$ and $B$. One of the measures provided in
 \end{equation}
 
 This distance is lower bounded by zero and vanishes if and only if $A = B$.
-\\
 
 By using this cost function, the non-negative matrix factorization can be
 formulated as an optimization problem:
@@ -309,12 +324,10 @@ It is shown in \cite{lee-algos} that an algorithm cannot realistically solve thi
 problem by finding a global minimum. However, it is possible using various
 techniques from numerical optimization which make it possible to find
 local minimum.
-\\
 
 Thus, the multiplicative update rules are a compromise between speed and
 ease of implementation offered in \cite{lee-algos} for solving this
 problem. The multiplicative updates can be described as an algorithm below:
-\\
 
 \begin{algorithm}[H]
   \caption{Multiplicative update algorithm for NMF}
@@ -338,7 +351,6 @@ It is shown in \cite{lee-algos} that the Euclidean distance $||V - WH||$ (and
 consequently the cost function $||V - WH||^2$) is nonincreasing under these
 rules. The work by Lee and Seung also considers another possible cost function and
 proves the convergence of these rules.
-\\
 
 \subsection{Alternating least squares method}
 Alternating least squares method is the first algorithm proposed for solving
@@ -346,11 +358,9 @@ the non-negative matrix factorization problem, which was proposed in the
 work by Paatero. \cite{nmf-paatero} Fixing either of the factors $W$ or $H$,
 the problem essentially becomes a least squares problem, which is commonly
 used in \emph{regression analysis}.
-\\
 
 The alternating least squares problem then solves NMF using the algorithm
 shown in \ref{alg:anls}.
-\\
 
 \begin{algorithm}[h]
   \caption{Basic Alternating least squares algorithm for NMF. \cite{nmf-anls}}
@@ -370,7 +380,6 @@ shown in \ref{alg:anls}.
 As the least squares algorithm does not enforce the constraint of non-negativity,
 all the negative elements in matrices are set to $0$ after each evaluation of
 the least squares problem.
-\\
 
 The name of the algorithm reflects its nature where it keeps alternating between
 solving the least squares problem for one fixed matrix and then the other.
@@ -383,7 +392,6 @@ In this section, a short example of a common application of non-negative matrix
 factorizations will be provided, for the purpose of showing concrete examples
 so that the reader may become more adjusted to the problem as well as showing
 certain observations about the properties of non-negative matrix factorization.
-\\
 
 
 \subsection{Part-based analysis}
@@ -391,7 +399,6 @@ What has inspired the work of Lee and Seung \cite{lee99} was the human activity
 of recognizing objects from basic parts - especially when using human vision which
 is shown to be designed to detect the presence or absence of features (parts)
 of physical objects in order to recognize them \cite{component-recognition}.
-\\
 
 Thus, assuming that features of an object would be independent and it would be
 possible to compile all the features together, an object could be described
@@ -401,7 +408,6 @@ formally as:
 \end{equation}
 where $b_{ij}$ either has the value \emph{present} if part $i$ is present in object $j$ or
 the value \emph{absent} if part $i$ is absent in object $j$.
-\\
 
 If the possible states \emph{present} and \emph{absent} in the model are
 replaced by non-negative values, it is possible to signify not only the
@@ -410,7 +416,7 @@ presence or absence of a feature but also its quantity or significance
 look like the following:
 
 \begin{equation}
-  Object_{i} = b_{i1} \times Part_{1} + b_{i2} \times Part_{2} + ...
+  Object_{i} = b_{i1} \cdot Part_{1} + b_{i2} \cdot Part_{2} + ...
 \end{equation}\cite{nmf-phd-thesis}
 
 When utilizing non-negative matrix factorization, the matrix $W$ can be
@@ -428,7 +434,6 @@ Each column in the matrix $W$ is a basis element and columns of the matrix $H$ g
 coordinates of a data point in the basis $W$. The product matrix $WH$ (the approximation
 of V) is a linear combination of the column vectors - the features extracted from
 the data points and its significance in the data point.
-\\
 
 This way, features and parts can be extracted from
 the original data and understood, as shown in the next subsection on the
@@ -444,12 +449,11 @@ reduction technique similar to \emph{NMF} commonly used for recognizing
 faces in images \cite{pca-facial} - however, without the non-negativity constraint.
 It has been shown in \cite{lee99} that \emph{NMF} can be used in a similar
 fashion while potentially classifying the data in a way which is easier to be understood.
-\\
 
 \begin{figure}[h]
   \centering
   \includegraphics{nmfpca-comparison}
-  \caption{Comparison between dimensionality reduction algorithms - \emph{NMF} and \emph{PCA},
+  \caption[Comparison between dimensionality reduction algorithms]{Comparison between dimensionality reduction algorithms - \emph{NMF} and \emph{PCA},
            as shown in \cite{lee99}.}
   \label{fig:nmfpca-comparison}
 \end{figure}
@@ -466,12 +470,10 @@ can be used for the same purposes as \emph{PCA}, the main strength of the
 algorithm is that certain parts can be recognized meaningfully - for example
 parts of a nose and such, whereas in the case of \emph{PCA}, discovering
 meaning in the matrices is difficult.
-\\
 
 It is for these reasons that non-negativity is a powerful and meaningful
 constraint, as parts are never subtracted from the particular instance
 (as it can happen in the case of \emph{PCA}), but are only added together \cite{nmf-phd-thesis}.
-\\
 
 
 \subsection{NMF properties}
@@ -480,7 +482,6 @@ more specifically the definition of the problem, common solutions and an example
 usage of \emph{NMF}. In this section, certain properties of non-negative matrix
 factorization will be pointed out. When the proof of concept image compression scheme
 is designed, the usefulness of these properties for compression will be discussed.
-\\
 
 The first property which will be shown is that the solution to non-negative matrix
 factorization is \textbf{not unique}. A matrix and its inverse can transform the two
@@ -491,7 +492,6 @@ factorization matrices, for example as:
 
 If the matrices $\bar{W} = WB$ and $\bar{H} = B^{-1}H$ are non-negative then they
 form another solution to the \emph{NMF} problem.\cite{nmf-nonuniq}
-\\
 
 Another important property is that the non-negative matrix factorization is not
 hierarchical, meaning that the factor matrices using rank $r$ can be completely
@@ -500,7 +500,6 @@ rank $r = 1$ provides only approximation of the target matrix $V$ yet rank $r = 
 possible to calculate $V = WH$ instead of the approximation. Due to these
 reasons, the results provided by using \emph{NMF} highly depend on choice of the rank
 parameter.
-\\
 
 \begin{figure}[h]
   \centering
@@ -517,7 +516,6 @@ With certain constraints, it is however possible to solve the \emph{NMF} problem
 in polynomial time - for example it is shown in \cite{nmf-poly} that in case the
 matrix $V$ is symmetric and contains a diagonal principal submatrix of rank $r$,
 it is possible to solve the problem in polynomial time $O(rm^{2})$.
-\\
 
 The last property of non-negative matrix factorization to be noted has been
 shown in the figures above. The factors extracted are often \emph{sparse} - it is
@@ -536,7 +534,6 @@ The choice of rank $r$ is one of the most important decisions when utilizing non
 matrix factorization - as when used for the examples above, choice of rank $r$
 changes the amount of features to be extracted in order to approximate the target
 matrix $V$.
-\\
 
 There are several common methods used for choosing the rank $r$:
 \begin{itemize}
@@ -562,7 +559,29 @@ matrices are:
 
 It should be noted here that some of the initialization techniques involve randomness
 (such as purely using random non-negative values) and some do not - and are rather
-based on extracting data from the input matrix.
+based on extracting data from the input matrix. The following initialization techniques
+are utilized and tested for image compression usage in this thesis:
+
+\begin{itemize}
+  \item Nonnegative double singular value decomposition (NNDSVD)
+  \item Random vcol
+  \item Random seeding
+\end{itemize}
+
+\emph{Nonnegative double singular value decomposition} is a method designed
+to enhance the initialization stage of the non-negative matrix factorization.
+The basic algorithm contains no randomization and is based on two SVD processes,
+one approximating the data matrix and the other approximating positive sections
+of the resulting partial SVD factors. \cite{nndsvd}
+
+\emph{Random vcol} is an initialization method which forms an initialization of
+each column of the basis matrix ($W$) by averaging $p$ random columns of
+target matrix ($V$). Random vcol also forms an initialization of each row
+of the mixture matrix ($H$) by averaging $p$ random rows of target matrix.
+\cite{randomvcol}
+
+The \emph{random} seeding method is the simplest non-negative matrix
+factorization seeding method possible and generates matrices randomly.
 
 
 \section{NMF and compression}
@@ -570,28 +589,27 @@ Most common use-case scenarios of non-negative matrix factorization are
 related to machine learning, as shown in the previous sections. However,
 \emph{NMF} can also be looked upon as a lossy compression tool (more
 on lossy compression in chapter \ref{ch:image-compression}), as an
-original matrix of size $n \times p$ is approximated by the product
+original matrix of size $n \cdot p$ is approximated by the product
 of two smaller matrices. Assuming the target matrix $V$ is represented
 in the same way as the factor matrices $W$ and $H$, if the amount
 of elements contained in matrices $W$ and $H$ is lower than the amount of
 elements in matrix $V$, then \emph{NMF} was used to perform compression.
-\\
 
 Whether the amount of elements in factor matrices $W$ and $H$ is lower than
 the amount of elements in target matrix $V$ depends on the choice of rank $r$.
-More specifically, if the dimensions of matrix $V$ are $n \times p$, the
-dimensions of matrix $W$ $n \times r$ and the dimensions of matrix $H$
-$r \times p$, then this requirement can be formalized as:
+More specifically, if the dimensions of matrix $V$ are $n \cdot p$, the
+dimensions of matrix $W$ $n \cdot r$ and the dimensions of matrix $H$
+$r \cdot p$, then this requirement can be formalized as:
 \begin{align*}
-  n \times r + r \times p &< n \times p\\
-  r (n + p) &< n \times p\\
-  r &< \frac{n \times p}{n + p}
+  n \cdot r + r \cdot p &< n \cdot p\\
+  r (n + p) &< n \cdot p\\
+  r &< \frac{n \cdot p}{n + p}
 \end{align*}
 
 Considering a square matrix ($n = p$), the following relationship can also
 be deduced:
 \begin{align*}
-  r &< \frac{n \times n}{n + n}\\
+  r &< \frac{n \cdot n}{n + n}\\
   r &< \frac{n^{2}}{2n}\\
   r &< \frac{n}{2}
 \end{align*}
@@ -599,11 +617,11 @@ This relationship is also demonstrated in the figure \ref{fig:maxrank}.
 
 \begin{figure}[h]
   \centering
-  \caption{Visualization of NMF as a compression tool. When using a rank $r$ lower than $n/2$, the
+  \includegraphics[scale=0.7]{maxrank}
+  \caption[Visualization of NMF as a compression tool]{Visualization of NMF as a compression tool. When using a rank $r$ lower than $n/2$, the
            total amount of elements in matrices $W$ and $H$ is less than the amount of elements in
            matrix $V$. When the rank $r$ reaches the value $n/2$, the amount of elements is the same.}
   \label{fig:maxrank}
-  \includegraphics[scale=0.7]{maxrank}
 \end{figure}
 
 % [TODO]
@@ -611,7 +629,6 @@ This relationship is also demonstrated in the figure \ref{fig:maxrank}.
 %Nice to have, ale nyni neni priorita.
 
 
-% [TODO] mozna pripsat rozdil mezi color modelem a color spacem
 \chapter{Digital image encoding}
 \label{ch:image-encoding}
 The second chapter of this thesis is related to digital images and their
@@ -621,43 +638,58 @@ various different digital image representations. The possible ways of
 specifying colors in digital images which will be explored are \emph{RGB},
 \emph{grayscale} and $Y'C_BC_R$. As this thesis is related to image
 compression and non-negative matrix factorization and not image processing,
-only the most important elements of image encoding and color spaces will be explored.
+only the most important elements of image encoding and color models will be explored.
 
-
-% TODO http://apachetechnology.in/ati/www/KC/dw/Saloman%20-%20Data_Compression_Complete_Reference.pdf
-%  `sampling and quantization str 253
 \section{Digital images}
-% http://elib.mi.sanu.ac.rs/files/journals/ncd/12/ncd12017.pdf
-% https://www.spacetelescope.org/static/projects/fits_liberator/image_processing.pdf
-% http://www.imageprocessingplace.com/downloads_V3/root_downloads/tutorials/Image%20Processing%20Fundamentals--An%20Overview.pdf - ideal
-% https://www.researchgate.net/figure/A-digital-image-is-a-2D-array-of-pixels-Each-pixel-is-characterised-by-its-x-y_fig1_221918148
 A digital image $I$ is stored as a matrix of \emph{pixels} (abbreviation for a \emph{picture
 element}). These matrices described as 2D discrete space are derived from analog
-images in 2D continuous space through the process called \emph{sampling}. More about
-sampling can be found for example in \cite{img:img-processing}.
-\\
+images in 2D continuous space through the process called \emph{sampling}. The other important
+operation which is done when images are converted into a 2D discrete space is \emph{quantization},
+which corresponds to a discretizaiton of the intensity values.
 
-The value assigned to a pixel $I[m,n]$ determines its color. The following sections
-explore the common color encoding options.
+The value assigned to a pixel $I[m,n]$ determines its color. Various ways of representing
+color information (color models and color spaces) exist - as well as transformations between
+them. The following sections explore the common color encoding options, which will be
+utilized in the image compression schemes.
 
+\subsection{Color models and color spaces}
+A color model is a mathematical model used for describing the way colors can be represented,
+usually as tuples of numbers (although this is not necessary, as in i.e.
+the \emph{grayscale} model, where only one number value is necessary to describe light intensity).
 
-\section{Color models}
-A color model is a mathematical model used for describing the way of representing
-colors, usually as tuples of numbers (although this is not necessary, as in i.e.
-the \emph{grayscale} model). When associated with a description of how the tuple
-components are interpreted, colors can be interpreted. The color models described
-are the \emph{RGB} color model, the $Y'C_{B}C_{R}$ color space (the set of colors
-which can be used) which is a transformation using the \emph{RGB} model and the
+On the other hand, a color space is an organization of colors, which allows for reproducible
+representations of colors. Color spaces can be defined in an arbitrary way, with particular
+colors for example associated with numbers (such as in the \emph{Pantone} collection) or
+can also be defined mathematically - such as is the case of, for example, \emph{sRGB} (standard
+Red Green Blue) color space.
+
+The difference between a color model and a color space is that a color model is an abstract
+mathematical model describing the way colors can be represented using numbers (or tuples of numbers).
+A color space provides the actual mapping which defines the colors represented, using the model.
+A visualization of different color spaces (Adobe RGB and sRGB) can be seen in the figure \ref{fig:colorspaces},
+which shows two color spaces which use the same model for describing colors - but are able to
+display a different set of colors (also called gamut).
+
+\begin{figure}[h]
+  \centering
+  \includegraphics{imgs/colorspaces}
+  \caption[Comparison between two different color spaces using an RGB model]{Comparison
+  		  between two different color spaces which both use an RGB color model. The
+  		  RGB color model contains the visible color spectrum, while both color
+  		  spaces are able to represent only a subset of these colors. Image source: \cite{wiki_colorspace}}
+  \label{fig:colorspaces}
+\end{figure}
+
+The color representations which are going to be explored are the \emph{RGB} color model, the $Y'C_{B}C_{R}$ color
+space which is a transformation using the \emph{RGB} model and the
 \emph{grayscale} model.
 
-
 % https://www.spacetelescope.org/static/projects/fits_liberator/image_processing.pdf
-\subsection{RGB}
+\subsection{RGB color model}
 The \emph{RGB} color model is closely related to the way the human eye perceives colors
 with the \emph{r} (red), \emph{g} (green) and \emph{b} (blue) receptors in our retinas.\cite{img:color-theory}
 In order to represent a color, components of each color (red, green and blue) are added together.
-As these components are added together, the \emph{RGB} model is considered to be an additive one.
-\\
+Since these components are added together, the \emph{RGB} model is also called an additive model.
 
 In order to store image data using the \emph{RGB} color model, the color components
 need to be quantified. Common way of storing the values of components in a pixel
@@ -668,14 +700,12 @@ equal to 0, the resulting color is black, if all the values of components are
 equal to the defined maximum value (255 in this case), the resulting color
 is white. An uncompressed image format which represents images this way is, for
 example, the Windows BMP.\cite{fileformat-bmp}
-\\
 
 Thus, encoding an uncompressed image using the \emph{RGB} color scheme with
 the common 8-bit per component component representation results in each pixel
 being represented by 24 bits. The size of an image in bytes would then be
 $width*height*3$ bytes (not counting the header and other data used by the
 specific file format).
-\\
 
 A colored image together with its decomposition into the \emph{R}, \emph{G}
 and \emph{B} channels can be seen in the figure \ref{fig:house-rgbdecomp}
@@ -683,15 +713,14 @@ and \emph{B} channels can be seen in the figure \ref{fig:house-rgbdecomp}
 \begin{figure}[h]
   \centering
   \includegraphics[scale=0.5]{imgs/house-rgbdecomp}
-  \caption{An image decomposed into the \emph{R}, \emph{G} and \emph{B} channels
+  \caption[Image decomposed in its RGB channels]{An image decomposed into the \emph{R}, \emph{G} and \emph{B} channels
            as used in the \emph{RGB} color model.}
   \label{fig:house-rgbdecomp}
 \end{figure}
 
-
 %[TODO] sepsat konverzi zpet (z ycbcr do rgb) - take sepsat, zda jde prevest vse
-\subsection{$Y'C_{B}C_{R}$}
-\emph{Y'CbCr}, also written as $Y'C_{B}C_{R}$ is an encoding system of colors commonly
+\subsection{$Y'C_{B}C_{R}$ color space}
+$Y'C_BC_R$, also written as \emph{Y'CbCr}, is an encoding system of colors commonly
 used in digital image systems, which is defined by a mathematical coordinate
 transformation from an associated RGB color space. The $Y'$ represents the
 \emph{luma} value (brightness of an image). The $C_{B}$ and $C_{R}$ values
@@ -709,7 +738,6 @@ However, the human eye does not perceive change of light in a linear way. Gamma 
 thus aims to translate the human eye's light sensitivity and that of a camera. \cite{img:gamma}
 As gamma correction is not an important topic for the rest of this thesis, it will not be
 explored further.
-\\
 
 Luma is calculated as the weighted sum of gamma-compressed $R'G'B'$ components. The prime
 again represents gamma correction. Luma can be calculated in the following way, as described in
@@ -735,16 +763,25 @@ In digital images, other transformations exist, such as the one used in the JPEG
 \end{equation}
 \cite{jfif}
 
-An image decomposed into the $Y'$, $C_B$ and $C_R$ components can be seen on the figure
-\ref{fig:house-ycbcrdecomp}
+An image decomposed into the $Y'$, $C_B$ and $C_R$ components can be seen in the figure
+\ref{fig:house-ycbcrdecomp}. The way colors are represented in the $Y'C_BC_R$ color model
+can be seen in the figure \ref{fig:ycbcr_plane}, which shows the $C_BC_R$ plane at constant
+luma ($Y' = 0.5$).
 
 \begin{figure}[h]
   \centering
   \includegraphics[scale=0.5]{imgs/houses-decomp-ycbcr}
-  \caption{An image decomposed into the $Y'$, $C_B$ and $C_R$ components, as used
+  \caption[Image decomposed into $Y'$, $C_B$ and $C_R$ channels]{An image decomposed into the $Y'$, $C_B$ and $C_R$ components, as used
            in the $Y'C_BC_R$ color space. The $Y'$ component also represents the
            grayscale image.}
   \label{fig:house-ycbcrdecomp}
+\end{figure}
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[scale=0.3]{imgs/ycbcr_plane}
+  \caption{The $C_BC_R$ plane at constant luma $Y' = 0.5$.}
+  \label{fig:ycbcr_plane}
 \end{figure}
 
 \subsubsection{Use of $Y'C_{B}C_{R}$}
@@ -753,13 +790,11 @@ differences in luma than color differences. Therefore, reduced bandwidth can be
 given for chrominance components, allowing compression artifacts (or even transmission
 errors, i.e. when encoding image data for television signals) to be more efficiently
 masked, as the human eye is not as sensitive to these errors.
-\\
 
 Another usage of $Y'C_BC_R$ is called \emph{chroma subsampling}, Chroma subsampling
 refers to allocating less resolution for chroma information than the luma information.
 This process is commonly used in video encoding schemes as well as in the JPEG
 image compression technique.\cite{img:chroma-subsample}
-
 
 \subsection{Grayscale}
 \emph{Grayscale} images are images composed exclusively of shades of gray.
@@ -767,12 +802,10 @@ When using the grayscale model, each pixel therefore carries only the intensity
 information. Commonly, grayscale images are stored using 8 bits per pixel.
 The range of colors represented by these 8 bits goes from black (the value 0)
 through possible shades of gray to white (255 or another maximum possible value).
-\\
 
 It is possible to transform colors from an \emph{RGB} color space into
 the grayscale model by calculating the luma using the formula \ref{formula:luma},
 as luma is a representation of an image's brightness.
-\\
 
 Encoding an uncompressed grayscale image which uses the common 8 bit per pixel
 representation would therefore create an image of a size of $width*height$, not counting
@@ -785,7 +818,6 @@ As it has been shown in the introduction of this thesis, storing uncompressed
 images requires a lot of space. The art of reducing the amount of space required
 for storing data by encoding information with less bits than would otherwise
 be necessary is called data compression.
-\\
 
 This chapter will explore the basics of data compression in order to build
 a framework for the rest of this thesis. Image compression basics with examples
@@ -798,6 +830,7 @@ quality of data compression (as well as image compression).
 % Pridat sekci o redundancies
 % Taky bych pak mohl napsat sekci o nejaky kompresni srande, co zvolim
 \section{Data compression}
+\label{ch:data_compression}
 When the terms \emph{compression algorithm} or \emph{compression technique} are
 used, they refer to two algorithms. One algorithm which takes an input $X$ and
 generates a representation $Y$, which requires fewer bits to store. The second
@@ -805,26 +838,98 @@ algorithm is the reconstruction algorithm, which operates on the representation
 $Y$ and generates the reconstruction $Z$. Depending on whether the reconstruction
 $Z$ is completely identical to the original data source $X$, the compression
 algorithms can be divided into two broad classes, being either \emph{lossless
-algorithms} or \emph{lossy algorithms}. Lossy algorithms generally provide
-much higher compression than lossless algorithms do, but at the cost of
-losing information.\cite{datacompression}
+compression algorithms} or \emph{lossy compression algorithms}. Lossy compression
+algorithms generally provide much higher compression ratios than lossless compression algorithms
+do, but at the cost of losing information.\cite{datacompression}
 
 
-\subsection{Lossless algorithms}
+\subsection{Lossless compression algorithms}
 Lossless compression techniques involve no loss of information - by using
-a lossless algorithm, the original data can be recovered exactly from the
-compressed data. The applications for lossless algorithms commonly include
+a lossless compression algorithm, the original data can be recovered exactly from the
+compressed data. The applications for lossless compression algorithms commonly include
 text data, where small differences could easily result in wrong statements
 (errors in e.g. bank records are, for obvious reasons, very undesirable).
 
+Many different lossless compression techniques - and different approaches altogether -
+exist and this thesis does not aim to describe them all. Therefore, the only techniques
+which are going to be described are the ones, which were used in the implemented compression
+schemes (more on this topic in chapter \ref{ch:implementation}, which is related to
+implementation of compression schemes.
 
-\subsection{Lossy algorithms}
+\subsubsection{Huffman coding}
+Huffman codes are particular types of optimal \emph{prefix codes} (a type of
+code system where no whole code word in the system is a prefix of any other
+code word in the system) which are commonly used for lossless data compression.
+The technique was developed by David Huffman as part of a class assignment, in the
+first ever taught class in the area of information theory.\cite{datacompression}
+
+Huffman coding produces a table from data input, which encodes a source symbol using
+variable-length code. The algorithm used for deriving this table does so from estimated
+probabilites (or frequencies) of occurences for each possible value of source symbols.
+Symbols which occur more frequently are then represented using fewer bits than less
+common symbols.\cite{huffman}
+
+It is possible to prove that Huffman coding produces optimal codes, except for
+certain use-cases where Huffman coding is unable to do so - such as in the case
+of the probability mass function being unknown, for example due to data changing over
+time or receiving new information during the coding process.
+
+\subsubsection{LZ77}
+Huffman coding is a technique which produces optimal codes, but also assumes a
+source which generates a sequence of independent symbols. However, very often,
+most sources are correlated. Thus it is common that the coding step is preceded by
+a decorrelation step. This step is often done using techniques which incoroporate
+the structure in the data to increase the amount of compression. These techniques
+are commonly called \emph{dictionary techniques}, as they build a list of
+commonly occuring patterns and encode these patterns by transmitting their index in
+the list. These methods tend to be most useful with sources which generate a small
+number of patterns quite frequently - such as text sources or in image compression.\cite{datacompression}
+
+These dictionary methods are often distinguished by the way these dictionaries are
+built, commonly into two groups - \emph{static} dictionaries and \emph{adaptive}
+dictionaries. The static dictionary techniques are more appropriate when considerable
+prior knowledge about the source is available - such as when records are compressed
+and ahead of time, certain words are going to appear in almost all records (for example
+the word Name).
+
+Adaptive techniques build dictionaries adaptively, during the course of compression. One
+popular technique, which has given rise to a number of variations, is the technique
+named \emph{LZ77}. This approach creates a dictionary as a portion of the previously
+encoded sequence. The encoder examines the input sequence through a sliding
+window, which consists of two parts - a search buffer, which contains a portion
+of the recently encoded sequence, and a look-ahead buffer, wihch contains the
+next portion of the sequence to be encoded.
+
+In order to encode a sequence in the look-ahead buffer, the encoder moves a search
+pointer through the search buffer until it encounters a match to the first symbol in the
+look-ahead buffer. The distance of the pointer from the look-ahead buffer is called the offset.
+The encoder then examines the symbols following the symbol at the
+pointer location to see if they match consecutive symbols in the look-ahead buffer.
+Once the longest match has been found, the encoder encodes it with a triple
+$(o, l, c)$, where $o$ is the offset, $l$ is the length of the match and $c$ is
+the codeword corresponding to the symbol in the look-ahead buffer that follows the match.\cite{lz77}
+
+\subsubsection{Use in image compression}
+Both Huffman coding as well as LZ77 are both utilized in one of the most
+used lossless image compression formats available - PNG. The PNG (Portable
+Network Graphics) standard was developed due to patent issues, where
+companies would charge royalties to authors of software that included
+support for GIF. Due to these reasons, the internet community decided to
+implement a patent-free replacement for GIF, which would be PNG.\cite{png}
+
+The compression algorithm used in PNG is based on the \emph{DEFLATE}
+implementation of LZ77, which combines both LZ77 and Huffman coding. While the encoder
+encodes the source using LZ77, it also represents the index values using a Huffman code.
+The algorithm producing DEFLATE files is widely considered to be implementable in a manner
+not covered by patents, which has led to a widespread use not only in image compression,
+but also in the ZIP file format, for which it was originally designed.\cite{deflate}
+
+\subsection{Lossy compression algorithms}
 However, not all usage scenarios require compression to be lossless. In
 these cases, the requirement of retrieving absolutely identical data can
 be relaxed. By relaxing this requirement, very often higher compression
 ratios (more on compression ratio in section \ref{metrics}) can be obtained,
 at the cost of having distortions in the reconstruction.
-\\
 
 Very common scenarios where lossy compression algorithms become often more
 desirable than lossless ones are when storing audio content. Modern audio
@@ -836,7 +941,6 @@ have to be perfect - especially when compressing speech. When compressing
 other forms of audio, such as music, the compression needs to be more accurate,
 but still does not have to be absolutely perfect - as long as the listener
 does not notice the difference.
-\\
 
 Other typical use case for a lossy compression algorithm is compressing images
 or video content. Small distortions are acceptable in images and video as long
@@ -848,9 +952,9 @@ can be very undesirable for medical usage.
 \begin{figure}[h]
   \centering
   \includegraphics{imgs/sampletext-comparison}
-  \caption{A sample image showing how accurate a lossy algorithm can be. The left image
-           has been compressed using a lossless algorithm, the right image has been
-           compressed using a lossy algorithm (JPEG). In this case, essentially
+  \caption[Accuracy of JPEG]{A sample image showing how accurate a lossy compression algorithm can be. The left image
+           has been compressed using a lossless technique, the right image has been
+           compressed using a lossy compression technique (JPEG). In this case, essentially
            no artifact can be seen unless zoomed in (as seen in the figure \ref{fig:jfifartifact}).}
   \label{fig:jfifvspng-sample}
 \end{figure}
@@ -858,7 +962,7 @@ can be very undesirable for medical usage.
 \begin{figure}[h]
   \centering
   \includegraphics[scale=0.3]{imgs/text-artifacts}
-  \caption{A zoomed in image used in the figure \ref{fig:jfifvspng-sample}. While
+  \caption[JPEG artifacts in an image containing text]{A zoomed in image used in the figure \ref{fig:jfifvspng-sample}. While
            almost impossible to notice any artifact in the former example,
            the artifacts can be seen on the borders between the text and the
            gray background easily once zoomed in. Color levels were adjusted
@@ -872,13 +976,11 @@ One of the important factors when designing a compression scheme which needs to
 be accounted for are characteristics of data which is to be compressed. An approach
 which works the best will depend to a large extent on the redundancies (more on
 redundancies in section \ref{sec:imgcmpr-redund}) inherent to the data compressed.
-\\
 
 In the phase of modeling, information about any redundancy is extracted in a form
 of a model, which can then be utilized in the compression algorithm. The second phase
 important in a compression scheme is \emph{coding}. A description of model and how
 data differs from the model can be encoded (usually using a binary alphabet).\cite{datacompression}
-\\
 
 A very simple example of modeling and coding and its importance can be seen on \emph{delta
 encoding} (sometimes also called \emph{delta compression}). Delta encoding encodes
@@ -893,13 +995,11 @@ then becomes:
 \begin{align*}
   10000, +2, -1, -2, +1
 \end{align*}
-\\
 
 After a representation of this data sequence has been modeled, the coding phase
 creates a way how to encode this sequence using this model. One possible
 coding is shown in the table \ref{tab:deltacoding}. Utilizing this coding, the
 differences require only 2 bits in order to be stored.
-\\
 
 \begin{table}[]
 \centering
@@ -927,7 +1027,6 @@ have preferred applications, literature commonly separates techniques from the a
 However, image compression is a specific field where separating techniques from
 the application is essentially impossible as the techniques are meant specifically
 for compressing images.\cite{datacompression}
-\\
 
 While compressing image data using standard compression techniques, none of them
 are satisfactory for color or grayscale images (which were discussed in chapter
@@ -935,8 +1034,6 @@ are satisfactory for color or grayscale images (which were discussed in chapter
 compressing data where each value has different probability (such as in standard
 text, where certain letters appear far less than others). However, in images, certain
 colors or shades of gray often have the same probabilities.\cite{datacompressioncompleteref}
-\\
-
 
 % TODO obrazek, ktery ukazuje redundance na 3 obrazcich
 \subsection{Redundancies in images}
@@ -960,7 +1057,6 @@ required. A simple example of coding redundancy can be shown on a grayscale
 image where only certain shades of gray are used. Instead of requiring
 8 bits per shade of gray, such an image might require far less bits to
 encode, as can be seen in the figure \ref{fig:redundancies}.
-\\
 
 \emph{Interpixel redundancy} refers to the fact that usually, neighbouring pixels
 tend to have similar colors. Therefore, it can often be possible to predict
@@ -970,7 +1066,6 @@ encoding the specific colors per pixel, an information about how many
 pixels of the same color are stored in a row. This can be particularly
 efficient when considering bi-level (black-and-white) images, as can be seen
 in the figure \ref{fig:redundancies}.
-\\
 
 The last kind of redundancy which is commonly utilized in image compression
 algorithms is called \emph{psychovisual redundancy}. The human eye is not
@@ -983,7 +1078,7 @@ format.
 \begin{figure}[h]
   \centering
   \includegraphics{imgs/redundancies}
-  \caption{A sample image showing some of the redundancies which can be present in an image.
+  \caption[An image showing some of the redundancies which exist in images]{A sample image showing some of the redundancies which can be present in an image.
   		  As there are only 4 levels of gray color, storing them using 8 bits
   		  per possible gray color would result in high coding redundancy. Also,
   		  neighbouring pixels almost always have the same colors.}
@@ -1014,15 +1109,14 @@ quantify their compression power in general. Certain metrics
 extend compression ratio and use it for scoring purposes, such as
 the \emph{Weissman score} which can be used for lossless compression
 algorithms.
-\\
 
 However, while compression ratio is a very valuable metric and
-highly valuable for lossless algorithms, it potentially stops
-being the most important metric when evaluating lossy algorithms.
-When evaluating lossy algorithms, the important information is not
+highly valuable for lossless compression algorithms, it potentially stops
+being the most important metric when evaluating performance of lossy compression algorithms.
+When evaluating lossy compressing algorithms, the important information is not
 only quantification of how much was the data compressed but also
 evaluating how much information was actually lost in the compression
-process. As an example, if a lossy algorithm has better compression
+process. As an example, if a lossy compression algorithm has better compression
 ratio than another one, it might still not be the algorithm of choice,
 in the case where it would introduce too many artifacts into the data.
 
@@ -1035,7 +1129,6 @@ present in data after reconstruction. The two error metrics which are
 commonly used when measuring the performance of a lossy compression
 algorithm are the \emph{mean squared error} (MSE) and \emph{peak
 signal-to-noise ratio} (PSNR).\cite{imgcompintro}
-\\
 
 Mean squared error is a statistical metric measuring the average
 of the squared of errors (the difference between original values and
@@ -1055,14 +1148,12 @@ where
 \end{itemize}
 A lower value of MSE is better, as it directly displays less errors present
 in the decompressed image.
-\\
 
 \subsubsection{Peak signal-to-noise ratio}
 Peak signal-to-noise ratio is a metric derived from MSE describing the ratio
 between the maximum possible power of a signal and the power of corrupting
 noise which affects the representation. Due to signals possibly having
 a very wide dynamic range, PSNR is usually expressed in the logarithmic scale.
-\\
 
 With MSE defined as above, PSNR can be formalized as:
 \begin{equation}
@@ -1072,7 +1163,6 @@ where $MAX_I$ is the maximum possible value of a pixel in an image. In the
 case of grayscale images stored with 8 bits per pixel, this value would
 be 255. Unlike MSE, higher PSNR values are better, as they are a sign of less errors
 in data - signal being the original colors and noise being errors.
-\\
 
 When evaluating MSE (and consecutively PSNR) for color images, the calculation becomes
 slightly more difficult, as a pixel value of I[x, y] holds multiple values for multiple
@@ -1108,10 +1198,9 @@ model, which considers image degradation as perceived change in structural infor
 Structural information refers to the concept that pixels have strong inter-dependencies
 when they are spatially close. These dependencies are important as they carry important
 information about the structure of objects in the visual scene.
-\\
 
 The SSIM index is calculated on various windows (sub-samples), rather than on an entire
-image, like MSE is. SSIM between two windows $x$ and $y$ of common size $N \times N$ is
+image, like MSE is. SSIM between two windows $x$ and $y$ of common size $N \cdot N$ is
 calculated using the following formula:
 \begin{equation}
   SSIM(x, y) = \frac{(2\mu_{x}\mu_{y}+c_{1})(2\sigma_{xy} + c_{2})}{(\mu^{2}_{x} + \mu^{2}_{y} + c_{1})(\sigma^{2}_{x} + \sigma^{2}_{y} + c_2)}
@@ -1133,7 +1222,6 @@ Usually, this formula is applied only on luma, as the most important aspect of t
 image in relation to eye perception. However, SSIM may also be applied on color or
 chromatic values. The possible values of SSIM are in the range $(-1; 1]$, where 
 SSIM of 1 can only be reached in the case of two images being identical.
-\\
 
 The figure \ref{fig:ssimmse} shows the possible strength of SSIM when compared to
 MSE or PSNR. While the second image has a lot of noise in it, its MSE compared to
@@ -1145,7 +1233,7 @@ is not the case for the human eye.
 \begin{figure}[h]
   \centering
   \includegraphics[scale=0.62]{imgs/flower_mse_psnr_ssim}
-  \caption{Figure visualizing the problems of MSE and PSNR when compared to
+  \caption[Problems of MSE and PSNR as lossy compression quality metrics]{Figure visualizing the problems of MSE and PSNR when compared to
            SSIM as an image quality metric. Original photography source: \cite{imgcomprbenchmark}}
   \label{fig:ssimmse}
 \end{figure}
@@ -1169,14 +1257,12 @@ matrix factorization and not describing all the existing lossy image
 compression schemes, only the JPEG compression scheme will be explored,
 as the results of the \emph{NMF} compression scheme will be compared to
 JPEG.
-\\
 
 The JPEG compression method is commonly used for compressing digital
 photographies and makes it possible to adjust the degree of compression
 - making it possible to decide the tradeoff between image quality and
 compression. Commonly, JPEG is able to achieve 10:1 compression ratio
 without significant perceptible loss in image quality.\cite{nasajpeg}
-\\
 
 The JPEG compression algorithm can use various modes of operation, but
 the most popular one works in the following way:
@@ -1184,20 +1270,19 @@ the most popular one works in the following way:
     \item An image is converted from $RGB$ to $Y'C_BC_R$.
     \item The resolution of chroma is reduced - this is done as the human eye is less
     sensitive to color details than brightness.
-    \item The image is split into $8 \times 8$ pixel blocks. For each component of $Y'C_BC_R$
+    \item The image is split into $8 \cdot 8$ pixel blocks. For each component of $Y'C_BC_R$
     the 8x8 block is transformed using the discrete cosine transform. By doing so,
     the image data is represented in the frequency domain.
     \item The amplitudes of the frequencies are quantized, meaning that components
     with high frequencies are stored with less accuracy than the ones with lower
     frequencies.
-    \item The resulting data of $8 \times 8$ blocks is further compressed using lossless
+    \item The resulting data of $8 \cdot 8$ blocks is further compressed using lossless
     encoding.
 \end{itemize}
 These steps are all able to reduce all three redundancies presented in the previous
 sections - psychovisual redundancies are removed by storing higher frequencies with
-lower accuracy and interpixel redundancy by working on $8 \times 8$ pixel blocks. Coding
+lower accuracy and interpixel redundancy by working on $8 \cdot 8$ pixel blocks. Coding
 redundancy is reduced using a lossless compression algorithm at the end.
-\\
 
 One of the possible parameters of JPEG compression is the quality setting. The quality
 setting can be chosen in the range [1; 100] and affects quantization, with the value
@@ -1208,7 +1293,7 @@ multiple times with different quality settings.
 \begin{figure}[h]
   \centering
   \includegraphics[scale=0.55]{imgs/bigbuilding_compress}
-  \caption{Effect of JPEG compression on an image with varying quality settings.
+  \caption[Accuracy of JPEG with different quality settings]{Effect of JPEG compression on an image with varying quality settings.
            First image is the original and the following images improve on the
            quality settings of a previous image. Original photography source: \cite{imgcomprbenchmark}}
   \label{fig:jpegquality}
@@ -1228,7 +1313,6 @@ compression scheme based on non-negative matrix factorization. Utilizing these c
 proof of concept compression schemes will be designed in this chapter. The implementation
 of these schemes is described in the following chapter \ref{ch:implementation}.
 
-
 \section{Compression scheme design}
 As it has been shown in chapter \ref{ch:NMF}, non-negative matrix factorization
 can be understood as a lossy compression scheme for matrices, as the original
@@ -1237,13 +1321,11 @@ space to store. However, as there are multiple ways of representing and encoding
 an image with different tradeoffs, multiple compression schemes will be constructed
 and compared with each other - ones based on factorizing RGB images and a scheme based
 on compressing chroma values.
-\\
 
 It should be emphasized that these compression schemes are proof of concept only
 and their main goal is to empirically evaluate the effect non-negative matrix
 factorization has on images. Therefore, storage size reduction is in this case only
 the secondary goal.
-\\
 
 All the compression schemes compress data using non-negative matrix factorization.
 As it is necessary to reconstruct the matrices from one-dimensional data, a header
@@ -1257,21 +1339,19 @@ a 2D matrix, a naive approach would be to simply use non-negative
 matrix factorization with the image as the input matrix. Afterwards,
 the two matrices will be compressed using a lossless data compression
 tool in order to save storage space.
-\\
 
 As non-negative matrix factorization results in creating two factor
 matrices, these factor matrices are flattened and afterwards concatenated into
 a byte string, resulting in one long string of bytes which is afterwards
-compressed using a lossless algorithm of choice (more on the specifics of
-implementation in the following chapter). 
-\\
+compressed using a lossless compression algorithm of choice (more on the specifics of
+implementation in the following chapter).
 
 This scheme is visualized in the figure \ref{fig:nmf-naive-scheme}.
 
 \begin{figure}[h]
   \centering
   \includegraphics{nmf-naive-scheme}
-  \caption{Visualization of the naive compression scheme. Note that NMF(RGB) actually
+  \caption[Visualization of the naive compression scheme]{Visualization of the naive compression scheme. Note that NMF(RGB) actually
   represents two matrices which are stored next to each other in one data structure.}
   \label{fig:nmf-naive-scheme}
 \end{figure}
@@ -1283,18 +1363,16 @@ is performed on each of these matrices individually. One aspect of this approach
 compared to the previous one is that the matrices which are going to be factorized
 are going to be smaller (contain less columns, as two color components will be missing
 in each matrix).
-\\
 
 Like in the previous scheme, the factor matrices will be flattened and concatenated,
 followed by using a lossless compression technique to store the data.
-\\
 
 This scheme is visualized in the figure \ref{fig:nmf-rgbseparate-scheme}.
 
 \begin{figure}[h]
   \centering
   \includegraphics{drawio/comprseparatergb}
-  \caption{Visualization of the compression scheme which performs NMF on each of the
+  \caption[Visualization of the separate RGB compression scheme]{Visualization of the compression scheme which performs NMF on each of the
   $RGB$ components.}
   \label{fig:nmf-rgbseparate-scheme}
 \end{figure}
@@ -1305,7 +1383,6 @@ The compression scheme based on $Y'C_BC_R$ aims to utilize the concept
 of human eye not noticing loss of information as strongly when it is related
 to colors, rather than brightness. This is achieved by working on each component
 separately:
-\\
 
 \begin{itemize}
   \item The luma ($Y'$) component is not compressed by a lossy compression algorithm but
@@ -1317,19 +1394,17 @@ separately:
 By not factorizing the luma component or using any lossy compression, the original luma
 information is not lost - only the chroma information. By doing so, less artifacts should
 be introduced into the images, however at the possible cost of worse compression ratios.
-\\
 
 After factorizing the matrices containing the chroma components, all 5 matrices are flattened
 and concatenated into one long byte string, which is compressed using a lossless compression
 technique of choice.
-\\
 
 This scheme is visualized in the figure \ref{fig:nmf-scheme}.
 
 \begin{figure}[h]
   \centering
   \includegraphics{nmf-scheme}
-  \caption{Visualization of the compression scheme based on compressing only the chroma
+  \caption[Visualization of the $Y'C_BC_R$ compression scheme]{Visualization of the compression scheme based on compressing only the chroma
            values.}
   \label{fig:nmf-scheme}
 \end{figure}
@@ -1338,7 +1413,6 @@ This scheme is visualized in the figure \ref{fig:nmf-scheme}.
 Decompressing images using these compression schemes is a reversed operation. As it is
 essentially the same for each scheme, only decompression of the $Y'C_BC_R$ scheme will be
 described.
-\\
 
 The data compressed using a lossless data compression algorithm of choice is decompressed
 utilizing it. Afterwards, the header and the data related to the $Y'$ component and the factor matrices
@@ -1356,14 +1430,13 @@ the solution to non-negative matrix factorization is not unique. Not only that,
 but due to the problem being an optimization problem, there is no guarantee that
 various runs of any of these compression schemes will create the same images, unless
 the initial matrices have been initialized in the same way.
-\\
 
 As a result, unless the initial matrices have been initialized in the same way,
 two aspects of these compression schemes should be noted:
 \begin{itemize}
   \item As the approximation will be different for each run, the information loss will
   also be different, meaning that the visual quality of compression can differ.
-  \item When using a lossless algorithm to store the data, the storage size required
+  \item When using a lossless compression algorithm to store the data, the storage size required
   to store the matrices will be different, as the source data compressed will also
   be different.
 \end{itemize}
@@ -1385,20 +1458,28 @@ implementing the compression schemes were the following:
         NumPy also provides support for vectorizing array operations, thus often significantly
         speeding up matrix calculations. The library also works as an efficient container of
         generic data with specifiable datatypes. NumPy was used for the majority of matrix
-        operations, together with flattening compressed matrices and reshaping them.\cite{numpy}
+        operations, together with flattening compressed matrices and reshaping them. This library
+        was chosen for its high efficiency when it comes to working with matrices, ease of use
+        and good readability.\cite{numpy}
   \item \emph{Nimfa} - a library implementing non-negative matrix factorization
         with implementations of multiple factorization methods, initialization
         approaches and other capabilities. This library uses the capabilities of NumPy
-        for matrix calculations.\cite{nimfa}
+        for matrix calculations. It was chosen for its established use in academic
+        environment and having rich capabilities, such as different seeding methods.\cite{nimfa}
   \item \emph{Pillow} - a fork of the Python Imaging Library (PIL).
         Pillow implements many functionalities related to image processing. The
         functionalities used are related to parsing existing image data and converting
-        between different pixel representations (RGB, grayscale (luma) and $YC_BC_R$).\cite{pillow}
+        between different pixel representations (RGB, grayscale (luma) and $Y'C_BC_R$).
+        Pillow was chosen as the library for working with images as it is currently
+        considered the de facto standard Python library for these purposes and is internally
+        used by many other libraries which work with images.\cite{pillow}
   \item \emph{zlib} - a compression library which is a higher-level abstraction for the DEFLATE
         lossless compression algorithm. Zlib was chosen as the lossless compression
-        technique after performing non-negative matrix factorization as it is a library commonly
-        used for compression. The other reason for choosing zlib was also that it is
-	   a part of the Python standard library.
+        technique after performing non-negative matrix factorization as DEFLATE is a technique commonly
+        used for compression - as well as image compression (as noted in chapter \ref{ch:data_compression}.
+        The other reason for choosing zlib was also that it is
+	   a part of the Python standard library, meaning that using zlib requires little
+	   dependencies.
   \item \emph{scikit-image} - an image processing library for Python. Used for
         calculating PSNR and SSIM.\cite{scikit-image}
 \end{itemize}
@@ -1410,7 +1491,6 @@ CD or online in a GitHub repository using the url \url{https://github.com/prki/m
 Non-negative matrix factorization was implemented using the Nimfa library, which
 allows choosing various parameters, most notably the rank, number of iterations and
 the seeding technique for initializing factor matrices.
-\\
 
 The method chosen for evaluating NMF was the standard NMF approach of multiplicative
 updates with the Euclidean distance update equations. The method for seeding
@@ -1437,7 +1517,6 @@ the aspects noted was the possible upper bound of rank to attain a compression r
 greater than 1. However, it has also been noted that it is necessary for the elements
 in factor matrices to require the same amount of storage that the elements of the
 original matrix do.
-\\
 
 However, that is not the case here, as the original data consists of 8 bit values,
 therefore natural numbers only. Factor matrices however consist of real number
@@ -1451,10 +1530,9 @@ using double-precision would.
 \label{sec:data-structure}
 Each of the compression schemes utilizes non-negative matrix factorization
 to compress color data - be it either factorizing RGB matrix, matrices containing
-each RGB component or factorizing the chroma components of $YC_BC_R$ values.
+each RGB component or factorizing the chroma components of $Y'C_BC_R$ values.
 All of the compression schemes compress this data using a lossless compression
 algorithm in order to save space.
-\\
 
 This data structure which contains the data to be compressed is the same for all
 of the compression schemes - with the only difference being how much data does
@@ -1462,7 +1540,6 @@ it contain, as the separate RGB compression scheme creates 6 factor matrices whi
 need to be stored, whereas the naive RGB compression scheme creates only 2
 factor matrices. Since the data structure differs only in this aspect, the general
 explanation of the structure will be provided.
-\\
 
 \begin{table}[h]
 \centering
@@ -1472,11 +1549,11 @@ explanation of the structure will be provided.
 \multicolumn{2}{|c|}{\multirow{3}{*}{Header}}                                                                                                       & height              & 4B                                    & uint32    \\ \cline{3-5} 
 \multicolumn{2}{|c|}{}                                                                                                                              & width               & 4B                                    & uint32    \\ \cline{3-5} 
 \multicolumn{2}{|c|}{}                                                                                                                              & rank                & 4B                                    & uint32    \\ \hline
-\multicolumn{2}{|c|}{\multirow{3}{*}{\begin{tabular}[c]{@{}c@{}}Compressed image\\  data\\\end{tabular}}} & flat matrix         & matrix size $\times$ 4B                      & float32   \\ \cline{3-5} 
-\multicolumn{2}{|c|}{}                                                                                                                              & flat matrix         & matrix size $\times$ 4B                      & float32   \\ \cline{3-5} 
-\multicolumn{2}{|c|}{}                                                                                                                              & other flat matrices & \multicolumn{1}{l|}{matrix size $\times$ 4B} & float32   \\ \hline
+\multicolumn{2}{|c|}{\multirow{3}{*}{\begin{tabular}[c]{@{}c@{}}Compressed image\\  data\\\end{tabular}}} & flat matrix         & matrix size $\cdot$ 4B                      & float32   \\ \cline{3-5} 
+\multicolumn{2}{|c|}{}                                                                                                                              & flat matrix         & matrix size $\cdot$ 4B                      & float32   \\ \cline{3-5} 
+\multicolumn{2}{|c|}{}                                                                                                                              & other flat matrices & \multicolumn{1}{l|}{matrix size $\cdot$ 4B} & float32   \\ \hline
 \end{tabular}
-\caption{Table showing how the compressed image data is stored. Flat matrices
+\caption[Format used for storing the compressed image data]{Table showing how the compressed image data is stored. Flat matrices
          represent the matrices after they have been flattened into a 1-D array.
 		  Matrix size depends on what kind of matrix is stored, as explained in the section
          \ref{sec:data-structure}}
@@ -1488,11 +1565,10 @@ table \ref{tab:data-structure}. The first 12 bytes of this data structure
 are used for the header. This header stores height, width and the rank parameter
 of non-negative matrix factorization - this information is required for restoring
 the image data, as the dimensions of matrices which were stored were either
-$height \times width$ (luma matrix in the $Y'C_BC_R$ scheme), $width \times rank$
-or $rank \times height$ (in the case of factor matrices). As the data size thus
+$height \cdot width$ (luma matrix in the $Y'C_BC_R$ scheme), $width \cdot rank$
+or $rank \cdot height$ (in the case of factor matrices). As the data size thus
 depends on the specific matrix stored, the table only describes the data size
-as matrix size $\times$ 4B.
-\\
+as matrix size $\cdot$ 4B.
 
 This data structure is compressed using the zlib module with the highest possible
 compression setting.
@@ -1516,7 +1592,7 @@ noted are the following:
 
 \begin{itemize}
   \item Performing independent non-negative matrix factorization in parallel
-  (such as in the case of the $YC_BC_R$ scheme, where factorizing the $C_B$
+  (such as in the case of the $Y'C_BC_R$ scheme, where factorizing the $C_B$
   and the $C_R$ matrices could run in parallel as these two operations are
   fully independent).
   \item Storing factor matrices as sparse matrices - as non-negative matrix
@@ -1560,7 +1636,6 @@ compression schemes will be measured using the following metrics:
 The effect of compression on image quality will also be analyzed subjectively.
 The compression scheme performing the best will also be compared with JPEG image
 compression.
-\\
 
 The results can also be found and used for further analysis in a comma-separated
 value format online in a GitHub repository using the url \url{https://github.com/prki/mastersthesis}
@@ -1572,15 +1647,14 @@ As noted in the previous chapters, non-negative matrix factorization can perform
 very differently depending on the parameters of NMF, such as the matrix rank,
 number of iterations of NMF, the chosen algorithm used for solving NMF as well
 as matrix initialization.
-\\
 
 In order for the experiments to be replicable, the algorithm used and the
 method used for matrix initialization is the same for each run of each
 compression scheme (NNDSVD, as noted in the previous chapter). On the other hand,
 the effect of rank on the quality of compression will be explored - thus, rank will
 not be constant. In the case of the compression scheme performing the best, the effect
-of maximum number of iterations on PSNR and SSIM will also be explored.
-\\
+of maximum number of iterations on PSNR and SSIM will also be explored. The best performing
+compression scheme will also be compared with JPEG.
 
 The quality setting of JPEG compression is set to be constant for all the runs, with the value
 of 75. In the runs where rank was the variable, maximum number of iterations was set to
@@ -1597,7 +1671,6 @@ the original ones (while retaining the original aspect ratio) due to the high ti
 of solving non-negative matrix factorization. While these images can be obtained in higher
 precision than 8 bits per component, the experiments were performed using the 8 bit precision,
 as it is currently still very commonly used.
-\\
 
 The images chosen from the set are shown, together with their names, on the
 figure \ref{fig:benchmarkimages}. The information about their resolution changes
@@ -1606,7 +1679,7 @@ can be found in the table \ref{tab:benchmarkimagesresolutions}.
 \begin{figure}[h]
   \centering
   \includegraphics[scale=0.5]{imgs/imagesused}
-  \caption{Images used in the experiments together with their names as found in the
+  \caption[Benchmark images]{Images used in the experiments together with their names as found in the
            image benchmark dataset.}
   \label{fig:benchmarkimages}
 \end{figure}
@@ -1623,7 +1696,7 @@ hdr                  & 3072x2048                    & 1000x667                  
 nightshot\_iso\_1600 & 3136x2352                    & 960x720                     \\ \hline
 spider\_web          & 4256x2848                    & 960x642                     \\ \hline
 \end{tabular}
-\caption{Resolutions of benchmark images after scaling them down. Scaling was done
+\caption[Resolutions of downscaled benchmark images]{Resolutions of benchmark images after scaling them down. Scaling was done
 		due to high time requirements of non-negative matrix factorization.}
 \label{tab:benchmarkimagesresolutions}
 \end{table}
@@ -1643,14 +1716,15 @@ The choice of rank has strong effect on the image quality - in some test cases,
 having a noticable effect on the structural similarity, but more noticably, the
 effect of rank can be seen on PSNR, which measures entire error and where rank
 changes the PSNR value significantly (i.e. from PSNR of ca. 22dB to over 27.5dB).
-\\
+The measured SSIM and PSNR values can be seen in the figure \ref{fig:psnr_ssim_naive24}.
 
 \begin{figure}[h]
   \centering
   \includegraphics[scale=0.7]{imgs/results/psnr_ssim_naive24}
-  \caption{Results of measuring SSIM and PSNR on benchmark images using
+  \caption[SSIM and PSNR using naive RGB compression scheme]{Results of measuring SSIM and PSNR on benchmark images using
   		 a variable rank and the naive RGB compression scheme. In all cases,
-  		 higher rank results in better image quality - with noticable improvements.}
+  		 higher rank results in better image quality - with noticable improvements
+  		 of both metrics.}
   \label{fig:psnr_ssim_naive24}
 \end{figure}
 
@@ -1663,10 +1737,11 @@ explored in the subsection \ref{sec:subj_analysis_naive}.
 
 \subsection{Compression time/ratio}
 The naive RGB compression scheme achieved the best compression ratios out of all three
-schemes. However, time-wise, it falls short when compared to the $YC_BC_R$ scheme - even though
-the $YC_BC_R$ compression scheme performs NMF on two different matrices (although containing
+schemes. However, time-wise, it falls short when compared to the $Y'C_BC_R$ scheme - even though
+the $Y'C_BC_R$ compression scheme performs NMF on two different matrices (although containing
 slightly less data). While the compression ratio can be fairly high at lower ranks, unfortunately the image
-information loss is very easy to notice at low ranks.
+information loss is very easy to notice at low ranks. A graph showing the results can
+be seen in the figure \ref{fig:comprtimeratio_naive24}.
 
 \begin{figure}[h]
   \centering
@@ -1686,12 +1761,11 @@ At higher ranks, the image becomes clearer and the details of an image become ea
 see. However, the images still contain a lot of noise in colors - regions with the same
 color seem to contain a lot of grain. This can be seen in the figure \ref{fig:bridge_imgqual},
 which shows the same image compressed using different rank side-by-side.
-\\
 
 \begin{figure}[h]
   \centering
   \includegraphics[scale=0.5]{imgs/results/bridge_imgqual}
-  \caption{Compressing the \emph{bridge} image using the naive RGB scheme.
+  \caption[Naive RGB scheme images with different ranks]{Compressing the \emph{bridge} image using the naive RGB scheme.
            Ranks used (from left to right): 5, 20, 75, 150. Even though
            higher ranks result in significant improvement of image
            quality, the images are very lossy and contain a lot of noise.}
@@ -1716,16 +1790,91 @@ change their shape very slightly. These artifacts can be seen in the image \ref{
   \label{fig:artifacts_naive}
 \end{figure}
 
-\section{Results using the separate RGB scheme}
-fgs
 
-\section{Results using the $YC_BC_R$ scheme}
+\section{Results using the separate RGB scheme}
+The separate RGB scheme is an improvement over the naive RGB scheme. By performing
+non-negative matrix factorization on separate RGB channels (and thus factorizing
+smaller matrices), the approximations are slightly more accurate. However, even though
+this is the case, the improvements are very small, as seen in the following subsections.
+Not only that but the exact same artifacts which occur in naive RGB compression scheme occur when
+the separate RGB scheme is used..
+
+\subsection{Image quality}
+The image quality of images compressed using the separate RGB scheme is very similar
+to the one of images compressed using the naive RGB scheme - and changing rank has
+very similar effect as well. Even then, the metrics still score this compression scheme
+noticably better, with better SSIM/PSNR gain with higher ranks and higher achieved SSIM/PSNR values
+altogether. The measured results can be seen visualized in the figure \ref{fig:ssim_separate}.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[scale=0.7]{imgs/results/psnr_ssim_separate}
+  \caption[SSIM and PSNR using separate RGB compression scheme]{Results of
+           measuring SSIM and PSNR on benchmark images using variable rank
+           and the separate RGB compression scheme. In all cases, higher
+           rank, just like in the naive RGB scheme, results in better
+           image quality. Compared to the naive RGB scheme, the graphs
+           have very similar shapes, but score slightly better.}
+  \label{fig:ssim_separate}
+\end{figure}
+
+Even though the SSIM and PSNR values are an improvement over the naive RGB compression scheme,
+the improvement is still very low - while the image structure is generally kept, many
+errors are introduced into the images, resulting in fairly low PSNR values.
+
+\subsection{Compression time/ratio}
+The separate RGB compression scheme achieves essentially the same compression
+times as its naive counterpart.(about 15 seconds for lower ranks and 30 seconds
+when used with higher ranks). The main difference between separate and naive RGB
+schemes in this case can be seen in the compression ratios. While the relationship
+between rank and compression ratio is essentially the same, the naive RGB scheme
+outperforms the separate RGB scheme slightly, achieving higher compression ratios.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[scale=0.7]{imgs/results/comprtimeratio_separate}
+  \caption[Compression time and ratio of separate RGB scheme, variable rank]{Figure showing
+           the effect of rank on compression time and compression ratio when using
+           the separate RGB scheme. As in the previous case with image quality, the graphs
+           look very similar to the ones of the naive RGB scheme. While compression time
+           is essentially the same as in the case of the naive RGB scheme, compression ratios
+           do not achieve values as high as in the previous case for lower ranks.}
+  \label{fig:comprtime_separate}
+\end{figure}
+
+However, even though this is the case, the lower ranks still achieve very low PSNR
+values in both cases, meaning the better compression ratio for the naive RGB scheme
+when lower ranks are used is not as much of an advantage, as such high information
+loss is not desirable.
+
+\subsection{Subjective analysis}
+The effect on rank and the image compression quality looks very similar as in the case
+of the naive RGB scheme. The effect can be seen in the figure \ref{fig:separate_imgqual}.
+Therefore, even though the loss of information is slightly lower than in the previous case,
+the compression scheme still has many problems which make it hard for use. As noted before,
+it is not clear whether these artifacts occur specifically because of non-negative
+matrix factorization or if a different seeding method would possibly lead to better results.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[scale=0.5]{imgs/results/hdr_imgqual_separate}
+  \caption[Separate RGB scheme images with different ranks]{Compressing the \emph{hdr} image using the separate RGB scheme.
+           Ranks used (from left to right): 5, 25 and 75.. Even though
+           higher ranks result in significant improvement of image
+           quality, the images are very lossy and contain a lot of noise, making it
+           almost impossible to read certain texts in the images. Also,
+           some artifacts can be noticed, which do not disappear at higher ranks,
+           such as the green artifacts on the left side.}
+  \label{fig:separate_imgqual}
+\end{figure}
+
+
+\section{Results using the $Y'C_BC_R$ scheme}
 Altogether, the performance of the scheme based on compressing only the chroma
 information using non-negative matrix factorization showed itself to be much
 better than in the previous two cases, mostly achieving very high SSIM values
 and high PSNR values. At the same time, thanks to converging slightly faster,
 the compression times were also not as high.
-\\
 
 \subsection{Image quality}
 The effect of rank on the compression quality seems to be tied together closely
@@ -1735,13 +1884,13 @@ showed itself to be problematic and required higher rank to achieve good quality
 rank to a very low value and still achieve very high compression quality. The results have
 shown themselves to be very similar both when using PSNR and SSIM as the metrics. The
 visualized results can be seen in the figure \ref{fig:ssim_ycbcr}.
-\\
 
 \begin{figure}[h]
   \centering
   \includegraphics[scale=0.7]{imgs/results/psnr_ssim_ycbcr}
-  \caption{Results of measuring SSIM and PSNR on benchmark images using a variable rank
-           and the $YC_BC_R$ compression scheme.
+  \caption[SSIM and PSNR using $Y'C_BC_R$ compression scheme]{Results of measuring SSIM and PSNR
+           on benchmark images using a variable rank
+           and the $Y'C_BC_R$ compression scheme.
   		  Note that except for one image, the SSIM changes only extremely slightly
   		  with higher rank, thus making it possible to use very low rank and still
   		  achieve good compression quality.}
@@ -1753,16 +1902,28 @@ SSIM over $0.99$ in most cases and reaching PSNR values of ca. 48 dB. In most ex
 with other rank settings, these values were essentially not improved on using this configuration. 
 
 \subsection{Compression time/ratio}
-As in all the cases before, rank affects the compression ratio - \emph{TODO} compare with the previous
-schemes.
+As in all the cases before, rank affects both the compression time as well as the compression ratio.
+Compared to both previous schemes, the compression times improve significantly - starting at
+10 seconds for lower ranks and taking about 20 seconds in most cases at rank 150 (unlike
+previous compression schemes, which took 15 to 30 seconds).
 
 \begin{figure}[h]
   \centering
   \includegraphics[scale=0.8]{imgs/results/comprtimeratio_ycbcr}
-  \caption{Visualization of the effect of rank on compression time and ratio
-           on the $YC_BC_R$ compression scheme.}
+  \caption[Compression time and ratio of $Y'C_BC_R$ compression scheme]{Visualization of
+           the effect of rank on compression time and ratio
+           on the $Y'C_BC_R$ compression scheme.}
   \label{fig:comprtimeratio_ycbcr}
 \end{figure}
+
+While the compression time is a significant improvement in this case, the compression ratio
+is not - mostly due to the fact that the luma values are not compressed using a lossy
+compression technique at all, thus requiring more space. However, unlike the previous cases,
+lower ranks can be used while still achieving very good image compression quality, as
+only one image has proven to be problematic (and the only one, which wasn't a photography)
+for image compression - in the rest of the cases, rank did not affect SSIM/PSNR significantly.
+As a result, for practical use, the $Y'C_BC_R$ compression scheme could achieve better compression
+ratios as lower ranks would still lead to desirable image qualities.
 
 \subsection{Comparison with JPEG}
 The scheme based on compressing chroma information has shown itself to possibly
@@ -1771,7 +1932,6 @@ of all six images, the values of SSIM and PSNR achieved higher values in their m
 of the same images compressed using JPEG. The comparison can be seen in the table \ref{tab:ycbcrvsjpeg}.
 Visually, image compression using NMF can produce better images and certain artifacts which are common
 in JPEG images are not present in images compressed in this way (as shown in the next section).
-\\
 
 However, even though the compression scheme is able to lose less information content, it is significantly
 beaten by JPEG when it comes to size of the images. This can be seen visually in the graph \ref{fig:filesize_comparison},
@@ -1790,8 +1950,8 @@ hdr                  & 0.999             & 48.14             & 0.975            
 nightshot\_iso\_1600 & 0.998             & 48.07             & 0.935                & 38.86                \\ \hline
 spider\_web          & 0.999             & 47.99             & 0.980                & 42.61                \\ \hline
 \end{tabular}
-\caption{A table showing the maximum achieved values of chosen metrics when using
-         the $YC_BC_R$ compression scheme and comparing them with the results using
+\caption[Maximum achieved SSIM/PSNR values and comparison to JPEG]{A table showing the maximum achieved values of chosen metrics when using
+         the $Y'C_BC_R$ compression scheme and comparing them with the results using
          JPEG.}
 \label{tab:ycbcrvsjpeg}
 \end{table}
@@ -1799,7 +1959,7 @@ spider\_web          & 0.999             & 47.99             & 0.980            
 \begin{figure}
   \centering
   \includegraphics[scale=0.8]{imgs/results/filesize_comparison}
-  \caption{Comparison between original image sizes and image sizes of images compressed using NMF (YCbCr scheme)
+  \caption[Image size comparison between original, JPEG and $Y'C_BC_R$ compression schemes]{Comparison between original image sizes and image sizes of images compressed using NMF ($Y'C_BC_R$ scheme)
            at a specific rank and JPEG image sizes. Even though NMF image compression can produce
            high quality images with far lower sizes, JPEG still significantly outperforms the NMF
            compression scheme.}
@@ -1807,25 +1967,23 @@ spider\_web          & 0.999             & 47.99             & 0.980            
 \end{figure}
 
 \subsection{Image quality improvement with more NMF iterations}
-As the $YC_BC_R$ compression scheme has proven to be the one performing the best
+As the $Y'C_BC_R$ compression scheme has proven to be the one performing the best
 out of the three, additional experiments were performed related to the effect
 of number of maximum possible iterations on the image quality. In these experiments,
 the value of rank was set to 150 and the maximum number of iterations was in the range
 $[150;450]$. Visualization of these experiments' results can be seen in the figure \ref{fig:maxiter_ycbcr}.
-\\
 
 While maximum number of iterations results in images closer to the original (as the
 approximation improves), the improvement has been shown to be relatively small. The effect
 on SSIM is essentially unnoticable in all images but one, where the SSIM gain is still
 quite low. However, in the case of PSNR, the improvements are easier to see - however, these
 improvements are still very low.
-\\
 
 \begin{figure}
   \centering
   \includegraphics[scale=0.8]{imgs/results/psnr_ssim_maxiter_ycbcr}
-  \caption{A figure displaying the effect of maximum number of multiplicative updates
-           iterations on the image quality. While both SSIM as well as PSNR can be
+  \caption[Effect of multiplicative update iterations on image quality ($Y'C_BC_R$)]{A figure displaying the effect of maximum number of multiplicative updates
+           iterations on the image quality ($Y'C_BC_R$ scheme). While both SSIM as well as PSNR can be
            improved upon, the difference is very small, in most cases not resulting in
            very significant PSNR gain.}
   \label{fig:maxiter_ycbcr}
@@ -1839,7 +1997,7 @@ it does have a linear effect on compression time requirements.
 \begin{figure}
   \centering
   \includegraphics[scale=0.8]{imgs/results/maxiter_ycbcr_comprtime}
-  \caption{A figure displaying compression time depending on the maximum number of iterations.}
+  \caption[Compression time depending on maximum iterations ($Y'C_BC_R$)]{A figure displaying compression time depending on the maximum number of iterations ($Y'C_BC_R$ scheme).}
   \label{fig:maxiter_ycbcr_comprtime}
 \end{figure}
 
@@ -1851,17 +2009,16 @@ certain regions of an image creates many artifacts, especially if these regions
 mainly consist of certain colors (red, purple and dark blue). It hasn't been found out if
 certain colors are more prone to these artifacts by default or if these
 artifacts are rather related to certain image properties. A comparison between a region
-of an image showing the difference between using JPEG and the $YC_BC_R$ compression
+of an image showing the difference between using JPEG and the $Y'C_BC_R$ compression
 scheme can be seen in the figures \ref{fig:nmfvsjpgartifacts} and \ref{fig:nmfvsjpgzoom}.
-\\
 
 \begin{figure}
   \centering
   \includegraphics[scale=0.33]{imgs/results/nmfvsjpgartifacts}
-  \caption{Region of the image named \emph{artificial} showcasing the difference
+  \caption[Artifact comparison between JPEG and NMF $Y'C_BC_R$ compression scheme]{Region of the image named \emph{artificial} showcasing the difference
            between our compression scheme using NMF and between JPEG. First image
-           shows the uncompressed vesion, second image using compression with NMF,
-           last image is compressed using JPEG. While small differences are
+           shows the uncompressed vesion, second image using the $Y'C_BC_R$ compression scheme
+           and the last image is compressed using JPEG. While small differences are
            noticable, second image loses less information on certain colors (mostly
            on the right cubes).}
   \label{fig:nmfvsjpgartifacts}
@@ -1870,8 +2027,8 @@ scheme can be seen in the figures \ref{fig:nmfvsjpgartifacts} and \ref{fig:nmfvs
 \begin{figure}
   \centering
   \includegraphics[scale=0.5]{imgs/results/nmfjpgzoom}
-  \caption{Zoomed in region from the figure \ref{fig:nmfvsjpgartifacts}. First image
-           was compressed using the $YC_BC_R$ scheme, second one has been compressed
+  \caption[Zoomed in artifact comparison between JPEG and NMF $Y'C_BC_R$ compression scheme]{Zoomed in region from the figure \ref{fig:nmfvsjpgartifacts}. First image
+           was compressed using the $Y'C_BC_R$ scheme, second one has been compressed
            using JPEG. The JPEG artifacts surrounding the cubes are easier to notice
            and the NMF compression scheme is able to keep the structure of an image
            better. However, the NMF compression scheme also produces artifacts in the
@@ -1881,11 +2038,10 @@ scheme can be seen in the figures \ref{fig:nmfvsjpgartifacts} and \ref{fig:nmfvs
 
 SImilar problems however occur when compressing the same image using JPEG.
 The exact same image region has problems with the same colors and also produces artifacts in the
-neighbouring areas to the cubes, as JPEG compresses small $8 \times 8$ pixel regions.
-This is one of the main advantages of the $YC_BC_R$ compression scheme when
+neighbouring areas to the cubes, as JPEG compresses small $8 \cdot 8$ pixel regions.
+This is one of the main advantages of the $Y'C_BC_R$ compression scheme when
 compared to JPEG - structure of an image is, for the most part, very unaffected,
 as only the color values change.
-\\
 
 In most cases where the compression loses information, the human eye does not perceive
 the information loss as artifacts per se but rather simply loss of color information - resulting
@@ -1896,63 +2052,111 @@ where small regions with slightly brighter colors can be seen. These changes are
 to notice without focusing on them.
 
 
-\section{Other experiments}
+\section{Randomized seeding methods}
 In the course of implementing the compression schemes and their testing, certain
-interesting aspects of the compression schemes were found. As they are not
-related to the rest of the experiments, they are noted in this section.
+interesting aspects of the compression schemes were found. During the course
+of development and testing, multiple seeding methods were tested - in the previous
+sections, the NNDSVD seeding method was used in all cases. Early on, randomized seeding
+methods were also used - until it was decided the NNDSVD method would be better suited,
+not only due to the fact that the results would be absolutely replicable, but also due to
+the fact that the randomized seeding methods did not perform well in certain cases. This
+section shows some of these aspects in order to show how much can different configuration
+change the results of image compression schemes based on non-negative matrix
+factorization.
 
+\subsection{Rank affecting image quality}
+The \emph{nightshot\_iso\_1600} image from the benchmark set was compressed using
+randomized seeding methods using the naive RGB scheme. The results were essentially
+the same in case of both randomized seeding methods used (fully random and
+random\_vcol). However, when working on a photography, the SSIM and PSNR values
+were clearly better when compared to the results with NNDSVD used. In the case of
+PSNR, the gain was not that high - but in SSIM the difference was as much as entire
+0.1 points. This improvement is shown in the figure \ref{fig:diff_methods}.
 
-\subsection{More artifacts with higher rank}
-% random, naive/separate rgb, svd nedela
-Before seeding the initial factor matrices using the NNDSVD method, various other
-ones were used - together with random seeding. While some of the results on testing
-images were satisfactory, some of the results were very surprising. One of these were
-that higher rank could lead to far higher information loss - or rather, introduce far more
-artifacts into an image than using lower rank. On the other hand, when using NNDSVD,
-the images were absolutely the same when choosing higher rank, rather than deteriorating
-the image quality.
-\\
+However, even though the randomized methods improve on the naive RGB scheme when
+used on this image, the artifacts still occur and do not disappear with higher ranks,
+which would make it seem that these artifacts occur not because of the seeding method
+but rather because of the way non-negative matrix factorization is solved itself.
 
-Other effects of using the random seeding method instead of NNDSVD were also far higher
-times of compression due to more iterations required to achieve convergence and far worse
-compression ratios, as the amount of artifacts present in the image became far higher. The
-effect of using random method on a sample image can be seen in the figure \ref{fig:random-seed}.
+\begin{figure}[h]
+  \centering
+  \includegraphics[scale=0.7]{imgs/results/diff_methods}
+  \caption[Randomized seeding methods on a benchmark picture]{Randomized seeding methods
+  improve the image quality of the naive RGB compression scheme on the \emph{nightshot\_iso\_1600}
+  image. While the PSNR gain is not that significant, the SSIM values are noticably higher.}
+  \label{fig:diff_methods}
+\end{figure}
+
+These results would make it seem that randomized methods are an improvement over the
+NNDSVD method and perform far better. During the course of development of the compression
+schemes, other images were artificially created for testing purposes. Some of the results
+on these images were very surprising and would appear to have contradictory results
+compared to the rest of the findings - more specifically, using higher rank could significantly
+corrupt the image and lead to very noticable information loss.
+
+This can be seen in particular in the figure \ref{fig:random-seed}, where an artifically
+created image was compressed using the RGB schemes. When random seeding was used, higher ranks
+corrupted the image extremely. In the case of NNDSVD, this was not the case and higher rank
+had absolutely no effect on the image quality. These errors also did not occur when the
+random\_vcol seeding method was used.
 
 \begin{figure}[h]
   \centering
   \includegraphics[scale=0.5]{imgs/random-seed-artifacts}
-  \caption{A sample image where random seeding method produces inconsistent results
-           when increasing rank.}
+  \caption[Artifacts created by using a random seeding method]{A sample image where random
+           seeding method produces inconsistent results when increasing rank.}
   \label{fig:random-seed}
 \end{figure}
 
+As randomized seeding method could corrupt an image in such significant way, other seeding
+methods were preferred - in this case, NNDSVD, which did not have this problem in any of the
+test cases and would also lead to replicable test results due to lack of randomization.
 
-\subsection{Black squares in white borders}
-% naive rgb redundancies obrazek - okraje
-When attempting to perform the compression schemes based on RGB on the image
-\ref{fig:redundancies}, which was used to showcase certain redundancies present
-in images, interesting results were found. When converted into a bitmap image,
-the image has had white borders surround the image. After compressing this image
-using the RGB compression schemes, distinct black lines filled large portions of these
-white borders, as seen in the image \ref{fig:blacksquares}. These artifacts occur with
-both compression schemes based on RGB. The reason why these artifacts occur is unknown.
-
-\begin{figure}[h]
-  \centering
-  \includegraphics[scale=0.65]{imgs/redundancies_black_border}
-  \caption{Black areas in the white border which occur after compressing a grayscale image
-  		  using an RGB scheme.}
-  \label{fig:blacksquares}
-\end{figure}
-
-
-\subsection{Different seeding method}
-% ycbcr + random
-For this experiment, a different seeding method than NNDSVD was chosen - in this case, a
-random\_vcol method.
 
 \setsecnumdepth{part}
-\chapter{Conclusion}
+\chapter{Conclusions and future work}
+In this thesis, non-negative matrix factorization was explored and its potential
+use for image compression was analyzed. Together with that, the essential information
+related to encoding digital images was also analyzed and explored, as well as image
+compression basics. By analyzing these topics, it was possible to create three compression schemes
+- a naive one factorizing an image as an entire RGB matrix,
+one which factorizes separate RGB channels and one which factorizes matrices containing
+the values related to colors by transforming the image into the $Y'C_BC_R$ color space.
+These compression schemes were implemented using the \emph{Python} programming language
+and tested on various benchmark images coming from different sources (both artificially
+created images as well as digital photographies).
+
+These compression schemes were evaluated using the peak signal-to-noise ratio and structural
+similarity index metrics and the effect of choosing different rank values on the image quality
+was explored. The other metrics which were explored were the compression times and compression ratios.
+
+Out of these compression schemes, the ones based on compressing RGB color information
+proved to be quite inaccurate - even introducing very noticable artifacts. On the other hand,
+the compression scheme factorizing $C_B$ and $C_R$ matrices has proven to be very accurate - even
+more accurate than current state of the art lossy compression technique (JPEG), however at the cost
+of image size and compression times. 
+
+\section{Future work}
+As noted in the first chapter, the area of image compression using non-negative matrix
+factorization is currently very underdeveloped. While this thesis offers framework
+for exploring the potential of using non-negative matrix factorization for
+image compression, there are still many areas which can be explored.
+
+The $Y'C_BC_R$ compression scheme has proven to be the fastest one (out of the
+explored compression schemes utilizing non-negative matrix factorization) by
+a large margin. The accuracy of the $Y'C_BC_R$ when it comes to retaining the
+image quality is even higher than in the case of JPEG, being one of the currently most
+used lossy compression techniques for image compression. However, the compression
+scheme still falls short of JPEG when it comes to compression time and compression
+ratio.
+
+Potential improvements which could lead to better compression ratious have been proposed
+in chapter \ref{ch:implementation}, such as representing the matrices in a way
+which would take less space (for example by using a sparse matrix representation, if
+possible), performing non-negative matrix factorization on small image regions, performing
+further quantization in order to compress a range of values into a single quantum
+value or utilizing chroma subsampling. Compression times could be significantly improved
+by evaluating non-negative matrix factorization of the $C_B$ and $C_R$ information in parallel.
 
 
 \bibliographystyle{iso690}
@@ -1966,9 +2170,13 @@ random\_vcol method.
 \begin{description}
   \item[NMF] Non-negative matrix factorization
   \item[PNG] Portable Network Graphics
-  \item[JPEG]
+  \item[JPEG] Joint Photographic Experts Group
   \item[PCA] Principal Component Analysis
   \item[SVD] Singular Value Decomposition
+  \item[MSE] Mean squared error
+  \item[PSNR] Peak signal-to-noise ratio
+  \item[SSIM] Structural similarity index
+  \item[NNDSVD] Nonnegative double singular value decomposition
 \end{description}
 
 
